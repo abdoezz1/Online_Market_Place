@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime, timedelta
 from functools import wraps
 
-import db
+from core.db import db
 
 
 SESSION_LIFETIME_HOURS = 24
@@ -130,7 +130,7 @@ def require_login(handler_func):
 
         if user_id is None:
             # Import here to avoid circular imports at module load time
-            from response_builder import redirect 
+            from core.http.response_builder import redirect 
             return redirect("/login")
 
         # Inject user_id so the handler can use it without another DB call

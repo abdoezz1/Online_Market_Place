@@ -3,7 +3,7 @@ auth.py: Authentication
 Handles password hashing, user registration, and login verification.
 """
 import bcrypt
-import db  
+from core.db import db  
 
 # ─────────────────────────────────────────────
 #  Password Utilities
