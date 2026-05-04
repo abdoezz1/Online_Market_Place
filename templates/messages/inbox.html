@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    :root { --primary: #6C63FF; --primary-dark: #574FD6; --primary-light: #EEF0FF; --accent: #FF6584; --bg: #F4F5FB; --surface: #FFFFFF; --text: #1E1E2E; --text-muted: #6B6B80; --border: #E2E4F0; --radius: 12px; --radius-lg: 18px; --shadow-sm: 0 2px 8px rgba(108,99,255,.08); --shadow-md: 0 6px 20px rgba(108,99,255,.14); --transition: all 0.28s cubic-bezier(.4,0,.2,1); }
+
+    .inbox-wrapper {
+        min-height: calc(100vh - 130px);
+        background: var(--bg);
+        padding: 2.5rem 1rem;
+    }
+    .inbox-inner {
+        max-width: 780px;
+        margin: 0 auto;
+    }
+    .inbox-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 2rem;
+    }
+    .inbox-header h1 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0;
+    }
+    .inbox-header i { font-size: 1.7rem; color: var(--primary); }
+    .unread-badge {
+        background: var(--accent);
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-left: auto;
+    }
+
+    /* Thread list */
+    .thread-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+    .thread-item {
+        background: var(--surface);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        padding: 1rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-decoration: none;
+        color: var(--text);
+        transition: var(--transition);
+        border-left: 3px solid transparent;
+    }
+    .thread-item:hover {
+        box-shadow: var(--shadow-md);
+        border-left-color: var(--primary);
+        transform: translateX(3px);
+        color: var(--text);
+    }
+    .thread-item.unread {
+        border-left-color: var(--primary);
+        background: #FAFAFF;
+    }
+    .thread-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+        flex-shrink: 0;
+    }
+    .thread-avatar-placeholder {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .thread-avatar-placeholder i { font-size: 1.2rem; color: var(--primary); }
+    .thread-body { flex: 1; min-width: 0; }
+    .thread-name {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .thread-item.unread .thread-name { color: var(--primary); }
+    .thread-preview {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .thread-item.unread .thread-preview { color: var(--text); font-weight: 500; }
+    .thread-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    .thread-time {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+    .thread-unread-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--primary);
+    }
+    .thread-item-tag {
+        font-size: 0.72rem;
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* Empty state */
+    .inbox-empty {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+    }
+    .inbox-empty i { font-size: 4rem; color: var(--border); margin-bottom: 1rem; }
+    .inbox-empty h2 { color: var(--text); font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .inbox-empty p { color: var(--text-muted); font-size: 0.95rem; }
+
+    @media (max-width: 576px) {
+        .thread-item { padding: 0.85rem 1rem; }
+        .inbox-header h1 { font-size: 1.4rem; }
+    }
+</style>
+
+<main class="inbox-wrapper">
+    <div class="inbox-inner">
+        <div class="inbox-header">
+            <i class="fas fa-envelope"></i>
+            <h1>Inbox</h1>
+            {% if unread_count and unread_count > 0 %}
+                <span class="unread-badge">{{ unread_count }} new</span>
+            {% endif %}
+        </div>
+
+        {% if messages_list %}
+            <div class="thread-list">
+                {% for thread in messages_list %}
+                <a href="/messages/{{ thread.id }}" class="thread-item {% if not thread.is_read %}unread{% endif %}">
+                    {% if thread.other_user.profile and thread.other_user.profile.photo %}
+                        <img src="{{ thread.other_user.profile.photo.url }}" alt="{{ thread.other_user.username }}" class="thread-avatar">
+                    {% else %}
+                        <div class="thread-avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                    <div class="thread-body">
+                        <div class="thread-name">{{ thread.other_user.first_name }} {{ thread.other_user.last_name }}</div>
+                        <div class="thread-preview">
+                            {% if thread.last_message %}
+                                {% if thread.last_message.sender == user %}You: {% endif %}
+                                {{ thread.last_message.body }}
+                            {% else %}
+                                No messages yet
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="thread-meta">
+                        <span class="thread-time">
+                            {% if thread.last_message %}
+                                {{ thread.last_message.created_at|strftime('%b %d') if thread.last_message else '' }}
+                            {% endif %}
+                        </span>
+                        {% if thread.item %}
+                            <span class="thread-item-tag"><i class="fas fa-tag"></i> {{ thread.item.name }}</span>
+                        {% endif %}
+                        {% if not thread.is_read %}
+                            <div class="thread-unread-dot"></div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="inbox-empty">
+                <i class="fas fa-inbox"></i>
+                <h2>No messages yet</h2>
+                <p>When you contact a seller or a buyer replies, their messages will appear here.</p>
+            </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}
