@@ -1,0 +1,256 @@
+Profile Container
+.profile-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 30px;
+}
+
+.profile-photo {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.photo-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-photo:hover .photo-overlay {
+    opacity: 1;
+}
+
+.change-photo-btn {
+    color: white;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.profile-title {
+    flex: 1;
+}
+
+.profile-title h1 {
+    font-size: 2.2rem;
+    color: #111111;
+    margin-bottom: 10px;
+}
+
+.member-since {
+    color: #666666;
+    font-size: 0.9rem;
+}
+
+/* Profile Content */
+.profile-content {
+    padding: 20px;
+}
+
+.form-section {
+    margin-bottom: 30px;
+    background: #f8f8f8;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.form-section h2 {
+    color: #111111;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #00e0d0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333333;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #00e0d0;
+    box-shadow: 0 0 0 2px rgba(0, 224, 208, 0.2);
+    outline: none;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Form Actions */
+.form-actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.save-btn {
+    background-color: #00e0d0;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+    background-color: #00c9ba;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 224, 208, 0.3);
+}
+
+/* Messages */
+.messages {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert {
+    padding: 15px 25px;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    animation: fadeIn 0.5s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.alert.fade-out {
+    animation: fadeOut 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+.alert.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+
+    .profile-title h1 {
+        font-size: 1.8rem;
+    }
+
+    .form-section {
+        padding: 15px;
+    }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0fcfb;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00e0d0;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00bfa6;
+}

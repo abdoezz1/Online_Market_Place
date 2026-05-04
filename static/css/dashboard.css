@@ -1,0 +1,169 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8fafc;
+    color: #111827;
+}
+
+.wrapper {
+    max-width: 1600px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+}
+
+h1 {
+    text-align: center;
+    color: #0f172a;
+    margin-bottom: 35px;
+    font-size: 32px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+h1 i {
+    color: #00E5D4;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    margin-top: 25px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.styled-table thead tr {
+    background-color: #00E5D4;
+    color: #ffffff;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.styled-table th, .styled-table td {
+    padding: 14px 16px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.styled-table th {
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f8fafc;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f0fdfa;
+    transition: background-color 0.2s;
+}
+
+.btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    margin: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review {
+    background-color: #00E5D4;
+}
+
+.review:hover {
+    background-color: #00E5D4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 224, 208, 0.2);
+}
+
+.print {
+    background-color: #64748b;
+}
+
+.print:hover {
+    background-color: #475569;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(100, 116, 139, 0.2);
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.action-buttons .btn {
+    padding: 8px 14px;
+}
+
+.styled-table th:nth-child(1),
+.styled-table td:nth-child(1) {
+    width: 120px;
+}
+
+.styled-table th:nth-child(9),
+.styled-table td:nth-child(9) {
+    width: 180px;
+}
+
+/* Status indicators */
+.green {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.orange {
+    color: #f97316;
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .wrapper {
+        padding: 20px;
+    }
+    
+    .styled-table {
+        font-size: 14px;
+    }
+    
+    .btn {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+}
+
+/* Animation for table rows */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.styled-table tbody tr {
+    animation: fadeIn 0.3s ease-out;
+    animation-fill-mode: both;
+}
+
+.styled-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.styled-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+.styled-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+/* ... and so on for more rows if needed */
