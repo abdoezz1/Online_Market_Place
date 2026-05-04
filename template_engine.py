@@ -1,0 +1,56 @@
+"""
+template_engine.py — Jinja2 template rendering engine for marketplace_server.
+
+Usage:
+    from template_engine import render_template
+
+    html = render_template("core/index.html", {"user": user, "products": products})
+"""
+
+import os
+import jinja2
+
+# Resolve the templates directory relative to this file
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_TEMPLATES_DIR = os.path.join(_BASE_DIR, "templates")
+
+# ---------------------------------------------------------------------------
+# Jinja2 environment
+# ---------------------------------------------------------------------------
+
+_env = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(_TEMPLATES_DIR),
+    autoescape=jinja2.select_autoescape(["html", "xml"]),
+    # Keep undefined variables silent (renders as empty string)
+    undefined=jinja2.Undefined,
+    # Trim whitespace around block tags for cleaner HTML output
+    trim_blocks=True,
+    lstrip_blocks=True,
+)
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
+def render_template(template_name: str, context: dict | None = None) -> str:
+    """Render a Jinja2 template and return the HTML string.
+
+    Args:
+        template_name: Path relative to the templates/ directory,
+                       e.g. "core/index.html" or "carts/cart.html".
+        context:       Dictionary of variables exposed inside the template.
+                       Pass ``None`` or omit for an empty context.
+
+    Returns:
+        Rendered HTML as a string.
+
+    Raises:
+        jinja2.TemplateNotFound: If *template_name* does not exist.
+        jinja2.TemplateError:    On any other Jinja2 rendering error.
+    """
+    if context is None:
+        context = {}
+
+    template = _env.get_template(template_name)
+    return template.render(**context)
