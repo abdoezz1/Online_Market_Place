@@ -1,1 +1,241 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    :root { --primary: #6C63FF; --primary-dark: #574FD6; --primary-light: #EEF0FF; --accent: #FF6584; --bg: #F4F5FB; --surface: #FFFFFF; --text: #1E1E2E; --text-muted: #6B6B80; --border: #E2E4F0; --radius: 12px; --radius-lg: 18px; --shadow-sm: 0 2px 8px rgba(108,99,255,.08); --shadow-md: 0 6px 20px rgba(108,99,255,.14); --transition: all 0.28s cubic-bezier(.4,0,.2,1); }
+
+    .wishlist-wrapper {
+        min-height: calc(100vh - 130px);
+        background: var(--bg);
+        padding: 2.5rem 1rem;
+    }
+    .wishlist-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .wishlist-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 2rem;
+    }
+    .wishlist-header h1 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0;
+    }
+    .wishlist-header i {
+        font-size: 1.8rem;
+        color: var(--accent);
+    }
+    .wishlist-count {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-left: auto;
+    }
+
+    /* Empty state */
+    .wishlist-empty {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+    }
+    .wishlist-empty i {
+        font-size: 4rem;
+        color: var(--border);
+        margin-bottom: 1rem;
+    }
+    .wishlist-empty h2 { color: var(--text); font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .wishlist-empty p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .wishlist-empty a {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        padding: 11px 28px;
+        border-radius: var(--radius);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(108,99,255,.3);
+        display: inline-block;
+    }
+    .wishlist-empty a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(108,99,255,.4); }
+
+    /* Grid */
+    .wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    .wishlist-card {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+    }
+    .wishlist-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+    .wishlist-card .card-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+    .wishlist-card .card-img-placeholder {
+        width: 100%;
+        height: 200px;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .wishlist-card .card-img-placeholder i {
+        font-size: 3rem;
+        color: var(--primary);
+        opacity: 0.4;
+    }
+    .wishlist-card .card-body {
+        padding: 1.2rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .wishlist-card .card-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.3rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .wishlist-card .card-category {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-bottom: 0.7rem;
+    }
+    .wishlist-card .card-price {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+    .wishlist-card .card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+    }
+    .btn-view {
+        flex: 1;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 9px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    .btn-view:hover { opacity: 0.9; color: #fff; }
+    .btn-remove {
+        background: transparent;
+        border: 1.5px solid #FFD0D8;
+        color: var(--accent);
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+    .btn-remove:hover { background: #FFF0F3; border-color: var(--accent); }
+
+    @media (max-width: 576px) {
+        .wishlist-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .wishlist-header h1 { font-size: 1.4rem; }
+    }
+    @media (max-width: 400px) {
+        .wishlist-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<main class="wishlist-wrapper">
+    <div class="wishlist-inner">
+        <div class="wishlist-header">
+            <i class="fas fa-heart"></i>
+            <h1>My Wishlist</h1>
+            {% if wishlist_items %}
+                <span class="wishlist-count">{{ wishlist_items|length }} item{% if wishlist_items|length != 1 %}s{% endif %}</span>
+            {% endif %}
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if wishlist_items %}
+            <div class="wishlist-grid">
+                {% for entry in wishlist_items %}
+                <div class="wishlist-card">
+                    {% if entry.item.image %}
+                        <img src="{{ entry.item.image.url }}" alt="{{ entry.item.name }}" class="card-img">
+                    {% else %}
+                        <div class="card-img-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="card-title" title="{{ entry.item.name }}">{{ entry.item.name }}</div>
+                        {% if entry.item.category %}
+                            <div class="card-category"><i class="fas fa-tag"></i> {{ entry.item.category.name }}</div>
+                        {% endif %}
+                        <div class="card-price">${{ entry.item.price }}</div>
+                        <div class="card-actions">
+                            <a href="/products/{{ entry.item.id }}" class="btn-view">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="/wishlist/remove/{{ entry.id }}" class="btn-remove" title="Remove from wishlist">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="wishlist-empty">
+                <i class="fas fa-heart-broken"></i>
+                <h2>Your wishlist is empty</h2>
+                <p>Save items you love and come back to them anytime.</p>
+                <a href="/home"><i class="fas fa-shopping-bag"></i> Browse Products</a>
+            </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}
 
