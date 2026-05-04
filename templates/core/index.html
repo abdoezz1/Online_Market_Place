@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<link rel="stylesheet" href="/static/css/items.css">
+<link rel="stylesheet" href="/static/css/messages.css">
+
+<!-- Main Content Area -->
+<div class="main-container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Filter By</h3>
+
+        <div class="filter-section">
+            <h4>Categories</h4>
+            {% for category in cat %}
+                <div>
+                    <input type="checkbox" class="category-filter" value="{{ category.id }}" id="cat-{{ category.id }}">
+                    <label for="cat-{{ category.id }}">{{ category.name }}</label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="filter-section">
+            <h4>Price Range ($)</h4>
+            <div>
+                <label>Min:</label>
+                <input type="number" id="min-price" class="price-filter" placeholder="0">
+            </div>
+            <div>
+                <label>Max:</label>
+                <input type="number" id="max-price" class="price-filter" placeholder="9999">
+            </div>
+        </div>
+
+        <button id="apply-filters">Apply Filters</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- SEARCH -->
+        <div class="search-container">
+            <form method="get" action="/filter">
+                <div class="search-bar">
+                    <input type="text" name="query" placeholder="Search for items..." value="{{ query }}">
+
+                    <button type="submit">Search</button>
+
+                    <div style="position: relative;">
+                        <button type="button" onclick="toggleFilter()">Filter</button>
+
+                        <div id="filter-options">
+                            <label><input type="checkbox" name="search_in" value="name"> Item Name</label>
+                            <label><input type="checkbox" name="search_in" value="seller"> Seller</label>
+                            <label><input type="checkbox" name="search_in" value="category"> Category</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- PRODUCTS -->
+        {% for category in cat %}
+        <div class="category-box">
+
+            <a href="/products/category/{{ category.id }}" style="text-decoration:none;">
+                <h1>{{ category.name }}</h1>
+            </a>
+
+            <div class="items-container">
+                <div class="items">
+
+                    {% for product in pro %}
+                        {% if product.category.id == category.id and product.for_sale %}
+
+                        <div class="item"
+                             data-category="{{ product.category.id }}"
+                             data-price="{{ product.price }}"
+                             data-name="{{ product.name|lower }}"
+                             data-seller="{{ product.seller.username|lower }}"
+                             data-category-name="{{ product.category.name|lower }}">
+
+                            <div class="item-content">
+
+                                <a href="/products/product_{{ product.id }}">
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                </a>
+
+                                <h2>
+                                    {{ product.name }}
+                                    {% if product.average_rating > 0 %}
+                                        <span style="color: gold;">
+                                            {{ product.average_rating }} ★
+                                        </span>
+                                    {% endif %}
+                                </h2>
+
+                                <p><strong>Price:</strong> ${{ product.price }}</p>
+                                <p><strong>Stock:</strong> {{ product.quantity }}</p>
+
+                            </div>
+
+                            <form action="/home/add-to-cart" method="get">
+                                <label>Qty:</label>
+                                <input type="number" name="quantity" min="1" max="{{ product.quantity }}" value="1">
+
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                                <button type="submit">Add</button>
+                            </form>
+
+                        </div>
+
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<script>
+function toggleFilter() {
+    const el = document.getElementById("filter-options");
+    el.style.display = (el.style.display === "block") ? "none" : "block";
+}
+
+document.getElementById("apply-filters").addEventListener("click", () => {
+    const selected = Array.from(document.querySelectorAll(".category-filter:checked"))
+        .map(cb => cb.value);
+
+    const min = parseFloat(document.getElementById("min-price").value) || 0;
+    const max = parseFloat(document.getElementById("max-price").value) || Infinity;
+
+    document.querySelectorAll(".item").forEach(item => {
+        const price = parseFloat(item.dataset.price);
+        const cat = item.dataset.category;
+
+        const okCategory = selected.length === 0 || selected.includes(cat);
+        const okPrice = price >= min && price <= max;
+
+        item.style.display = (okCategory && okPrice) ? "block" : "none";
+    });
+});
+</script>
+
+{% endblock %}

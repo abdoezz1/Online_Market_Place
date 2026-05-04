@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/terms1.css">
+
+<div class="terms-container">
+    <h2 class="terms-title">Marketplace Terms and Conditions</h2>
+
+    <div class="terms-content">
+
+        <section class="terms-section">
+            <h2>1. Introduction</h2>
+            <p>Welcome to SALE Square (the "Marketplace"). By accessing or using our services, you agree to comply with these Terms and Conditions.</p>
+        </section>
+
+        <section class="terms-section">
+            <h2>2. Definitions</h2>
+            <ul class="terms-list">
+                <li><strong>Buyer</strong> – A user who purchases goods or services via the Marketplace.</li>
+                <li><strong>Seller</strong> – A user who offers goods or services for sale on the Marketplace.</li>
+                <li><strong>Content</strong> – Any media, text, images, videos, or data uploaded by users.</li>
+                <li><strong>Transaction</strong> – A completed purchase or sale facilitated through the Marketplace.</li>
+            </ul>
+        </section>
+
+        <section class="terms-section">
+            <h2>3. User Responsibilities</h2>
+            <ol class="terms-list">
+                <li>Maintain accurate and up-to-date account information.</li>
+                <li>Abide by all applicable laws and regulations.</li>
+                <li>Refrain from fraudulent or misleading behavior.</li>
+                <li>Ensure confidentiality of login credentials.</li>
+                <li>Avoid uploading prohibited or harmful content.</li>
+            </ol>
+        </section>
+
+        <section class="terms-section">
+            <h2>4. Seller Obligations</h2>
+            <ul class="terms-list">
+                <li>List accurate product or service details.</li>
+                <li>Honor advertised prices and availability.</li>
+                <li>Fulfill orders promptly and professionally.</li>
+                <li>Handle returns according to platform rules.</li>
+                <li>Pay any applicable commissions or fees.</li>
+            </ul>
+        </section>
+
+        <section class="terms-section">
+            <h2>5. Buyer Expectations</h2>
+            <ul class="terms-list">
+                <li>Provide accurate payment information.</li>
+                <li>Complete transactions without delay.</li>
+                <li>Communicate respectfully with sellers.</li>
+                <li>Inspect products upon receipt.</li>
+            </ul>
+        </section>
+
+        <section class="terms-section">
+            <h2>6. Payments & Fees</h2>
+            <p>Transaction fees may apply and will be shown before payment. Payments are processed securely via trusted providers.</p>
+        </section>
+
+        <section class="terms-section">
+            <h2>7. Intellectual Property</h2>
+            <p>Users retain ownership of their content while granting the Marketplace a license to display it. SALE Square trademarks and system code remain protected.</p>
+        </section>
+
+        <section class="terms-section">
+            <h2>8. Dispute Resolution</h2>
+            <p>Users should attempt to resolve disputes directly before involving the platform.</p>
+        </section>
+
+        <section class="terms-section">
+            <h2>9. Limitation of Liability</h2>
+            <ul class="terms-list">
+                <li>Accuracy of user content</li>
+                <li>Transaction outcomes</li>
+                <li>Service interruptions</li>
+                <li>Indirect damages</li>
+            </ul>
+        </section>
+
+        <section class="terms-section">
+            <h2>10. Account Termination</h2>
+            <p>Accounts may be suspended for violations. Users may delete accounts anytime.</p>
+        </section>
+
+        <section class="terms-section">
+            <h2>11. Changes to Terms</h2>
+            <p>We may update these Terms with notice. Continued use means acceptance.</p>
+        </section>
+
+        <section class="terms-section">
+            <h2>12. Governing Law</h2>
+            <p>These Terms are governed by the laws of the Arab Republic of Egypt.</p>
+        </section>
+
+        <section class="terms-section">
+            <h2>13. External API Use</h2>
+            <p>We provide a REST API for external integrations. Users agree to:</p>
+            <ul class="terms-list">
+                <li>Use API legally</li>
+                <li>Respect rate limits</li>
+                <li>Avoid scraping or reverse engineering</li>
+                <li>Report vulnerabilities</li>
+            </ul>
+
+            <p>
+                Download API documentation:
+                <a href="/static/docs/salesquare_api_documentation.docx" download>
+                    Download API Documentation (Word)
+                </a>
+            </p>
+        </section>
+
+        <div class="terms-acceptance">
+            <p><strong>Last Updated:</strong> April 20, 2025</p>
+            <p>By using SALE Square, you agree to these Terms.</p>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.terms-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.terms-title {
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+}
+
+.terms-content {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+}
+
+.terms-section {
+    margin-bottom: 30px;
+}
+
+.terms-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.terms-section p,
+.terms-list {
+    color: #555;
+    line-height: 1.6;
+}
+
+.terms-list {
+    padding-left: 20px;
+}
+
+.terms-list li {
+    margin-bottom: 8px;
+}
+
+.terms-acceptance {
+    background: #f8f8f8;
+    padding: 20px;
+    border-left: 4px solid #00e0d0;
+    margin-top: 40px;
+}
+
+.terms-acceptance p {
+    margin-bottom: 10px;
+}
+</style>
+
+{% endblock %}
