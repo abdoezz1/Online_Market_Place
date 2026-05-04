@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block navbar %}
+    {% if user.is_authenticated %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+
+
+
+{% block content %}
+<style>
+    body {
+        background-color: black;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        color: #00e0d0;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    .section {
+        background-color: #1c1c1c;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #00e0d0;
+    }
+
+    .section h2 {
+        color: #00e0d0;
+        margin-bottom: 15px;
+    }
+
+    label {
+        color: white;
+        display: inline-block;
+        width: auto;
+        margin-right: 10px;
+        margin-top: 10px;
+    }
+
+    select, input[type="text"], input[type="number"] {
+        width: 200px;
+        padding: 5px;
+        border: 1px solid #00e0d0;
+        border-radius: 5px;
+        background-color: black;
+        color: white;
+    }
+
+    button {
+        background-color: #00e0d0;
+        color: black;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #00c0b0;
+    }
+
+    .popup {
+        display: none;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #00e0d0;
+        color: black;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+    }
+
+    .popup.error {
+        background-color: red;
+        color: white;
+    }
+
+    .inline-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+</style>
+<h1>External Marketplace API </h1>
+
+<div class="container">
+    <div class="section">
+        <h2>API Authentication</h2>
+        <input type="text" id="apiToken" placeholder="Enter your API token" style="width: 100%;">
+        <button onclick="validateToken()">Validate Token</button>
+    </div>
+
+    <div class="section">
+        <h2>Product Catalog</h2>
+        <button onclick="fetchProducts()" id="fetchProductsBtn">
+            <span id="fetchProductsText">Fetch Products</span>
+        </button>
+        <ul id="productList" class="response-list"></ul>
+    </div>
+
+    <div class="section">
+        <h2>Create Order</h2>
+        <select id="productOrderSelect" disabled>
+            <option value="">-- Fetch products first --</option>
+        </select>
+        <input type="number" id="quantity" min="1" value="1" disabled>
+        <button onclick="submitOrder()" id="submitOrderBtn" disabled>Submit Order</button>
+        <div id="orderResponse"></div>
+    </div>
+
+    <div class="section">
+        <h2>Transaction History</h2>
+        <button onclick="fetchTransactions()">Fetch Transactions</button>
+        <ul id="transactionList" class="response-list"></ul>
+    </div>
+</div>
+
+<script>
+    const API_BASE = '/api/external/';
+    let authToken = localStorage.getItem('apiToken') || '';
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('apiToken').value = authToken;
+        updateUIState();
+    });
+
+    function updateUIState() {
+        const hasToken = authToken.length > 0;
+        document.getElementById('fetchProductsBtn').disabled = !hasToken;
+        document.getElementById('submitOrderBtn').disabled = !hasToken;
+    }
+
+    function validateToken() {
+        authToken = document.getElementById('apiToken').value.trim();
+        localStorage.setItem('apiToken', authToken);
+        showMessage('API token saved');
+        updateUIState();
+    }
+
+    async function fetchProducts() {
+        {% comment %} try {
+            const response = await fetch(`${API_BASE}products/`, {
+                headers: { 'Authorization': `Token ${authToken}` }
+            });
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const data = await response.json();
+            const productSelect = document.getElementById('productOrderSelect');
+            
+            // Update product list
+            document.getElementById('productList').innerHTML = 
+                data.products.map(p => `
+                    <li>
+                        <strong>${p.name}</strong> - $${p.price}
+                        <br><small>${p.description || ''}</small>
+                    </li>
+                `).join('');
+            
+            // Update product dropdown
+            productSelect.innerHTML = data.products.map(p => 
+                `<option value="${p.id}">${p.name} ($${p.price})</option>`
+            ).join('');
+            productSelect.disabled = false;
+            document.getElementById('quantity').disabled = false;
+            document.getElementById('submitOrderBtn').disabled = false;
+            
+            showMessage(`Loaded ${data.count} products`);
+        } catch (error) {
+            showMessage(error.message, true);
+            console.error('Fetch error:', error);
+        } {% endcomment %}
+        fetch('/api/my-products/', {
+                headers: {
+                    'Accept': 'application/json'
+                },
+                credentials: 'include'  // Ensure cookies/session are sent
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Not logged in or server error");
+                return response.json();
+            })
+            .then(data => {
+                const list = document.getElementById('product-list');
+                list.innerHTML = '';
+                data.forEach(product => {
+                    const item = document.createElement('li');
+                    item.innerHTML = `<strong>${product.name}</strong> - $${product.price} - Stock: ${product.stock}`;
+                    list.appendChild(item);
+                });
+            })
+            .catch(err => alert("Error: " + err));
+    }
+
+    async function submitOrder() {
+        const productId = document.getElementById('productOrderSelect').value;
+        const quantity = document.getElementById('quantity').value;
+        
+        try {
+            const response = await fetch(`${API_BASE}orders/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${authToken}`
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: quantity
+                })
+            });
+            
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Order failed');
+            
+            showMessage(`Order created! ID: ${data.order_id}`);
+            fetchProducts(); // Refresh product list
+        } catch (error) {
+            showMessage(error.message, true);
+            console.error('Order error:', error);
+        }
+    }
+
+    async function fetchTransactions() {
+        try {
+            const response = await fetch(`${API_BASE}transactions/`, {
+                headers: { 'Authorization': `Token ${authToken}` }
+            });
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const data = await response.json();
+            document.getElementById('transactionList').innerHTML = 
+                data.transactions.map(t => `
+                    <li>
+                        <strong>${t.product.name}</strong> - $${t.total_price}
+                        <br><small>${new Date(t.date).toLocaleString()}</small>
+                    </li>
+                `).join('');
+            
+            showMessage(`Loaded ${data.count} transactions`);
+        } catch (error) {
+            showMessage(error.message, true);
+            console.error('Transaction error:', error);
+        }
+    
+    }
+
+    function showMessage(message, isError = false) {
+        // [Keep your existing showMessage implementation]
+    }
+</script>
+{% endblock %}
+
+
+

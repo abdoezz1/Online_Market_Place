@@ -1,0 +1,206 @@
+{% load static %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Store</title>
+    <link rel="stylesheet" href="{% static 'css/stylesheet1.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Profile Icon Styles */
+        .navbar-profile-icon {
+            display: inline-block;
+            margin-left: 15px;
+            cursor: pointer;
+            position: relative; /* Added for dropdown positioning */
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #00dfc4;
+            transition: all 0.3s ease;
+            display: block; /* Ensures proper spacing */
+        }
+
+        .fa-user-circle.profile-icon {
+            font-size: 40px;
+            color: #00dfc4;
+            vertical-align: middle;
+        }
+
+        /* Improved Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%; /* Positions directly below the profile icon */
+            margin-top: 10px; /* Small gap between icon and menu */
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 200px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #333 !important; /* Ensures text is visible */
+            text-decoration: none;
+            transition: all 0.2s;
+            gap: 10px;
+            white-space: nowrap; /* Prevents text wrapping */
+        }
+
+        .dropdown-menu a:hover {
+            background: #f5f5f5;
+            color: #00dfc4 !important;
+        }
+
+        /* Balance Display */
+        .balance-display {
+            background-color: #00dfc4;
+            color: white !important;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .balance-display:hover {
+            background-color: #00b4a5;
+            color: white !important;
+        }
+
+        /* Cart Icon */
+         .cart-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Center icon horizontally */
+        margin-left: 10px; /* Increased spacing */
+        color: white !important; /* Ensures visibility */
+        font-size: 30px; /* Increased from 22px */
+        text-decoration: none;
+        width: 40px; /* Fixed width */
+        height: 40px; /* Fixed height */
+        
+    }
+
+    .cart-icon:hover {
+        color: #00dfc4 !important;
+        border-radius: 40%; /* Circular shape */
+        transition: all 0.3s ease;
+        background-color: rgba(0, 223, 196, 0.2); /* Subtle teal background */
+        background-color: rgba(0, 223, 196, 0.3); /* Darker on hover */
+        transform: scale(1.1); /* Slight enlargement */
+    }
+
+    .cart-count {
+        position: absolute;
+        top: -5px; /* Adjusted position */
+        right: -5px; /* Adjusted position */
+        background: #00dfc4;
+        color: white;
+        border-radius: 50%;
+        width: 24px; /* Larger circle */
+        height: 24px; /* Larger circle */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px; /* Larger text */
+        font-weight: bold;
+        border: 2px solid #222; /* Border for contrast */
+    }
+
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% if user.is_authenticated %}/home{% else %}/{% endif %}" class="logo">
+                SALES<span> Square</span>
+            </a>
+
+            <ul class="nav-links">
+                {% if user.is_authenticated %}
+                <!-- Right-aligned items -->
+                <li>
+                    <a href="{% url 'deposit_page' %}" class="balance-display">
+                        <i class="fas fa-wallet"></i>
+                        ${{ user.profile.balance }}
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/home/cart" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% if cart_items_count > 0 %}
+                        <span class="cart-count">{{ cart_items_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+
+                <!-- Profile with dropdown -->
+                <li>
+                    <div class="navbar-profile-icon" onclick="toggleProfileMenu()">
+                        {% if user.profile.photo %}
+                            <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}'s Profile"
+                                 class="profile-icon">
+                        {% else %}
+                            <i class="fas fa-user-circle profile-icon"></i>
+                        {% endif %}
+                    </div>
+                    <div class="dropdown-menu" id="profileDropdown">
+                        <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+                        <a href="/deposit"><i class="fas fa-wallet"></i> Deposit</a>
+                        <a href="/inventory"><i class="fas fa-boxes"></i> Inventory</a>
+                        <a href="/dashboard/transaction-report/"><i class="fas fa-file-alt"></i> Reports</a>
+                        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+                {% else %}
+                <li><a href="{% url 'signUP' %}" class="btn">Sign up</a></li>
+                <li><a href="{% url 'login' %}" class="btn">Log In</a></li>
+                {% endif %}
+            </ul>
+
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        function toggleProfileMenu() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+
+            document.addEventListener('click', function closeMenu(e) {
+                if (!e.target.closest('.navbar-profile-icon') && !e.target.closest('.dropdown-menu')) {
+                    dropdown.classList.remove('show');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }
+    </script>
+</body>
+{% endblock content %}

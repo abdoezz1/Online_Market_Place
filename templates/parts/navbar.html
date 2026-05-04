@@ -1,0 +1,28 @@
+{% load static %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Store</title>
+    <link rel="stylesheet" href="{% static 'css/stylesheet1.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo" >SALES<span> Square</span></a>
+            <ul class="nav-links">
+                <!-- <li><a href="{% url 'ContactUs' %}">Contact Us</a></li>
+                <li><a href="{% url 'About' %}">About</a></li>
+                <li><a href="{% url 'TermsandPolicy' %}">Terms and Policy</a></li> -->
+                <li><a href="{% url 'signUP' %}" class="btn">Sign up</a></li>
+                <li><a href="{% url 'login' %}" class="btn">Log In</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+</body>
+{% endblock content %}
