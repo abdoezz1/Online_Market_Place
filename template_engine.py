@@ -9,6 +9,8 @@ Usage:
 
 import os
 import jinja2
+from typing import Optional
+from datetime import datetime
 
 # Resolve the templates directory relative to this file
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,18 +24,31 @@ _env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(_TEMPLATES_DIR),
     autoescape=jinja2.select_autoescape(["html", "xml"]),
     # Keep undefined variables silent (renders as empty string)
-    undefined=jinja2.Undefined,
+    undefined=jinja2.ChainableUndefined,
     # Trim whitespace around block tags for cleaner HTML output
     trim_blocks=True,
     lstrip_blocks=True,
 )
 
+# ---------------------------------------------------------------------------
+# Custom filters                        
+# ---------------------------------------------------------------------------
+
+def _strftime_filter(value, fmt="%b %d, %Y"):
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    return value.strftime(fmt)
+
+_env.filters["strftime"] = _strftime_filter
 
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 
-def render_template(template_name: str, context: dict | None = None) -> str:
+from typing import Optional
+def render_template(template_name: str, context: Optional[dict] = None) -> str:
     """Render a Jinja2 template and return the HTML string.
 
     Args:
