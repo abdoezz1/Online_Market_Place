@@ -1,0 +1,201 @@
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<main class="about-wrapper">
+    <link rel="stylesheet" href="/static/css/Terms1.css">
+    <style>
+        /* About Page Styling */
+        .about-wrapper {
+            padding: 60px 0; /* Increased external margin */
+            background-color: #f9f9f9;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto; /* Increased external margin */
+            padding: 40px; /* Increased internal padding */
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        h1 {
+            color: #000000;
+            text-align: center;
+            margin-bottom: 40px; /* Increased margin */
+            font-size: 2.8rem; /* Slightly larger */
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        p {
+            font-size: 1.2rem; /* Slightly larger text */
+            line-height: 1.8; /* More breathing room */
+            color: #444;
+            margin-bottom: 30px; /* Increased margin */
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 20px; /* Internal padding */
+        }
+        
+        /* Team Section Styling */
+        .team-section {
+            margin: 80px auto; /* Increased external margin */
+            padding: 60px 40px; /* Increased internal padding */
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+            max-width: 1400px; /* Wider container */
+        }
+        
+        .team-title {
+            color: #00dfc4;
+            margin-bottom: 50px; /* Increased margin */
+            font-size: 2.5rem;
+            text-align: center;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Wider cards */
+            gap: 40px; /* Increased gap */
+            justify-items: center;
+        }
+        
+        .team-member {
+            text-align: center;
+            transition: transform 0.3s ease;
+            padding: 20px; /* Internal padding */
+            border-radius: 10px;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,223,196,0.15);
+        }
+        
+        .team-member img {
+            width: 160px; /* Larger images */
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #00dfc4; /* Thicker border */
+            margin-bottom: 20px; /* Increased margin */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .team-member h3 {
+            color: #333;
+            font-size: 1.3rem; /* Larger text */
+            margin: 15px 0 5px; /* Adjusted margins */
+        }
+        
+        .team-member p {
+            font-size: 1rem;
+            color: #666;
+            margin: 0 auto 10px; /* Adjusted margins */
+            padding: 0;
+            max-width: 100%;
+        }
+        
+        @media (max-width: 992px) {
+            .container, .team-section {
+                margin: 30px auto;
+                padding: 30px;
+            }
+            
+            .team-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .about-wrapper {
+                padding: 40px 0;
+            }
+            
+            .container, .team-section {
+                margin: 20px auto;
+                padding: 25px 20px;
+                border-radius: 8px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 30px;
+            }
+            
+            .team-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 25px;
+            }
+            
+            .team-member img {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+    
+    <div class="container">
+      <h1>About Us</h1>
+      <p>Welcome to Online_Market_Place  your trusted marketplace for connecting buyers and sellers with ease. We’re committed to delivering a top-tier experience by offering access to high-quality products and reliable services.</p>
+      
+      <p>Our mission is to build a seamless, secure, and enjoyable shopping environment while empowering sellers to expand their businesses. At every step, we’re guided by innovation, integrity, and a strong focus on customer satisfaction.</p>
+      
+      <p>Thank you for being part of our community. We’re constantly evolving and improving to serve you better and ensure your experience with Online_Market_Place is exceptional.</p>
+    </div>
+    
+    <div class="container">
+      <h1>Meet Our Team</h1>
+      <div class="team-grid">
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Abdelrahman Ezz">
+          <h3>Abdelrahman Ezz</h3>
+        </div>
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Omar Ashraf">
+          <h3>Omar Ashraf</h3>
+        </div>
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Nevin Yasser">
+          <h3>Nevin Yasser</h3>
+        </div>
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Mohamed Abdelbaky">
+          <h3>Mohamed Abdelbaky</h3>
+        </div>
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Youssef Yasser">
+          <h3>Youssef Yasser</h3>
+        </div>
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Youssef Ashraf">
+          <h3>Youssef Ashraf</h3>
+        </div>
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Ahmed Mohamed">
+          <h3>Ahmed Mohamed</h3>
+        </div>
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Miran Mohamed">
+          <h3>Miran Mohamed</h3>
+        </div>
+        <div class="team-member">
+          <img src="/static/profile_photos/defult_image.png" alt="Habiba Mohamed">
+          <h3>Habiba Mohamed</h3>
+        </div>
+      </div>
+</section>
+</main>
+{% endblock %}
+       
