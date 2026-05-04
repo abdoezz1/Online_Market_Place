@@ -1,1 +1,335 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    :root { --primary: #6C63FF; --primary-dark: #574FD6; --primary-light: #EEF0FF; --accent: #FF6584; --bg: #F4F5FB; --surface: #FFFFFF; --text: #1E1E2E; --text-muted: #6B6B80; --border: #E2E4F0; --radius: 12px; --radius-lg: 18px; --shadow-sm: 0 2px 8px rgba(108,99,255,.08); --shadow-md: 0 6px 20px rgba(108,99,255,.14); --transition: all 0.28s cubic-bezier(.4,0,.2,1); }
+
+    .conv-wrapper {
+        min-height: calc(100vh - 130px);
+        background: var(--bg);
+        padding: 2rem 1rem;
+        display: flex;
+        justify-content: center;
+    }
+    .conv-container {
+        width: 100%;
+        max-width: 760px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    /* Header */
+    .conv-header {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: 1rem 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .conv-back {
+        color: var(--primary);
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: var(--transition);
+        flex-shrink: 0;
+    }
+    .conv-back:hover { color: var(--primary-dark); }
+    .conv-avatar {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+        flex-shrink: 0;
+    }
+    .conv-avatar-placeholder {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .conv-avatar-placeholder i { font-size: 1.2rem; color: var(--primary); }
+    .conv-user-info { flex: 1; min-width: 0; }
+    .conv-user-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .conv-user-sub {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+    }
+    .conv-item-badge {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 20px;
+        text-decoration: none;
+        flex-shrink: 0;
+        transition: var(--transition);
+    }
+    .conv-item-badge:hover { background: var(--primary); color: #fff; }
+
+    /* Messages area */
+    .conv-messages {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: 1.2rem;
+        min-height: 400px;
+        max-height: 500px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        scroll-behavior: smooth;
+    }
+
+    /* Individual message bubbles */
+    .msg-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+    }
+    .msg-row.mine { flex-direction: row-reverse; }
+    .msg-bubble-avatar {
+        width: 30px; height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+    .msg-bubble-avatar-placeholder {
+        width: 30px; height: 30px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .msg-bubble-avatar-placeholder i { font-size: 0.8rem; color: var(--primary); }
+    .msg-bubble {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 18px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+    .msg-row:not(.mine) .msg-bubble {
+        background: var(--primary-light);
+        color: var(--text);
+        border-bottom-left-radius: 4px;
+    }
+    .msg-row.mine .msg-bubble {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        border-bottom-right-radius: 4px;
+    }
+    .msg-time {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+        text-align: right;
+    }
+    .msg-row:not(.mine) .msg-time { text-align: left; }
+    .msg-content { display: flex; flex-direction: column; }
+
+    /* Date separator */
+    .date-separator {
+        text-align: center;
+        margin: 0.4rem 0;
+    }
+    .date-separator span {
+        background: var(--border);
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        padding: 3px 12px;
+        border-radius: 20px;
+    }
+
+    /* Input area */
+    .conv-input-area {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: 1rem 1.2rem;
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+    .conv-input {
+        flex: 1;
+        border: 1.5px solid var(--border);
+        border-radius: 22px;
+        padding: 10px 18px;
+        font-size: 0.93rem;
+        color: var(--text);
+        outline: none;
+        resize: none;
+        min-height: 44px;
+        max-height: 120px;
+        transition: border-color 0.2s;
+        font-family: inherit;
+        line-height: 1.4;
+        background: var(--bg);
+    }
+    .conv-input:focus { border-color: var(--primary); background: #fff; }
+    .conv-send-btn {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex; align-items: center; justify-content: center;
+        transition: var(--transition);
+        box-shadow: 0 4px 12px rgba(108,99,255,.3);
+        flex-shrink: 0;
+    }
+    .conv-send-btn:hover { transform: scale(1.08); box-shadow: 0 6px 16px rgba(108,99,255,.4); }
+
+    @media (max-width: 576px) {
+        .conv-messages { min-height: 300px; max-height: 380px; }
+        .msg-bubble { max-width: 85%; }
+    }
+</style>
+
+<main class="conv-wrapper">
+    <div class="conv-container">
+
+        <!-- Header -->
+        <div class="conv-header">
+            <a href="/messages" class="conv-back"><i class="fas fa-arrow-left"></i></a>
+
+            {% if other_user.profile and other_user.profile.photo %}
+                <img src="{{ other_user.profile.photo.url }}" alt="{{ other_user.username }}" class="conv-avatar">
+            {% else %}
+                <div class="conv-avatar-placeholder"><i class="fas fa-user"></i></div>
+            {% endif %}
+
+            <div class="conv-user-info">
+                <div class="conv-user-name">{{ other_user.first_name }} {{ other_user.last_name }}</div>
+                <div class="conv-user-sub">@{{ other_user.username }}</div>
+            </div>
+
+            {% if thread.item %}
+                <a href="/products/{{ thread.item.id }}" class="conv-item-badge">
+                    <i class="fas fa-tag"></i> {{ thread.item.name }}
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Messages -->
+        <div class="conv-messages" id="messagesArea">
+            {% if conversation %}
+                {% for msg in conversation %}
+                    {% if loop.first or msg.date_label != conversation[loop.index0 - 1].date_label %}
+                        <div class="date-separator"><span>{{ msg.date_label }}</span></div>
+                    {% endif %}
+                    <div class="msg-row {% if msg.sender == user %}mine{% endif %}">
+                        {% if msg.sender != user %}
+                            {% if msg.sender.profile and msg.sender.profile.photo %}
+                                <img src="{{ msg.sender.profile.photo.url }}" alt="{{ msg.sender.username }}" class="msg-bubble-avatar">
+                            {% else %}
+                                <div class="msg-bubble-avatar-placeholder"><i class="fas fa-user"></i></div>
+                            {% endif %}
+                        {% endif %}
+                        <div class="msg-content">
+                            <div class="msg-bubble">{{ msg.body }}</div>
+                            <div class="msg-time">{{ msg.created_at|strftime('%I:%M %p') if msg.created_at else '' }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align:center; color: var(--text-muted); margin: auto; padding: 2rem;">
+                    <i class="fas fa-comments" style="font-size:2.5rem; opacity:0.3; display:block; margin-bottom:0.8rem;"></i>
+                    No messages yet. Say hello!
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Input -->
+        <div class="conv-input-area">
+            <textarea
+                class="conv-input"
+                id="messageInput"
+                placeholder="Type a message…"
+                rows="1"
+                onInput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"
+                onKeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"
+            ></textarea>
+            <button class="conv-send-btn" onclick="sendMessage()" title="Send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+
+    </div>
+</main>
+
+<script>
+// Scroll to bottom of messages on load
+document.addEventListener('DOMContentLoaded', function() {
+    const area = document.getElementById('messagesArea');
+    if (area) area.scrollTop = area.scrollHeight;
+});
+
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const body = input.value.trim();
+    if (!body) return;
+
+    fetch('/messages/{{ thread.id }}/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ body: body })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Append the new message bubble
+            const area = document.getElementById('messagesArea');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const row = document.createElement('div');
+            row.className = 'msg-row mine';
+            row.innerHTML = `
+                <div class="msg-content">
+                    <div class="msg-bubble">${escapeHtml(body)}</div>
+                    <div class="msg-time">${timeStr}</div>
+                </div>`;
+            area.appendChild(row);
+            area.scrollTop = area.scrollHeight;
+
+            input.value = '';
+            input.style.height = 'auto';
+        }
+    })
+    .catch(() => {
+        // Fallback: submit a form if fetch fails
+        window.location.reload();
+    });
+}
+
+function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.appendChild(document.createTextNode(text));
+    return d.innerHTML;
+}
+</script>
+{% endblock %}
 
