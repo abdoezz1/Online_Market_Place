@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/login.css">
+<style>
+    :root { --primary: #6C63FF; --accent: #FF6584; }
+    .signup-wrapper {
+        min-height: calc(100vh - 130px);
+        display: flex; align-items: center; justify-content: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #F4F5FB 0%, #EEF0FF 100%);
+    }
+    .signup-container {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 10px 40px rgba(108,99,255,.15);
+        padding: 2.5rem 2rem;
+        width: 100%; max-width: 420px;
+    }
+    .signup-container h1 {
+        font-size: 1.8rem; font-weight: 800;
+        color: #1E1E2E; margin-bottom: 0.25rem; text-align: center;
+    }
+    .signup-container .sub { text-align: center; color: #6B6B80; font-size: 0.9rem; margin-bottom: 1.8rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; color: #1E1E2E; }
+    .form-group input {
+        width: 100%; padding: 11px 14px;
+        border: 1.5px solid #E2E4F0;
+        border-radius: 10px; font-size: 0.95rem;
+        transition: all 0.25s; outline: none; box-sizing: border-box;
+    }
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,99,255,.12); }
+    .signup-btn {
+        width: 100%; padding: 13px;
+        background: linear-gradient(135deg, #6C63FF, #574FD6);
+        color: #fff; border: none; border-radius: 10px;
+        font-size: 1rem; font-weight: 700;
+        cursor: pointer; transition: all 0.25s;
+        margin-top: 0.5rem;
+        box-shadow: 0 4px 15px rgba(108,99,255,.3);
+    }
+    .signup-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,99,255,.4); }
+    .signup-footer { text-align: center; margin-top: 1.2rem; font-size: 0.88rem; color: #6B6B80; }
+    .signup-footer a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    #message { border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 1rem; display: none; }
+</style>
+
+<main class="signup-wrapper">
+    <div class="signup-container">
+        <h1>Welcome Back</h1>
+        <p class="sub">Sign in to your account</p>
+
+        <div id="message"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" placeholder="Enter username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="signup-btn">Log In</button>
+        </form>
+
+        <div class="signup-footer">
+            <p>Don't have an account? <a href="/signup">Create one here</a></p>
+        </div>
+    </div>
+</main>
+
+<script>
+document.getElementById("login-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const response = await fetch("/api/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ username, password }),
+    });
+
+    const messageBox = document.getElementById("message");
+    messageBox.style.display = "block";
+
+    if (response.ok) {
+        window.location.href = "/home/";
+    } else {
+        messageBox.innerHTML = "Login failed. Please check your credentials.";
+        messageBox.style.cssText = "display:block;background:#fff0f2;color:#c0392b;border:1px solid #fcc;border-radius:8px;padding:10px 14px;";
+    }
+});
+</script>
+{% endblock %}

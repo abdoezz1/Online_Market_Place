@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/login.css">
+<style>
+    :root { --primary: #6C63FF; }
+    .signup-wrapper {
+        min-height: calc(100vh - 130px);
+        display: flex; align-items: center; justify-content: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #F4F5FB 0%, #EEF0FF 100%);
+    }
+    .signup-container {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 10px 40px rgba(108,99,255,.15);
+        padding: 2.5rem 2rem;
+        width: 100%; max-width: 440px;
+    }
+    .signup-container h1 { font-size: 1.8rem; font-weight: 800; color: #1E1E2E; text-align: center; margin-bottom: 0.25rem; }
+    .signup-container .sub { text-align: center; color: #6B6B80; font-size: 0.9rem; margin-bottom: 1.8rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.88rem; color: #1E1E2E; }
+    .form-group input {
+        width: 100%; padding: 11px 14px;
+        border: 1.5px solid #E2E4F0;
+        border-radius: 10px; font-size: 0.93rem;
+        transition: all 0.25s; outline: none; box-sizing: border-box;
+    }
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,99,255,.12); }
+    .signup-btn {
+        width: 100%; padding: 13px;
+        background: linear-gradient(135deg, #6C63FF, #574FD6);
+        color: #fff; border: none; border-radius: 10px;
+        font-size: 1rem; font-weight: 700;
+        cursor: pointer; transition: all 0.25s;
+        margin-top: 0.5rem;
+        box-shadow: 0 4px 15px rgba(108,99,255,.3);
+    }
+    .signup-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,99,255,.4); }
+    .signup-footer { text-align: center; margin-top: 1.2rem; font-size: 0.88rem; color: #6B6B80; }
+    .signup-footer a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    #signup-errors { color: #c0392b; background: #fff0f2; border: 1px solid #fcc; border-radius: 8px; padding: 10px 14px; margin-top: 0.8rem; font-size: 0.88rem; }
+    #signup-errors:empty { display: none; }
+</style>
+
+<main class="signup-wrapper">
+    <div class="signup-container">
+        <h1>Create Account</h1>
+        <p class="sub">Join SALES Square today</p>
+
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" id="first_name" placeholder="First name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" id="last_name" placeholder="Last name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" id="email" placeholder="your@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password1">Password</label>
+                <input type="password" name="password1" id="password1" placeholder="Create a password" required>
+            </div>
+            <div class="form-group">
+                <label for="password2">Confirm Password</label>
+                <input type="password" name="password2" id="password2" placeholder="Repeat your password" required>
+            </div>
+
+            <button type="submit" class="signup-btn">Create Account</button>
+        </form>
+
+        <div id="signup-errors"></div>
+
+        <div class="signup-footer">
+            <p>Already have an account? <a href="/login">Login here</a></p>
+        </div>
+    </div>
+</main>
+
+<script>
+document.getElementById("signup-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const formData = {
+        username:   document.getElementById("username").value,
+        first_name: document.getElementById("first_name").value,
+        last_name:  document.getElementById("last_name").value,
+        email:      document.getElementById("email").value,
+        password1:  document.getElementById("password1").value,
+        password2:  document.getElementById("password2").value,
+    };
+    try {
+        const response = await fetch("/api/signup/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            window.location.href = "/login";
+        } else {
+            const errors = Object.entries(data).map(([k, v]) => `<p><strong>${k}:</strong> ${v}</p>`).join("");
+            document.getElementById("signup-errors").innerHTML = errors;
+        }
+    } catch (error) {
+        document.getElementById("signup-errors").textContent = "An unexpected error occurred.";
+        console.error(error);
+    }
+});
+</script>
+{% endblock %}
