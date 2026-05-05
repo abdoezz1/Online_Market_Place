@@ -1,35 +1,29 @@
 /* Basic CSS file */
-
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #F8FAFC;
+    color: #0F172A;
 }
-
 h1, h2, h3 {
-    color: #444;
+    color: #0F172A;
 }
-
 a {
     color: #007BFF;
     text-decoration: none;
 }
-
 a:hover {
     text-decoration: underline;
 }
-
 button {
-    background-color: #007BFF;
-    color: white;
+    background-color: #2563EB;
+    color: #FFFFFF;
     border: none;
     padding: 10px 15px;
     cursor: pointer;
     border-radius: 5px;
 }
-
 button:hover {
-    background-color: #0056b3;
+    background-color: #1D4ED8;
 }
