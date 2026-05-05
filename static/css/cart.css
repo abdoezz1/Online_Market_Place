@@ -22,7 +22,7 @@
     display: flex;
     gap: 20px;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #FFFFFF;
     border: 1px solid #e0e0e0;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -33,8 +33,8 @@
 
 .order-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0, 224, 208, 0.15);
-    border-color: #00e0d0;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
+    border-color: #2563EB;
 }
 
 /* Order Image */
@@ -53,17 +53,17 @@
 
 .order-details h3 {
     margin: 0 0 10px;
-    color: #111;
+    color: #0F172A;
     font-size: 1.2rem;
 }
 
 .order-details p {
     margin: 5px 0;
-    color: #555;
+    color: #64748B;
 }
 
 .order-details .price {
-    color: #00a896;
+    color: #2563EB;
     font-weight: bold;
     font-size: 1.1rem;
 }
@@ -92,8 +92,8 @@
 .edit-btn,
 .remove-btn,
 .pay-btn {
-    background-color: #00e0d0;
-    color: white;
+    background-color: #2563EB;
+    color: #FFFFFF;
     border: none;
     padding: 10px 18px;
     border-radius: 25px;
@@ -105,17 +105,17 @@
 
 .edit-btn:hover,
 .pay-btn:hover {
-    background-color: #00c9ba;
+    background-color: #1D4ED8;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 224, 208, 0.3);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .remove-btn {
-    background-color: #111;
+    background-color: #EF4444;
 }
 
 .remove-btn:hover {
-    background-color: #333;
+    background-color: #DC2626;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -124,7 +124,7 @@
 .total-summary {
     text-align: center;
     flex-direction: column;
-    border-top: 4px solid #00e0d0;
+    border-top: 4px solid #2563EB;
     padding-top: 20px;
 }
 
@@ -152,16 +152,16 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: #f0fcfb;
+    background: #DBEAFE;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #00e0d0;
+    background: #2563EB;
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #00bfa6;
+    background: #1D4ED8;
 }
 
 /* Messages */
