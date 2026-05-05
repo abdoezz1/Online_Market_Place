@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction Summary - T-{{ transaction.transaction_id }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #0F172A;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2563EB;
+        }
+        .header h2 {
+            color: #2563EB;
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0 0;
+            color: #64748B;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        th {
+            background-color: #2563EB;
+            color: #FFFFFF;
+            text-align: left;
+            padding: 12px;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        tr:nth-child(even) {
+            background-color: #F8FAFC;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #E2E8F0;
+            font-size: 12px;
+            color: #64748B;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .logo span {
+            display: inline-block;
+            background-color: #2563EB;
+            color: #FFFFFF;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        @media print {
+            body {
+                padding: 0;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body onload="window.print(); window.onafterprint = function(){ window.close(); }">
+    <div class="logo">
+        <span>TRANSACTION RECEIPT</span>
+    </div>
+    
+    <div class="header">
+        <h2>Transaction Summary</h2>
+        <p>Generated on {{ now().strftime("%B %-d, %Y %H:%M") }}</p>
+    </div>
+    <table>
+        <tr>
+            <th>Transaction ID</th>
+            <td>T-{{ transaction.transaction_id }}</td>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <td>{{ transaction.date|date("F j, Y H:i") }}</td>
+        </tr>
+        <tr>
+            <th>Buyer</th>
+            <td>{{ transaction.buyer }}</td>
+        </tr>
+        <tr>
+            <th>Seller</th>
+            <td>{{ transaction.seller }}</td>
+        </tr>
+        <tr>
+            <th>Product</th>
+            <td>{{ transaction.product.name }}</td>
+        </tr>
+        <tr>
+            <th>Quantity</th>
+            <td>{{ transaction.quantity }}</td>
+        </tr>
+        <tr>
+            <th>Unit Price</th>
+            <td>{{ transaction.product.price }}</td>
+        </tr>
+        <tr>
+            <th>Total Price</th>
+            <td><strong>{{ transaction.total_price }}</strong></td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>{{ transaction.status|title }}</td>
+        </tr>
+    </table>
+    <div class="footer">
+        <p>This is an automatically generated transaction receipt. Thank you for your business!</p>
+        <p class="no-print">This window will close automatically after printing.</p>
+    </div>
+</body>
+</html>
