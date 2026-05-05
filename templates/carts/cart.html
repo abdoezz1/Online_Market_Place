@@ -1,1 +1,302 @@
+{% extends 'base.html' %}
 
+
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+<link rel="stylesheet" href="/static/css/cart.css">
+<div class="orders-container">
+    {% for order in orders %}
+    {% if order.buyer.user == user %}
+        <div class="order-card">
+            <div class="order-img">
+                <img src="{{ order.product.image }}" alt="{{ order.product.name }}">
+            </div>
+
+            <div class="order-details">
+                <h3>{{ order.product.name }}</h3>
+                <p><strong>Seller:</strong> {{ order.seller.user }}</p>
+                <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                <p class="price"><strong>Total:</strong> ${{ order.total_price }}</p>
+            </div>
+
+            <div class="order-actions">
+                <form action="/home/edit-order/{{ order.id }}" method="post">
+                    <label for="new_amount_{{ order.id }}">New Amount:</label>
+                    <input type="number" id="new_amount_{{ order.id }}" name="quantity" min="1" max="{{ order.product.quantity }}" value="{{ order.quantity }}" required>
+                    <button type="submit" class="edit-btn">Update</button>
+                </form>
+                <button id="removeOrderBtn-{{ order.id }}" class="remove-btn">Remove</button>
+                
+                <!-- Remove Order Confirmation Modal -->
+                <div id="removeOrderModal-{{ order.id }}" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3>Confirm Removal</h3>
+                        <p>Are you sure you want to remove "{{ order.product.name }}" from your cart?</p>
+                        <div class="modal-buttons">
+                            <button class="modal-cancel">Cancel</button>
+                            <a href="/home/remove-order/{{ order.id }}" class="modal-confirm">Yes, Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% endfor %}
+
+    <div class="order-card total-summary">
+        <h3>Total Amount</h3>
+        <p class="price">Total amount of all orders = ${{ total_price }}</p>
+        <button type="button" id="openPayModalBtn" class="pay-btn">Pay</button>
+    </div>
+    
+    <!-- Payment Confirmation Modal -->
+    <div id="payConfirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Payment Confirmation</h3>
+            <p>Are you sure you want to proceed with the payment of ${{ total_price }}?</p>
+            <div class="modal-buttons">
+                <form action="/home/process-payment" method="GET">
+                    <button type="submit" class="modal-confirm">Confirm Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Base Styles */
+    .orders-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+    
+    .order-card {
+        display: flex;
+        background: #FFFFFF;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .order-img {
+        flex: 0 0 150px;
+    }
+    
+    .order-img img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+    
+    .order-details {
+        flex: 1;
+    }
+    
+    .order-details h3 {
+        margin-top: 0;
+        color: #333;
+    }
+    
+    .price {
+        font-weight: bold;
+        color: #2563EB;
+        font-size: 1.1rem;
+    }
+    
+    .order-actions {
+        flex: 0 0 200px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .order-actions input[type="number"] {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+    }
+    
+    /* Button Styles */
+    .edit-btn, .remove-btn, .pay-btn {
+        padding: 10px 22px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+    
+    .edit-btn {
+        background-color: #2563EB;
+        color: #FFFFFF;
+    }
+    
+    .edit-btn:hover {
+        background-color: #1D4ED8;
+    }
+    
+    .remove-btn {
+        background-color: #EF4444;
+        color: #FFFFFF;
+    }
+    
+    .remove-btn:hover {
+        background-color: #DC2626;
+    }
+    
+    .pay-btn {
+        background-color: #2563EB;
+        color: #FFFFFF;
+        margin-top: 1rem;
+    }
+    
+    .pay-btn:hover {
+        background-color: #1D4ED8;
+    }
+    
+    .total-summary {
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 400px;
+        padding: 2rem;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+        color: #888;
+        cursor: pointer;
+    }
+    
+    .modal-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .modal-cancel, .modal-confirm {
+        padding: 10px 22px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .modal-cancel {
+        background-color: #e9ecef;
+        color: #495057;
+    }
+    
+    .modal-cancel:hover {
+        background-color: #dee2e6;
+    }
+    
+    .modal-confirm {
+        background-color: #EF4444;
+        color: #FFFFFF;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .modal-confirm:hover {
+        background-color: #DC2626;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Payment Modal
+        const payModal = document.getElementById('payConfirmModal');
+        const openPayModalBtn = document.getElementById('openPayModalBtn');
+        const payModalClose = payModal.querySelector('.close');
+        
+        if (openPayModalBtn) {
+            openPayModalBtn.addEventListener('click', function() {
+                payModal.style.display = 'flex';
+            });
+        }
+        
+        payModalClose.addEventListener('click', function() {
+            payModal.style.display = 'none';
+        });
+        
+        // Remove Order Modals
+        const removeButtons = document.querySelectorAll('[id^="removeOrderBtn-"]');
+        
+        removeButtons.forEach(button => {
+            const orderId = button.id.split('-')[1];
+            const modal = document.getElementById(`removeOrderModal-${orderId}`);
+            const closeBtn = modal.querySelector('.close');
+            const cancelBtn = modal.querySelector('.modal-cancel');
+            
+            button.addEventListener('click', function() {
+                modal.style.display = 'flex';
+            });
+            
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            cancelBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+{% endblock content %}
