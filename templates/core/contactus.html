@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Contact Us - Marketplace_server</title>
-
-    <link rel="stylesheet" href="/static/css/messages.css">
-</head>
-
-<body>
+{% extends 'base.html' %}
 
 {% block navbar %}
     {% if user %}
@@ -18,12 +8,12 @@
     {% endif %}
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/css/messages.css">
+{% endblock %}
+
 {% block content %}
-
-<main class="contact-main">
-
-    <!-- Messages -->
-    {% if messages %}
+{% if messages %}
         <div class="messages">
             {% for message in messages %}
                 <div class="alert {{ message.tags }}">{{ message }}</div>
@@ -31,112 +21,141 @@
         </div>
     {% endif %}
 
+<main class="contact-main">
     <div class="contact-container">
         <h1 class="contact-title">Get in Touch</h1>
-
-        <p class="contact-subtitle">
-            Have a question, suggestion, or just want to say hello? We'd love to hear from you!
-        </p>
-
+        <p class="contact-subtitle">Have a question, suggestion, or just want to say hello? We'd love to hear from you!</p>
         <form action="/contactus" method="POST" class="contact-form">
-
             <div class="form-group">
-                <label>Name</label>
+                <label for="name">Name</label>
                 <input type="text" name="name" required class="contact-input">
             </div>
-
             <div class="form-group">
-                <label>Email</label>
+                <label for="email">Email</label>
                 <input type="email" name="email" required class="contact-input">
             </div>
-
             <div class="form-group">
-                <label>Message</label>
+                <label for="message">Message</label>
                 <textarea name="message" rows="5" required class="contact-input"></textarea>
-            </div>
-
-            <button type="submit" class="contact-submit-btn">
-                Send Message
-            </button>
-
+            </div>    
+            <button type="submit" class="contact-submit-btn">Send Message</button>
         </form>
     </div>
 
+    <style>
+        .contact-main {
+            background-color: #F8FAFC;
+            padding: 60px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 100px);
+        }
+
+        .contact-container {
+            background: #FFFFFF;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .contact-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #0F172A;
+            margin-bottom: 10px;
+        }
+
+        .contact-subtitle {
+            text-align: center;
+            font-size: 1rem;
+            color: #64748B;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0F172A;
+        }
+
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: #fdfdfd;
+            color: #0F172A;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: #2563EB;
+            box-shadow: 0 0 5px rgba(37, 99, 235, 0.25);
+            outline: none;
+        }
+
+        .contact-form textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .contact-submit-btn {
+            display: block;
+            width: 100%;
+            background-color: #2563EB;
+            color: #FFFFFF;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+
+        .contact-submit-btn:hover {
+            background-color: #1D4ED8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            .contact-container {
+                padding: 30px 20px;
+            }
+
+            .contact-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-title {
+                font-size: 1.5rem;
+            }
+
+            .contact-form input,
+            .contact-form textarea {
+                padding: 10px 12px;
+            }
+
+            .contact-submit-btn {
+                padding: 12px 16px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
 </main>
-
-<style>
-    /* (your CSS unchanged for safety) */
-
-    .contact-main {
-        background-color: #f4f7f9;
-        padding: 60px 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: calc(100vh - 100px);
-    }
-
-    .contact-container {
-        background: #fff;
-        padding: 40px;
-        max-width: 600px;
-        width: 100%;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    }
-
-    .contact-title {
-        text-align: center;
-        font-size: 2.2rem;
-        margin-bottom: 10px;
-    }
-
-    .contact-subtitle {
-        text-align: center;
-        font-size: 1rem;
-        color: #666;
-        margin-bottom: 30px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-    }
-
-    .contact-form input,
-    .contact-form textarea {
-        width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 1rem;
-        background-color: #fdfdfd;
-    }
-
-    .contact-form input:focus,
-    .contact-form textarea:focus {
-        border-color: #00dfc4;
-        outline: none;
-    }
-
-    .contact-submit-btn {
-        width: 100%;
-        background-color: #00dfc4;
-        color: white;
-        padding: 14px;
-        border: none;
-        border-radius: 30px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-</style>
-
 {% endblock %}
-
-</body>
-</html>
