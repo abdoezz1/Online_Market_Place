@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/inventory.css">
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<style>
+    /* Remove ALL default <a> tag styling for .addItem */
+    a.addItem {
+        text-decoration: none !important;
+        color: inherit !important;
+        display: inline-block !important;
+        width: 100% !important;
+        height: 100% !important;
+        line-height: normal !important;
+        outline: none !important;
+        cursor: pointer !important;
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font: inherit !important;
+    }
+    
+    /* Modal background */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    
+    /* Modal content box */
+    .modal-content {
+        background-color: #ffffff;
+        margin: 10% auto;
+        padding: 30px 25px;
+        border-radius: 12px;
+        width: 350px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        position: relative;
+    }
+    
+    /* Close button */
+    .modal .close {
+        position: absolute;
+        top: 12px;
+        right: 18px;
+        font-size: 22px;
+        color: #888;
+        cursor: pointer;
+    }
+    
+    /* Form input */
+    .modal-content input[type="text"] {
+        width: 90%;
+        padding: 10px 12px;
+        margin: 20px 0;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        outline: none;
+    }
+    
+    /* Add Category button inside modal */
+    .modal-content button[type="submit"] {
+        background-color: #2563EB;
+        color: #FFFFFF;
+        padding: 10px 22px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    
+    .modal-content button[type="submit"]:hover {
+        background-color: #1D4ED8;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .form-group select,
+    .form-group input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .cancel-btn {
+        background-color: #E2E8F0;
+        color: #0F172A;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    .cancel-btn:hover {
+        background-color: #CBD5E1;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm); 
+    }
+
+    /* Scroll Container Styling */
+    .scroll-container {
+        display: grid;
+        grid-template-rows: repeat(3, auto);
+        gap: 15px;
+        padding-right: 8px;
+    }
+
+    /* Custom Scrollbar */
+    .scroll-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scroll-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb {
+        background: #2563EB;
+        border-radius: 3px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #1D4ED8;
+    }
+
+    /* Item Card Container */
+    .item-card {
+        display: flex;
+        gap: 15px;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+    }
+
+    .item-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Image Container */
+    .item-img {
+        width: 150px;
+        height: 150px;
+        min-width: 150px;
+        background-color: #f8f8f8;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .item-img img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .item-card:hover .item-img img {
+        transform: scale(1.05);
+    }
+
+    /* Item Details */
+    .item-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .item-details h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.1rem;
+        color: #0F172A;
+    }
+
+    .item-details p {
+        margin: 5px 0;
+        font-size: 0.9rem;
+        color: #64748B;
+    }
+
+    .item-details strong {
+        color: #0F172A;
+    }
+
+    /* Action Buttons */
+    .item-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        min-width: 120px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .item-card {
+            flex-direction: column;
+        }
+        
+        .item-img {
+            width: 100%;
+            height: 200px;
+        }
+        
+        .item-actions {
+            flex-direction: row;
+            margin-top: 15px;
+        }
+    }
+    .remove-category-btn {
+        background-color: #EF4444;
+    }
+    .remove-category-btn:hover {
+        background-color: #DC2626;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<!-- Available Items -->
+<div class="category-box">
+    <h2 style="display: flex; justify-content: space-between; align-items: center;">
+        Items Available for Sale
+        <div style="display: flex; gap: 10px;">
+            <button type="button" class="edit-btn inventory-add-category-btn" id="openAddModalBtn">Add category</button>
+            <button type="button" class="edit-btn inventory-add-category-btn remove-category-btn" id="openRemoveModalBtn">Remove category</button>
+            <button type="button" class="edit-btn"><a class="addItem" href="/inventory/add_item">Add item</a></button>
+        </div>
+    </h2>
+    <div class="scroll-container" style="max-height: 400px; overflow-y: auto;">
+        {% if available_items %}
+            {% for item in available_items %}
+            {% if item.for_sale %}
+            <div class="item-card">
+                <div class="item-img">
+                    <a href="/products/product_{{ item.id }}">
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                    </a>
+                </div>
+                <div class="item-details">
+                    <h3>{{ item.name }}</h3>
+                    <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+                    <p><strong>Price:</strong> ${{ item.price }}</p>
+                </div>
+                <div class="item-actions">
+                    <a href="/inventory/edit_item/{{ item.id }}"><button type="submit" class="edit-btn">Edit Item</button></a>
+                    <button type="button" class="remove-btn remove-item-btn" data-item-id="{{ item.id }}">Remove Item</button>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<!-- Purchased Items -->
+<div class="category-box">
+    <h2>Purchased Items</h2>
+    <div class="scroll-container" style="max-height: 400px; overflow-y: auto;">
+        {% if available_items %}
+            {% for item in available_items %}
+            {% if not item.for_sale %}
+            <div class="item-card">
+                <div class="item-img">
+                    <a href="/products/product_{{ item.id }}">
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                    </a>
+                </div>
+                <div class="item-details">
+                    <h3>{{ item.name }}</h3>
+                    <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+                    <p><strong>Price:</strong> ${{ item.price }}</p>
+                </div>
+                <div class="item-actions">
+                    <a href="/inventory/edit_item/{{ item.id }}"><button type="submit" class="edit-btn">Edit Item</button></a>
+                    <button type="button" class="remove-btn remove-item-btn" data-item-id="{{ item.id }}">Remove Item</button>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Category Modal -->
+<div id="addCategoryModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Add New Category</h3>
+        <form method="post" action="/inventory/add_category">
+            <input type="text" name="name" placeholder="Category name" required>
+            <button type="submit">Add</button>
+        </form>
+    </div>
+</div>
+
+<!-- Remove Category Modal -->
+<div id="removeCategoryModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Remove Existing Category</h3>
+        <form method="post" action="/inventory/remove_category">
+            <div class="form-group">
+                <label for="category-select">Select Category:</label>
+                <select id="category-select" name="category_id" required>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% empty %}
+                        <option disabled>No categories available</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="remove-btn">Remove</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Remove Item Confirmation Modal (Single reusable modal) -->
+<div id="removeItemModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="removeItemModalTitle">Are you sure you want to remove this item?</h3>
+        <form id="removeItemForm" method="post" action="">
+            <div class="form-actions">
+                <button type="button" class="cancel-btn">Cancel</button>
+                <button type="submit" class="remove-btn">Yes, Remove</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Modal elements
+        const addModal = document.getElementById('addCategoryModal');
+        const removeModal = document.getElementById('removeCategoryModal');
+        const removeItemModal = document.getElementById('removeItemModal');
+        const removeItemForm = document.getElementById('removeItemForm');
+        const removeItemModalTitle = document.getElementById('removeItemModalTitle');
+        
+        // Buttons to open modals
+        const addBtn = document.getElementById('openAddModalBtn');
+        const removeBtn = document.getElementById('openRemoveModalBtn');
+        
+        // Close buttons
+        const closeButtons = document.querySelectorAll('.close');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        
+        // Open modals
+        if (addBtn) addBtn.addEventListener('click', () => addModal.style.display = 'block');
+        if (removeBtn) removeBtn.addEventListener('click', () => removeModal.style.display = 'block');
+        
+        // Handle remove item buttons - using event delegation for dynamic content
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-item-btn')) {
+                const itemCard = e.target.closest('.item-card');
+                if (itemCard) {
+                    const itemId = e.target.getAttribute('data-item-id');
+                    const itemName = itemCard.querySelector('.item-details h3').textContent;
+                    
+                    // Update the modal content
+                    removeItemModalTitle.textContent = `Are you sure you want to remove "${itemName}"?`;
+                    
+                    // Use Django's url template tag to generate the correct URL
+                    removeItemForm.action = `/inventory/delete_item/0`.replace('0', itemId);
+                    
+                    // Show the modal
+                    removeItemModal.style.display = 'block';
+                }
+            }
+        });
+        
+        // Close modals when clicking close buttons
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                addModal.style.display = 'none';
+                removeModal.style.display = 'none';
+                removeItemModal.style.display = 'none';
+            });
+        });
+        
+        // Close modals when clicking cancel button
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                removeItemModal.style.display = 'none';
+            });
+        }
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target == addModal) addModal.style.display = 'none';
+            if (event.target == removeModal) removeModal.style.display = 'none';
+            if (event.target == removeItemModal) removeItemModal.style.display = 'none';
+        });
+    });
+</script>
+{% endblock %}
