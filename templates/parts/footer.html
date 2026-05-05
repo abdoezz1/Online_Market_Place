@@ -1,117 +1,103 @@
 {% block content %}
+<style>
+    .footer {
+        background-color: #222;
+        color: #ffffff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+    }
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .footer-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .footer h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #ffffff;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .footer h3 span {
+        color: #2563EB;
+    }
+    .footer p {
+        margin: 5px 0;
+        color: #ffffffcc;
+        font-size: 13px;
+        line-height: 1.4;
+        max-width: 500px;
+    }
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        margin: 15px 0 0;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .footer-links li {
+        display: inline-block;
+        position: relative;
+    }
+    .footer-links a {
+        color: #2563EB;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        padding: 3px 0;
+        position: relative;
+    }
+    .footer-links a:hover {
+        color: #ffffff;
+    }
+    .footer-links a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #2563EB;
+        transition: width 0.3s ease;
+    }
+    .footer-links a:hover::after {
+        width: 100%;
+    }
+    .copyright {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #ffffff1a;
+        font-size: 12px;
+        color: #ffffff99;
+    }
+    @media (max-width: 768px) {
+        .footer-links {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .footer {
+            padding: 15px 10px;
+        }
+    }
+</style>
+
 <main>
     <!-- Page content goes here -->
 </main>
-
 <footer class="footer">
-    <style>
-        .footer {
-            background-color: #222;
-            color: #ffffff;
-            padding: 20px 10px; /* Reduced padding */
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px; /* Reduced gap */
-        }
-
-        .footer-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .footer h3 {
-            font-size: 20px; /* Reduced font size */
-            margin-bottom: 10px; /* Reduced margin */
-            color: #ffffff;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .footer h3 span {
-            color: #00dfc4;
-        }
-
-        .footer p {
-            margin: 5px 0; /* Reduced margin */
-            color: #ffffffcc;
-            font-size: 13px; /* Reduced font size */
-            line-height: 1.4; /* Adjusted line height */
-            max-width: 500px; /* Reduced max width */
-        }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-            margin: 15px 0 0; /* Reduced margin */
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px; /* Reduced gap */
-        }
-
-        .footer-links li {
-            display: inline-block;
-            position: relative;
-        }
-
-        .footer-links a {
-            color: #00dfc4;
-            text-decoration: none;
-            font-size: 13px; /* Reduced font size */
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 3px 0; /* Reduced padding */
-            position: relative;
-        }
-
-        .footer-links a:hover {
-            color: #ffffff;
-        }
-
-        .footer-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: #00dfc4;
-            transition: width 0.3s ease;
-        }
-
-        .footer-links a:hover::after {
-            width: 100%;
-        }
-
-        .copyright {
-            margin-top: 20px; /* Reduced margin */
-            padding-top: 10px; /* Reduced padding */
-            border-top: 1px solid #ffffff1a;
-            font-size: 12px; /* Reduced font size */
-            color: #ffffff99;
-        }
-
-        @media (max-width: 768px) {
-            .footer-links {
-                flex-direction: column;
-                gap: 10px; /* Reduced gap */
-            }
-            
-            .footer {
-                padding: 15px 10px; /* Reduced padding */
-            }
-        }
-    </style>
-    
     <div class="footer-container">
         <div class="footer-col">
             <h3>Market<span>Store</span></h3>
@@ -119,9 +105,9 @@
         </div>
         
         <ul class="footer-links">
-            <li><a href="{% url 'ContactUs' %}">Contact Us</a></li>
-            <li><a href="{% url 'About' %}">About</a></li>
-            <li><a href="{% url 'TermsandPolicy' %}">Terms and Policy</a></li>
+            <li><a href="/contactus">Contact Us</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/terms">Terms and Policy</a></li>
         </ul>
         
         <div class="copyright">
