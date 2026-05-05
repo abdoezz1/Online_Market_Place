@@ -10,7 +10,25 @@
 
 {% block content %}
 <style>
-    :root { --primary: #6C63FF; --primary-dark: #574FD6; --primary-light: #EEF0FF; --accent: #FF6584; --bg: #F4F5FB; --surface: #FFFFFF; --text: #1E1E2E; --text-muted: #6B6B80; --border: #E2E4F0; --radius: 12px; --radius-lg: 18px; --shadow-sm: 0 2px 8px rgba(108,99,255,.08); --shadow-md: 0 6px 20px rgba(108,99,255,.14); --transition: all 0.28s cubic-bezier(.4,0,.2,1); }
+    :root {
+      --primary:        #2563EB;
+      --primary-dark:   #1D4ED8;
+      --primary-light:  #DBEAFE;
+      --accent:         #F59E0B;
+      --accent-dark:    #D97706;
+      --bg:             #F8FAFC;
+      --surface:        #FFFFFF;
+      --text:           #0F172A;
+      --text-muted:     #64748B;
+      --border:         #E2E8F0;
+      --success:        #10B981;
+      --danger:         #EF4444;
+      --radius:         10px;
+      --radius-lg:      16px;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md:      0 4px 16px rgba(37,99,235,0.12);
+      --transition:     all 0.25s ease;
+    }
 
     .inbox-wrapper {
         min-height: calc(100vh - 130px);
@@ -71,7 +89,7 @@
     }
     .thread-item.unread {
         border-left-color: var(--primary);
-        background: #FAFAFF;
+        background: #F0F6FF;
     }
     .thread-avatar {
         width: 46px;
@@ -172,7 +190,7 @@
                 {% for thread in messages_list %}
                 <a href="/messages/{{ thread.id }}" class="thread-item {% if not thread.is_read %}unread{% endif %}">
                     {% if thread.other_user.profile and thread.other_user.profile.photo %}
-                        <img src="{{ thread.other_user.profile.photo.url }}" alt="{{ thread.other_user.username }}" class="thread-avatar">
+                        <img src="{{ thread.other_user.profile.photo }}" alt="{{ thread.other_user.username }}" class="thread-avatar">
                     {% else %}
                         <div class="thread-avatar-placeholder">
                             <i class="fas fa-user"></i>
