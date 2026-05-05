@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/inventory.css">
+{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <style>
+        .item-detail {
+            display: flex;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 1rem;
+            gap: 2rem;
+        }
+        
+        .item-image {
+            flex: 1;
+        }
+        
+        .item-image img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .inv-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .edit-btn, .remove-btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: background-color 0.2s ease-in-out;
+        }
+        
+        .edit-btn {
+            background-color: #2563EB;
+            color: #FFFFFF;
+        }
+        
+        .edit-btn:hover {
+            background-color: #1D4ED8;
+        }
+        
+        .remove-btn {
+            background-color: #EF4444;
+            color: #FFFFFF;
+        }
+        
+        .remove-btn:hover {
+            background-color: #DC2626;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px 25px;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 22px;
+            color: #888;
+            cursor: pointer;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .modal-cancel, .modal-confirm {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        
+        .modal-cancel {
+            background-color: #E2E8F0;
+            color: #0F172A;
+        }
+        
+        .modal-confirm {
+            background-color: #EF4444;
+            color: #FFFFFF;
+        }
+        
+        .modal-confirm:hover {
+            background-color: #DC2626;
+        }
+    </style>
+
+    <div class="item-detail">
+        <div class="item-image">
+            <img src="{{ product.image }}" alt="{{ product.name }}">
+        </div>
+        <div class="item-info">
+            <h1>{{ product.name }}</h1>
+            <p class="price">Price: ${{ product.price }}</p>
+            <p>Description: {{ product.description }}</p>
+            <p>Category: {{ product.category }}</p>
+            <p>Created At: {{ product.created_at }}</p>
+            <p>Available Quantity: {{ product.quantity }}</p>
+            <p>For Sale: {{ product.for_sale }}</p>
+
+            <div class="inv-actions">
+                <a href="/inventory/edit_item/{{ product.id }}" class="edit-btn">Edit Item</a>
+                <a href="#" id="removeItemBtn-{{ product.id }}" class="remove-btn">Remove Item</a>
+            </div>
+        </div>
+
+        <div id="removeItemModal-{{ product.id }}" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Are you sure you want to remove the item "{{ product.name }}"?</h3>
+                <div class="modal-actions">
+                    <button class="modal-cancel">Cancel</button>
+                    <form method="post" action="/inventory/delete_item/{{ product.id }}">
+                        <button type="submit" class="modal-confirm">Yes, Remove</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('removeItemModal-{{ product.id }}');
+            const btn = document.getElementById('removeItemBtn-{{ product.id }}');
+            const closeBtn = modal.querySelector('.close');
+            const cancelBtn = modal.querySelector('.modal-cancel');
+            
+            btn.onclick = function(e) {
+                e.preventDefault();
+                modal.style.display = 'block';
+            }
+            
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+            
+            cancelBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+            
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
+{% endblock content %}
