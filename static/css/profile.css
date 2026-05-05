@@ -1,4 +1,4 @@
-Profile Container
+/* Profile Container */
 .profile-container {
     max-width: 1000px;
     margin: 40px auto;
@@ -89,7 +89,7 @@ Profile Container
     font-size: 1.5rem;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #00e0d0;
+    border-bottom: 2px solid #2563EB;
 }
 
 .form-group {
@@ -113,8 +113,8 @@ Profile Container
 }
 
 .form-control:focus {
-    border-color: #00e0d0;
-    box-shadow: 0 0 0 2px rgba(0, 224, 208, 0.2);
+    border-color: #2563EB;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
     outline: none;
 }
 
@@ -134,7 +134,7 @@ textarea.form-control {
 }
 
 .save-btn {
-    background-color: #00e0d0;
+    background-color: #2563EB;
     color: white;
     border: none;
     padding: 12px 30px;
@@ -146,9 +146,9 @@ textarea.form-control {
 }
 
 .save-btn:hover {
-    background-color: #00c9ba;
+    background-color: #1D4ED8;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 224, 208, 0.3);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 /* Messages */
@@ -247,10 +247,10 @@ textarea.form-control {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #00e0d0;
+    background: #2563EB;
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #00bfa6;
+    background: #1D4ED8;
 }
