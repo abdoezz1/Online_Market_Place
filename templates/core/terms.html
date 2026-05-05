@@ -9,13 +9,114 @@
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="/static/css/terms1.css">
+<style>
+.terms-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.terms-title {
+    color: #0F172A;
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.terms-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+}
+
+.terms-content {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+}
+
+.terms-section {
+    margin-bottom: 30px;
+}
+
+.terms-section h2 {
+    color: #0F172A;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.terms-section p,
+.terms-list {
+    color: #64748B;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.terms-list {
+    padding-left: 20px;
+}
+
+.terms-list li {
+    margin-bottom: 8px;
+}
+
+.terms-acceptance {
+    background-color: #F8FAFC;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 40px;
+    border-left: 4px solid #2563EB;
+}
+
+.terms-acceptance p {
+    color: #0F172A;
+    margin-bottom: 10px;
+}
+
+.terms-section a {
+    color: #2563EB;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .terms-content {
+        padding: 30px 20px;
+    }
+
+    .terms-title {
+        font-size: 1.8rem;
+    }
+
+    .terms-section h2 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .terms-container {
+        padding: 0 15px;
+    }
+
+    .terms-content {
+        padding: 25px 15px;
+    }
+}
+</style>
 
 <div class="terms-container">
     <h2 class="terms-title">Marketplace Terms and Conditions</h2>
 
     <div class="terms-content">
-
         <section class="terms-section">
             <h2>1. Introduction</h2>
             <p>Welcome to SALE Square (the "Marketplace"). By accessing or using our services, you agree to comply with these Terms and Conditions.</p>
@@ -37,7 +138,7 @@
                 <li>Maintain accurate and up-to-date account information.</li>
                 <li>Abide by all applicable laws and regulations.</li>
                 <li>Refrain from fraudulent or misleading behavior.</li>
-                <li>Ensure confidentiality of login credentials.</li>
+                <li>Ensure the confidentiality of login credentials.</li>
                 <li>Avoid uploading prohibited or harmful content.</li>
             </ol>
         </section>
@@ -48,7 +149,7 @@
                 <li>List accurate product or service details.</li>
                 <li>Honor advertised prices and availability.</li>
                 <li>Fulfill orders promptly and professionally.</li>
-                <li>Handle returns according to platform rules.</li>
+                <li>Handle returns in accordance with Marketplace policies.</li>
                 <li>Pay any applicable commissions or fees.</li>
             </ul>
         </section>
@@ -56,65 +157,65 @@
         <section class="terms-section">
             <h2>5. Buyer Expectations</h2>
             <ul class="terms-list">
-                <li>Provide accurate payment information.</li>
-                <li>Complete transactions without delay.</li>
-                <li>Communicate respectfully with sellers.</li>
-                <li>Inspect products upon receipt.</li>
+                <li>Provide accurate and valid payment information.</li>
+                <li>Complete transactions without undue delay.</li>
+                <li>Engage in respectful communication with sellers.</li>
+                <li>Review and inspect products upon receipt.</li>
             </ul>
         </section>
 
         <section class="terms-section">
             <h2>6. Payments & Fees</h2>
-            <p>Transaction fees may apply and will be shown before payment. Payments are processed securely via trusted providers.</p>
+            <p>The Marketplace may impose transaction fees, which will be clearly communicated before payment. All payments are processed securely via trusted third-party providers.</p>
         </section>
 
         <section class="terms-section">
             <h2>7. Intellectual Property</h2>
-            <p>Users retain ownership of their content while granting the Marketplace a license to display it. SALE Square trademarks and system code remain protected.</p>
+            <p>Users retain ownership of their uploaded content, while granting the Marketplace a non-exclusive license to display it. All SALE Square trademarks and platform code are the intellectual property of SALE Square.</p>
         </section>
 
         <section class="terms-section">
             <h2>8. Dispute Resolution</h2>
-            <p>Users should attempt to resolve disputes directly before involving the platform.</p>
+            <p>Users agree to attempt resolution directly before escalating issues to the Marketplace. While we may assist in disputes, we are not legally required to do so.</p>
         </section>
 
         <section class="terms-section">
             <h2>9. Limitation of Liability</h2>
+            <p>The Marketplace is not responsible for:</p>
             <ul class="terms-list">
-                <li>Accuracy of user content</li>
-                <li>Transaction outcomes</li>
-                <li>Service interruptions</li>
-                <li>Indirect damages</li>
+                <li>The accuracy of user-generated content.</li>
+                <li>Outcomes of transactions between users.</li>
+                <li>Interruptions or service downtimes.</li>
+                <li>Indirect, incidental, or consequential damages.</li>
             </ul>
         </section>
 
         <section class="terms-section">
             <h2>10. Account Termination</h2>
-            <p>Accounts may be suspended for violations. Users may delete accounts anytime.</p>
+            <p>We reserve the right to suspend or terminate user accounts for policy violations. Users may delete their accounts at any time via settings.</p>
         </section>
 
         <section class="terms-section">
-            <h2>11. Changes to Terms</h2>
-            <p>We may update these Terms with notice. Continued use means acceptance.</p>
+            <h2>11. Changes to These Terms</h2>
+            <p>We may update these Terms with at least 30 days' notice. Continued use of the Marketplace implies agreement to the updated terms.</p>
         </section>
 
         <section class="terms-section">
             <h2>12. Governing Law</h2>
-            <p>These Terms are governed by the laws of the Arab Republic of Egypt.</p>
+            <p>These Terms and Conditions are governed by the laws of the Arab Republic of Egypt.</p>
         </section>
 
         <section class="terms-section">
-            <h2>13. External API Use</h2>
-            <p>We provide a REST API for external integrations. Users agree to:</p>
+            <h2>13. External Store API Use</h2>
+            <p>We provide a RESTful API for external stores and third-party integrations. By using the API, you agree to:</p>
             <ul class="terms-list">
-                <li>Use API legally</li>
-                <li>Respect rate limits</li>
-                <li>Avoid scraping or reverse engineering</li>
-                <li>Report vulnerabilities</li>
+                <li>Use the API for lawful and documented purposes only.</li>
+                <li>Respect rate limits and authentication requirements.</li>
+                <li>Avoid reverse engineering or data scraping.</li>
+                <li>Promptly report any discovered vulnerabilities or misuse.</li>
             </ul>
-
             <p>
-                Download API documentation:
+                You can download the full API documentation here:
                 <a href="/static/docs/salesquare_api_documentation.docx" download>
                     Download API Documentation (Word)
                 </a>
@@ -123,68 +224,9 @@
 
         <div class="terms-acceptance">
             <p><strong>Last Updated:</strong> April 20, 2025</p>
-            <p>By using SALE Square, you agree to these Terms.</p>
+            <p>By using SALE Square, you confirm that you have read, understood, and agreed to these Terms and Conditions.</p>
         </div>
-
     </div>
 </div>
-
-<style>
-.terms-container {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-.terms-title {
-    font-size: 2.2rem;
-    text-align: center;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-}
-
-.terms-content {
-    background: #fff;
-    padding: 40px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-}
-
-.terms-section {
-    margin-bottom: 30px;
-}
-
-.terms-section h2 {
-    font-size: 1.4rem;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-}
-
-.terms-section p,
-.terms-list {
-    color: #555;
-    line-height: 1.6;
-}
-
-.terms-list {
-    padding-left: 20px;
-}
-
-.terms-list li {
-    margin-bottom: 8px;
-}
-
-.terms-acceptance {
-    background: #f8f8f8;
-    padding: 20px;
-    border-left: 4px solid #00e0d0;
-    margin-top: 40px;
-}
-
-.terms-acceptance p {
-    margin-bottom: 10px;
-}
-</style>
 
 {% endblock %}
