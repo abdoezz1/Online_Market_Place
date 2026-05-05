@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
-{% load static %}
 
 
 
 {% block navbar %}
-    {% if user.is_authenticated %}
+    {% if user %}
         {% include 'parts/navbarwithoutforms.html' %}
     {% else %}
         {% include 'parts/navbar.html' %}
@@ -17,13 +16,13 @@
 {% block content %}
 <style>
     body {
-        background-color: black;
-        color: white;
+        background-color: #F8FAFC;
+        color: #0F172A;;
         font-family: Arial, sans-serif;
     }
 
     h1 {
-        color: #00e0d0;
+        color: #2563EB;
         text-align: center;
         margin-top: 20px;
     }
@@ -33,20 +32,20 @@
     }
 
     .section {
-        background-color: #1c1c1c;
+        background-color: #FFFFFF;
         padding: 20px;
         margin-bottom: 30px;
         border-radius: 10px;
-        box-shadow: 0 0 10px #00e0d0;
+        box-shadow: 0 0 10px #2563EB;
     }
 
     .section h2 {
-        color: #00e0d0;
+        color: #2563EB;
         margin-bottom: 15px;
     }
 
     label {
-        color: white;
+        color: #0F172A;
         display: inline-block;
         width: auto;
         margin-right: 10px;
@@ -56,15 +55,15 @@
     select, input[type="text"], input[type="number"] {
         width: 200px;
         padding: 5px;
-        border: 1px solid #00e0d0;
+        border: 1px solid #2563EB;
         border-radius: 5px;
-        background-color: black;
-        color: white;
+        background-color: #F8FAFC;
+        color: #0F172A;
     }
 
     button {
-        background-color: #00e0d0;
-        color: black;
+        background-color: #2563EB;
+        color: #FFFFFF;
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
@@ -73,7 +72,7 @@
     }
 
     button:hover {
-        background-color: #00c0b0;
+        background-color: #1D4ED8;
     }
 
     .popup {
@@ -81,8 +80,8 @@
         position: fixed;
         top: 20px;
         right: 20px;
-        background-color: #00e0d0;
-        color: black;
+        background-color: #2563EB;
+        color: #F8FAFC;
         padding: 10px 20px;
         border-radius: 5px;
         z-index: 1000;
@@ -158,7 +157,7 @@
     }
 
     async function fetchProducts() {
-        {% comment %} try {
+        {# try {
             const response = await fetch(`${API_BASE}products/`, {
                 headers: { 'Authorization': `Token ${authToken}` }
             });
@@ -189,7 +188,7 @@
         } catch (error) {
             showMessage(error.message, true);
             console.error('Fetch error:', error);
-        } {% endcomment %}
+        } #}
         fetch('/api/my-products/', {
                 headers: {
                     'Accept': 'application/json'
@@ -270,6 +269,3 @@
     }
 </script>
 {% endblock %}
-
-
-
