@@ -1,12 +1,9 @@
 """
 template_engine.py — Jinja2 template rendering engine for marketplace_server.
-
 Usage:
     from template_engine import render_template
-
     html = render_template("core/index.html", {"user": user, "products": products})
 """
-
 import os
 import jinja2
 from typing import Optional
@@ -19,7 +16,6 @@ _TEMPLATES_DIR = os.path.join(_BASE_DIR, "templates")
 # ---------------------------------------------------------------------------
 # Jinja2 environment
 # ---------------------------------------------------------------------------
-
 _env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(_TEMPLATES_DIR),
     autoescape=jinja2.select_autoescape(["html", "xml"]),
@@ -31,9 +27,13 @@ _env = jinja2.Environment(
 )
 
 # ---------------------------------------------------------------------------
-# Custom filters                        
+# Globals (available in every template automatically)
 # ---------------------------------------------------------------------------
+_env.globals['now'] = datetime.now
 
+# ---------------------------------------------------------------------------
+# Custom filters
+# ---------------------------------------------------------------------------
 def _strftime_filter(value, fmt="%b %d, %Y"):
     if value is None:
         return ""
@@ -46,26 +46,20 @@ _env.filters["strftime"] = _strftime_filter
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
-
-from typing import Optional
 def render_template(template_name: str, context: Optional[dict] = None) -> str:
     """Render a Jinja2 template and return the HTML string.
-
     Args:
         template_name: Path relative to the templates/ directory,
                        e.g. "core/index.html" or "carts/cart.html".
         context:       Dictionary of variables exposed inside the template.
                        Pass ``None`` or omit for an empty context.
-
     Returns:
         Rendered HTML as a string.
-
     Raises:
         jinja2.TemplateNotFound: If *template_name* does not exist.
         jinja2.TemplateError:    On any other Jinja2 rendering error.
     """
     if context is None:
         context = {}
-
     template = _env.get_template(template_name)
     return template.render(**context)
