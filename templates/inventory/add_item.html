@@ -1,1 +1,590 @@
+{% extends 'base.html' %}
 
+{% block navbar %}
+    {% if user %}
+        {% include 'parts/navbarwithoutforms.html' %}
+    {% else %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+/* Main Container */
+.edit-item-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #E2E8F0;
+}
+
+/* Title */
+.edit-item-title {
+    color: #0F172A;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    position: relative;
+    padding-bottom: 10px;
+}
+.edit-item-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background-color: #2563EB;
+}
+
+/* Form Layout */
+.edit-item-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.form-columns {
+    display: flex;
+    gap: 30px;
+}
+.form-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Form Groups */
+.edit-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.edit-form-group label {
+    color: #0F172A;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.edit-form-group input:not([type="checkbox"]),
+.edit-form-group select,
+.edit-form-group textarea {
+    padding: 12px 15px;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+}
+.edit-form-group input:focus:not([type="checkbox"]),
+.edit-form-group select:focus,
+.edit-form-group textarea:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.edit-form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Price Input */
+.input-with-symbol {
+    position: relative;
+}
+.input-with-symbol .symbol {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748B;
+}
+.input-with-symbol input {
+    padding-left: 30px !important;
+}
+
+/* Image Upload */
+.profile-photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+}
+.profile-photo {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #E2E8F0;
+}
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F8FAFC;
+    color: #64748B;
+    font-style: italic;
+}
+.photo-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.profile-photo:hover .photo-overlay {
+    opacity: 1;
+}
+.change-photo-btn {
+    color: #FFFFFF;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.profile-photo-container input[type="file"] {
+    display: none;
+}
+
+/* Checkbox Section */
+.checkbox-section {
+    background-color: #F8FAFC;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* Checkbox Row */
+.checkbox-row {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 15px;
+}
+
+/* Quantity Advertise Field */
+#quantityAdvertiseGroup {
+    margin-top: 15px;
+}
+
+.quantity-advertise-label {
+    display: block;
+    color: #0F172A;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.quantity-input-container input {
+    padding: 12px 15px;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 200px;
+}
+
+.quantity-input-container input:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Checkbox Groups */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.edit-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    gap: 8px;
+}
+
+.edit-checkbox-label input {
+    opacity: 0;
+    position: absolute;
+}
+
+.edit-checkbox-custom {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 2px solid #E2E8F0;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.edit-checkbox-label:hover .edit-checkbox-custom {
+    border-color: #2563EB;
+}
+
+.edit-checkbox-label input:checked ~ .edit-checkbox-custom {
+    background-color: #2563EB;
+    border-color: #2563EB;
+}
+
+.edit-checkbox-custom::after {
+    content: '';
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.edit-checkbox-label input:checked ~ .edit-checkbox-custom::after {
+    display: block;
+}
+
+.checkbox-text {
+    font-weight: 500;
+    color: #0F172A;
+    font-size: 0.95rem;
+}
+
+/* Form Actions */
+.edit-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+.edit-submit-btn {
+    padding: 12px 25px;
+    background-color: #2563EB;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+.edit-submit-btn:hover {
+    background-color: #1D4ED8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+.edit-cancel-btn {
+    padding: 12px 25px;
+    background-color: #EF4444;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+.edit-cancel-btn:hover {
+    background-color: #DC2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Messages */
+.edit-messages {
+    margin-bottom: 20px;
+}
+.edit-alert {
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.edit-alert-success {
+    background-color: #00a896;
+}
+.edit-alert-error {
+    background-color: #e63946;
+}
+.edit-alert-info {
+    background-color: #00b4d8;
+}
+.edit-alert-warning {
+    background-color: #ff9e00;
+}
+.edit-alert-close {
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+.edit-alert-close:hover {
+    opacity: 1;
+}
+
+/* Error Messages */
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0;
+    color: #e63946;
+    font-size: 0.85rem;
+}
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .edit-item-container {
+        padding: 20px;
+        margin: 20px 15px;
+    }
+    .form-columns {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .edit-form-actions {
+        flex-direction: column;
+    }
+    .edit-submit-btn,
+    .edit-cancel-btn {
+        width: 100%;
+    }
+    .checkbox-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .quantity-input-container input {
+        max-width: 100%;
+    }
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+/* Animation for alerts */
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+</style>
+
+<div class="edit-item-container">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <h2 class="edit-item-title">Add New Item</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="edit-item-form" id="addItemForm">
+
+        <div class="form-columns">
+            <div class="form-column">
+                <div class="edit-form-group">
+                    <label for="category" class="inventory-form-label">Category:</label>
+                    <select id="category-options" name="category" class="inventory-form-select" required>
+                        <option value="" disabled selected>Select a category</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.name }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="name" class="inventory-form-label">Item Name:</label>
+                    <input type="text" id="name" name="name" class="inventory-form-input" required>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="price" class="inventory-form-label">Price:</label>
+                    <div class="input-with-symbol">
+                        <span class="symbol">$</span>
+                        <input type="number" id="price" name="price" class="inventory-form-input" min="0" step="1" required>
+                    </div>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="quantity" class="inventory-form-label">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" class="inventory-form-input" min="1" step="1" required>
+                </div>
+            </div>
+
+            <div class="form-column">
+                <div class="edit-form-group">
+                    <div class="profile-photo-container">
+                        <div class="profile-photo">
+                            <div class="no-image">No image selected</div>
+                            <div class="photo-overlay">
+                                <label for="image" class="change-photo-btn">
+                                    Select Image
+                                </label>
+                            </div>
+                        </div>
+                        <input type="file" id="image" name="image" class="inventory-form-file" accept="image/*">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-form-group">
+            <label for="description" class="inventory-form-label">Description:</label>
+            <textarea id="description" name="description" class="inventory-form-textarea" rows="4"></textarea>
+        </div>
+
+        <div class="edit-form-actions">
+            <a href="/inventory" class="edit-cancel-btn">Cancel</a>
+            <button type="submit" class="edit-submit-btn">Add Item</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Image preview functionality
+    const imageInput = document.getElementById('image');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const preview = document.querySelector('.profile-photo');
+            const file = e.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    preview.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview">
+                        <div class="photo-overlay">
+                            <label for="image" class="change-photo-btn">
+                                Change Image
+                            </label>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Auto-dismiss alerts
+    const alerts = document.querySelectorAll('[data-auto-dismiss]');
+    alerts.forEach(alert => {
+        const timeout = parseInt(alert.getAttribute('data-auto-dismiss'));
+        setTimeout(() => {
+            alert.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => alert.remove(), 300);
+        }, timeout);
+    });
+
+    // Close alerts manually
+    document.querySelectorAll('.edit-alert-close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+            this.parentElement.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => this.parentElement.remove(), 300);
+        });
+    });
+
+    // Show/hide quantity_advertise based on advertise checkbox
+    const advertiseCheckbox = document.querySelector('input[name="advertise"]');
+    const quantityAdvertiseGroup = document.getElementById('quantityAdvertiseGroup');
+
+    if (advertiseCheckbox && quantityAdvertiseGroup) {
+        function toggleAdvertiseQuantity() {
+            quantityAdvertiseGroup.style.display = advertiseCheckbox.checked ? 'block' : 'none';
+        }
+
+        // Initial state
+        toggleAdvertiseQuantity();
+        
+        // Add event listener
+        advertiseCheckbox.addEventListener('change', toggleAdvertiseQuantity);
+    }
+
+    // Form validation
+    const form = document.getElementById('addItemForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Validate price is not negative
+            const priceInput = document.querySelector('input[name="price"]');
+            if (priceInput && parseFloat(priceInput.value) < 0) {
+                e.preventDefault();
+                alert('Price cannot be negative');
+                priceInput.focus();
+                return false;
+            }
+
+            // Validate quantity is at least 1
+            const quantityInput = document.querySelector('input[name="quantity"]');
+            if (quantityInput && parseInt(quantityInput.value) < 1) {
+                e.preventDefault();
+                alert('Quantity must be at least 1');
+                quantityInput.focus();
+                return false;
+            }
+
+            // Validate category is selected
+            const categorySelect = document.getElementById('category-options');
+            if (categorySelect && !categorySelect.value) {
+                e.preventDefault();
+                alert('Please select a category');
+                categorySelect.focus();
+                return false;
+            }
+
+            return true;
+        });
+    }
+
+    // Add fadeOut animation to stylesheet
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}
