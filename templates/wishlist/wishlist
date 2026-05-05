@@ -10,7 +10,25 @@
 
 {% block content %}
 <style>
-    :root { --primary: #6C63FF; --primary-dark: #574FD6; --primary-light: #EEF0FF; --accent: #FF6584; --bg: #F4F5FB; --surface: #FFFFFF; --text: #1E1E2E; --text-muted: #6B6B80; --border: #E2E4F0; --radius: 12px; --radius-lg: 18px; --shadow-sm: 0 2px 8px rgba(108,99,255,.08); --shadow-md: 0 6px 20px rgba(108,99,255,.14); --transition: all 0.28s cubic-bezier(.4,0,.2,1); }
+    :root {
+      --primary:        #2563EB;
+      --primary-dark:   #1D4ED8;
+      --primary-light:  #DBEAFE;
+      --accent:         #F59E0B;
+      --accent-dark:    #D97706;
+      --bg:             #F8FAFC;
+      --surface:        #FFFFFF;
+      --text:           #0F172A;
+      --text-muted:     #64748B;
+      --border:         #E2E8F0;
+      --success:        #10B981;
+      --danger:         #EF4444;
+      --radius:         10px;
+      --radius-lg:      16px;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md:      0 4px 16px rgba(37,99,235,0.12);
+      --transition:     all 0.25s ease;
+    }
 
     .wishlist-wrapper {
         min-height: calc(100vh - 130px);
@@ -71,10 +89,10 @@
         font-weight: 700;
         font-size: 0.95rem;
         transition: var(--transition);
-        box-shadow: 0 4px 15px rgba(108,99,255,.3);
+        box-shadow: 0 4px 15px rgba(37,99,235,0.25);
         display: inline-block;
     }
-    .wishlist-empty a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(108,99,255,.4); }
+    .wishlist-empty a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
 
     /* Grid */
     .wishlist-grid {
@@ -162,7 +180,7 @@
     .btn-view:hover { opacity: 0.9; color: #fff; }
     .btn-remove {
         background: transparent;
-        border: 1.5px solid #FFD0D8;
+        border: 1.5px solid #FDE68A;
         color: var(--accent);
         border-radius: 8px;
         padding: 9px 14px;
@@ -171,7 +189,7 @@
         transition: var(--transition);
         text-decoration: none;
     }
-    .btn-remove:hover { background: #FFF0F3; border-color: var(--accent); }
+    .btn-remove:hover { background: #FFFBEB; border-color: var(--accent); }
 
     @media (max-width: 576px) {
         .wishlist-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -203,7 +221,7 @@
                 {% for entry in wishlist_items %}
                 <div class="wishlist-card">
                     {% if entry.item.image %}
-                        <img src="{{ entry.item.image.url }}" alt="{{ entry.item.name }}" class="card-img">
+                        <img src="{{ entry.item.image }}" alt="{{ entry.item.name }}" class="card-img">
                     {% else %}
                         <div class="card-img-placeholder">
                             <i class="fas fa-image"></i>
@@ -238,4 +256,3 @@
     </div>
 </main>
 {% endblock %}
-
