@@ -8,192 +8,335 @@
     {% endif %}
 {% endblock %}
 
-{% block content %}
-
+{% block extra_css %}
 <link rel="stylesheet" href="/static/css/messages.css">
+{% endblock %}
 
+{% block content %}
 {% if messages %}
-<div class="messages">
-    {% for message in messages %}
-        <div class="alert {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-</div>
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
 {% endif %}
 
 <style>
-:root {
-    --primary-color: #00E5D4;
-    --primary-hover: #00C4B5;
-    --light-bg: #f8f9fa;
-    --dark-text: #333;
-    --medium-text: #666;
-    --light-text: #888;
-    --border-color: #eee;
-    --shadow-sm: 0 2px 5px rgba(0,0,0,0.1);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-    --border-radius: 8px;
-}
+    :root {
+        --primary:        #2563EB;
+        --primary-dark:   #1D4ED8;
+        --primary-light:  #DBEAFE;
+        --accent:         #F59E0B;
+        --accent-dark:    #D97706;
+        --bg:             #F8FAFC;
+        --surface:        #FFFFFF;
+        --text:           #0F172A;
+        --text-muted:     #64748B;
+        --border:         #E2E8F0;
+        --success:        #10B981;
+        --danger:         #EF4444;
+        --radius:         10px;
+        --radius-lg:      16px;
+        --shadow-sm:      0 1px 3px rgba(0,0,0,0.08);
+        --shadow-md:      0 4px 16px rgba(37,99,235,0.12);
+        --transition:     all 0.25s ease;
+    }
 
-.profile-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
+    .profile-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid var(--primary);
+        background-color: var(--bg);
+    }
+    
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-info h1 {
+        margin: 0;
+        color: var(--text);
+    }
+    
+    .member-since {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+    
+    .profile-details {
+        display: grid;
+        gap: 2rem;
+    }
+    
+    .detail-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .detail-card h3 {
+        margin-top: 0;
+        color: var(--text);
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 0.5rem;
+        display: inline-block;
+    }
+    
+    .bio {
+        margin: 1rem 0;
+        line-height: 1.6;
+        color: var(--text-muted);
+    }
+    
+    .contact-info {
+        display: grid;
+        gap: 1rem;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .info-item i {
+        color: var(--primary);
+        width: 20px;
+        text-align: center;
+    }
+    
+    .user-products h2 {
+        margin: 2rem 0 1rem;
+        color: var(--text);
+    }
+    
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .product-card {
+        background: white;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .product-image-container {
+        width: 100%;
+        height: 200px;
+        padding: 15px;
+        background-color: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .product-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: var(--transition);
+    }
+    
+    .product-card:hover .product-image {
+        transform: scale(1.05);
+    }
+    
+    .product-info {
+        padding: 1rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-info h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .product-info h3 a {
+        color: var(--text);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+    
+    .product-info h3 a:hover {
+        color: var(--primary);
+    }
+    
+    .price {
+        color: var(--primary);
+        font-weight: bold;
+        margin: 0.5rem 0;
+    }
+    
+    .created-date {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        margin: 0.5rem 0 0;
+    }
+    
+    .no-products {
+        color: var(--text-muted);
+        text-align: center;
+        padding: 2rem;
+        background: var(--bg);
+        border-radius: var(--radius);
+    }
+    
+    .rating-summary {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+    
+    .stars {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 8px;
+    }
+    
+    .rating-value {
+        color: var(--text-muted);
+    }
+    
+    .no-rating {
+        color: var(--text-muted);
+    }
+    
+    .fa-star {
+        color: gold;
+        margin-right: 2px;
+    }
 
-.profile-header {
-    display: flex;
-    gap: 2rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1.5rem;
-}
-
-.profile-photo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.profile-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
-}
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .products-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+    }
 </style>
 
 <div class="profile-container">
-
-    <!-- HEADER -->
     <div class="profile-header">
-
         <div class="profile-photo">
-            <img src="{{ user_profile.photo or '/static/profile_photos/default_image.png' }}"
-                 class="profile-image">
+            <img src="{% if user_profile.photo %}{{ user_profile.photo }}{% else %}/static/profile_photos/default_image.png{% endif %}" 
+                 alt="{{ user_profile.user }}" class="profile-image">
         </div>
-
         <div class="profile-info">
             <h1>{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h1>
-            <p class="member-since">Member since {{ user_profile.created_at }}</p>
-
+            <p class="member-since">Member since {{ user_profile.created_at|date:"F Y" }}</p>
             <div class="rating-summary">
-
                 {% if rated_count > 0 %}
                     <div class="stars">
-
-                        {% set rating = avg_rating|int %}
-
-                        {% for i in range(5) %}
-                            {% if i < rating %}
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= avg_rating %}
                                 <i class="fas fa-star"></i>
                             {% else %}
                                 <i class="far fa-star"></i>
                             {% endif %}
                         {% endfor %}
-
-                        <span>
-                            {{ avg_rating }} ({{ rated_count }} rated of {{ total_products }})
+                        <span class="rating-value">
+                            {{ avg_rating|floatformat:1 }} 
+                            ({{ rated_count }} rated of {{ total_products }})
                         </span>
-
                     </div>
                 {% else %}
-                    <div>No rated products yet ({{ total_products }} total)</div>
+                    <div class="no-rating">
+                        No rated products yet ({{ total_products }} total)
+                    </div>
                 {% endif %}
-
             </div>
         </div>
     </div>
 
-    <!-- ABOUT -->
     <div class="profile-details">
-
         <div class="detail-card">
             <h3>About</h3>
-
-            <p>
-                {{ user_profile.bio or "No bio provided." }}
-            </p>
-
+            <p class="bio">{% if user_profile.bio %}{{ user_profile.bio }}{% else %}No bio provided.{% endif %}</p>
+            
             <div class="contact-info">
-
-                <div>
+                <div class="info-item">
                     <i class="fas fa-envelope"></i>
-                    {{ user_profile.user.email }}
+                    <span>{{ user_profile.user.email }}</span>
                 </div>
-
                 {% if user_profile.phone %}
-                <div>
+                <div class="info-item">
                     <i class="fas fa-phone"></i>
-                    {{ user_profile.phone }}
+                    <span>{{ user_profile.phone }}</span>
                 </div>
                 {% endif %}
-
                 {% if user_profile.address %}
-                <div>
+                <div class="info-item">
                     <i class="fas fa-map-marker-alt"></i>
-                    {{ user_profile.address }}
+                    <span>{{ user_profile.address }}</span>
                 </div>
                 {% endif %}
-
                 {% if user_profile.age %}
-                <div>
+                <div class="info-item">
                     <i class="fas fa-birthday-cake"></i>
-                    {{ user_profile.age }} years old
+                    <span>{{ user_profile.age }} years old</span>
                 </div>
                 {% endif %}
-
             </div>
         </div>
 
-        <!-- PRODUCTS -->
         <div class="user-products">
-
-            <h2>Products by {{ user_profile.user.first_name }}</h2>
-
-            {% if products and products|length > 0 %}
+            <h2>Products by {{ user_profile }}</h2>
+            {% if products %}
             <div class="products-grid">
-
                 {% for product in products %}
                 <div class="product-card">
-
-                    <a href="/products/product_{{ product.id }}">
-                        <img src="{{ product.image or '/static/img/default.png' }}"
-                             class="product-image">
-                    </a>
-
-                    <div class="product-info">
-
-                        <h3>
-                            <a href="/products/product_{{ product.id }}">
-                                {{ product.name }}
-                            </a>
-                        </h3>
-
-                        <p class="price">${{ product.price }}</p>
-
-                        <p class="created-date">
-                            Posted on {{ product.created_at }}
-                        </p>
-
+                    <div class="product-image-container">
+                        <a href="{% url 'item' product.id %}">
+                            <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
+                        </a>
                     </div>
-
+                    <div class="product-info">
+                        <h3><a href="/products/product_{{ product.id }}">{{ product.name }}</a></h3>
+                        <p class="price">${{ product.price }}</p>
+                        <p class="created-date">Posted on {{ product.created_at|date:"M d, Y" }}</p>
+                    </div>
                 </div>
                 {% endfor %}
-
             </div>
-
             {% else %}
-                <p>This user hasn't posted any products yet.</p>
+            <p class="no-products">This user hasn't posted any products yet.</p>
             {% endif %}
-
         </div>
-
     </div>
 </div>
-
 {% endblock %}
