@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deposit Receipt - D-{{ deposit.id }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #0F172A;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2563EB;
+        }
+        .header h2 {
+            color: #2563EB;
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0 0;
+            color: #64748B;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        th {
+            background-color: #2563EB;
+            color: #FFFFFF;
+            text-align: left;
+            padding: 12px;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        tr:nth-child(even) {
+            background-color: #F8FAFC;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #E2E8F0;
+            font-size: 12px;
+            color: #64748B;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .logo span {
+            display: inline-block;
+            background-color: #2563EB;
+            color: #FFFFFF;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #2563EB;
+        }
+        @media print {
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body onload="window.print(); window.onafterprint = function(){ window.close(); }">
+    <div class="logo">
+        <span>DEPOSIT RECEIPT</span>
+    </div>
+    
+    <div class="header">
+        <h2>Deposit Summary</h2>
+        <p>Generated on {{ now().strftime("%B %-d, %Y %H:%M") }}</p>
+    </div>
+    <table>
+        <tr>
+            <th>Deposit ID</th>
+            <td>D-{{ deposit.id }}</td>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <td>{{ deposit.date|date:"F j, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <th>Account</th>
+            <td>{{ deposit.user }}</td>
+        </tr>
+        <tr>
+            <th>Amount</th>
+            <td class="highlight">{{ deposit.amount }}</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>{{ deposit.status|title }}</td>
+        </tr>
+    </table>
+    <div class="footer">
+        <p>This is an automatically generated deposit receipt. Thank you for your transaction!</p>
+    </div>
+</body>
+</html>
