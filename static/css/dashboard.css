@@ -2,22 +2,20 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8fafc;
-    color: #111827;
+    background-color: #F8FAFC;
+    color: #0F172A;
 }
-
 .wrapper {
     max-width: 1600px;
     margin: 30px auto;
     padding: 30px;
-    background-color: #fff;
+    background-color: #FFFFFF;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
 }
-
 h1 {
     text-align: center;
-    color: #0f172a;
+    color: #0F172A;
     margin-bottom: 35px;
     font-size: 32px;
     font-weight: 600;
@@ -26,11 +24,9 @@ h1 {
     justify-content: center;
     gap: 12px;
 }
-
 h1 i {
-    color: #00E5D4;
+    color: #2563EB;
 }
-
 .styled-table {
     width: 100%;
     border-collapse: collapse;
@@ -39,35 +35,29 @@ h1 i {
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
-
 .styled-table thead tr {
-    background-color: #00E5D4;
-    color: #ffffff;
+    background-color: #2563EB;
+    color: #FFFFFF;
     text-align: center;
     font-weight: 600;
     letter-spacing: 0.5px;
 }
-
 .styled-table th, .styled-table td {
     padding: 14px 16px;
     text-align: center;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #E2E8F0;
 }
-
 .styled-table th {
     text-transform: uppercase;
     font-size: 14px;
 }
-
 .styled-table tbody tr:nth-of-type(even) {
-    background-color: #f8fafc;
+    background-color: #F8FAFC;
 }
-
 .styled-table tbody tr:hover {
-    background-color: #f0fdfa;
+    background-color: #DBEAFE;
     transition: background-color 0.2s;
 }
-
 .btn {
     padding: 8px 14px;
     border-radius: 6px;
@@ -78,64 +68,53 @@ h1 i {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: white;
+    color: #FFFFFF;
     cursor: pointer;
     border: none;
     transition: all 0.2s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 .review {
-    background-color: #00E5D4;
+    background-color: #2563EB;
 }
-
 .review:hover {
-    background-color: #00E5D4;
+    background-color: #1D4ED8;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 224, 208, 0.2);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
 }
-
 .print {
     background-color: #64748b;
 }
-
 .print:hover {
     background-color: #475569;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(100, 116, 139, 0.2);
 }
-
 .action-buttons {
     display: flex;
     justify-content: center;
     gap: 10px;
 }
-
 .action-buttons .btn {
     padding: 8px 14px;
 }
-
 .styled-table th:nth-child(1),
 .styled-table td:nth-child(1) {
     width: 120px;
 }
-
 .styled-table th:nth-child(9),
 .styled-table td:nth-child(9) {
     width: 180px;
 }
-
 /* Status indicators */
 .green {
     color: #10b981;
     font-weight: 600;
 }
-
 .orange {
     color: #f97316;
     font-weight: 600;
 }
-
 /* Responsive adjustments */
 @media (max-width: 1200px) {
     .wrapper {
@@ -151,18 +130,15 @@ h1 i {
         font-size: 13px;
     }
 }
-
 /* Animation for table rows */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
 .styled-table tbody tr {
     animation: fadeIn 0.3s ease-out;
     animation-fill-mode: both;
 }
-
 .styled-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
 .styled-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
 .styled-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
