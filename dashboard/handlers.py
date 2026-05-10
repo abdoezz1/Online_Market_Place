@@ -1,8 +1,8 @@
 from . import queries
-from db import execute_transaction
-from session_manager import require_login
+from core.db.db import execute_transaction
+from core.auth.session_manager import require_login
 from template_engine import render_template
-from response_builder import build_response, error_response, json-response
+from core.http.response_builder import build_response, error_response, json_response
 
 @require_login
 def transaction_report(request):

@@ -1,6 +1,6 @@
-from session_manager import get_current_user, require_login
+from core.auth.session_manager import get_current_user, require_login
 from template_engine import render_template
-from response_builder import build_response, error_response
+from core.http.response_builder import build_response, error_response
 import items.queries as q
 import core.queries as cq
 

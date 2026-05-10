@@ -1,47 +1,47 @@
 {% extends 'base.html' %}
 
 {% block navbar %}
-    {% if user %}
-        {% include 'parts/navbarwithoutforms.html' %}
-    {% else %}
-        {% include 'parts/navbar.html' %}
-    {% endif %}
+{% if user %}
+{% include 'parts/navbarwithoutforms.html' %}
+{% else %}
+{% include 'parts/navbar.html' %}
+{% endif %}
 {% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="/static/css/items.css">
-    <link rel="stylesheet" href="/static/css/messages.css">
+<link rel="stylesheet" href="/static/css/items.css">
+<link rel="stylesheet" href="/static/css/messages.css">
 {% endblock %}
 
 {% block content %}
 {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
 
 <style>
     /* Base Styles */
     :root {
-        --primary:        #2563EB;
-        --primary-dark:   #1D4ED8;
-        --primary-light:  #DBEAFE;
-        --accent:         #F59E0B;
-        --accent-dark:    #D97706;
-        --bg:             #F8FAFC;
-        --surface:        #FFFFFF;
-        --text:           #0F172A;
-        --text-muted:     #64748B;
-        --border:         #E2E8F0;
-        --success:        #10B981;
-        --danger:         #EF4444;
-        --radius:         10px;
-        --radius-lg:      16px;
-        --shadow-sm:      0 1px 3px rgba(0,0,0,0.08);
-        --shadow-md:      0 4px 16px rgba(37,99,235,0.12);
-        --transition:     all 0.25s ease;
+        --primary: #2563EB;
+        --primary-dark: #1D4ED8;
+        --primary-light: #DBEAFE;
+        --accent: #F59E0B;
+        --accent-dark: #D97706;
+        --bg: #F8FAFC;
+        --surface: #FFFFFF;
+        --text: #0F172A;
+        --text-muted: #64748B;
+        --border: #E2E8F0;
+        --success: #10B981;
+        --danger: #EF4444;
+        --radius: 10px;
+        --radius-lg: 16px;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 16px rgba(37, 99, 235, 0.12);
+        --transition: all 0.25s ease;
     }
 
     body {
@@ -66,7 +66,7 @@
         width: 250px;
         padding: 20px;
         background: #FFFFFF;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         position: sticky;
         top: 105px;
         height: auto;
@@ -298,13 +298,13 @@
         padding-bottom: 0.5rem;
         align-items: stretch;
     }
-    
+
     .item {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
-    
+
     .item-content {
         flex: 1;
     }
@@ -326,7 +326,7 @@
         padding: 10px;
         box-sizing: border-box;
     }
-    
+
     .item:hover img {
         opacity: 0.9;
         transform: scale(1.02);
@@ -461,122 +461,124 @@
     }
 </style>
 
-    <!-- Main Content Area -->
-    <div class="main-container">
-        <!-- Sidebar (filter options) -->
-        <div class="sidebar">
-            <h3>Filter By</h3>
+<!-- Main Content Area -->
+<div class="main-container">
+    <!-- Sidebar (filter options) -->
+    <div class="sidebar">
+        <h3>Filter By</h3>
 
-            <div class="filter-section">
-                <h4>Categories</h4>
-                {% for category in cat %}
-                    <div>
-                        <input type="checkbox" class="category-filter" value="{{ category.id }}" id="cat-{{ category.id }}">
-                        <label for="cat-{{ category.id }}">{{ category.name }}</label>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <div class="filter-section">
-                <h4>Price Range ($)</h4>
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                    <label for="min-price">Min:</label>
-                    <input type="number" id="min-price" class="price-filter" placeholder="0" min="0">
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label for="max-price">Max:</label>
-                    <input type="number" id="max-price" class="price-filter" placeholder="9999" min="0">
-                </div>
-            </div>
-
-            <button id="apply-filters">Apply Filters</button>
-        </div>
-
-        <!-- Product Content -->
-        <div class="content">
-            <!-- Search Bar (now in content area, not fixed) -->
-            <div class="search-container">
-                <form method="get" action="/filter">
-                    <div class="search-bar">
-                        <input type="text" name="query" placeholder="Search for items..." id="search-input" value="{{ query }}">
-                        <button type="submit">
-                            <i class="fa fa-search"></i> Search
-                        </button>
-                    
-                        <div style="position: relative;">
-                            <button type="button" onclick="toggleFilter()">
-                                <i class="fa fa-filter"></i> Filter
-                            </button>
-                    
-                            <div id="filter-options">
-                                <label>
-                                    <input type="checkbox" name="search_in" value="name" {% if 'name' in search_in %}checked{% endif %}>
-                                    Item Name
-                                </label>
-                                <label>
-                                    <input type="checkbox" name="search_in" value="seller" {% if 'seller' in search_in %}checked{% endif %}>
-                                    Seller
-                                </label>
-                                <label>
-                                    <input type="checkbox" name="search_in" value="category" {% if 'category' in search_in %}checked{% endif %}>
-                                    Category
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
+        <div class="filter-section">
+            <h4>Categories</h4>
             {% for category in cat %}
-                <div class="category-box" data-category="{{ category.id }}">
-                    <a href="/products/category/{{ category.id }}" style="text-decoration: none; color: inherit;">
-                    <h1>{{ category.name }}</h1></a>
-                    <div class="items-container">
-                        <div class="items">
-                            {% for product in pro %}
-                                {% if product.category.id == category.id and product.for_sale %}
-                                <div class="item" 
-                                data-category="{{ product.category.id }}" 
-                                data-price="{{ product.price }}"
-                                data-name="{{ product.name|lower }}"
-                                data-seller="{{ product.seller.username|lower }}"
-                                data-category-name="{{ product.category.name|lower }}">
-                                <div class="item-content">
-                                    <a href="/products/product_{{ product.id }}">
-                                        <img src="{{ product.image }}" alt="{{ product.name }}">
-                                    </a>
-                                    <h2>
-                                        {{ product.name }}
-                                        {% if product.average_rating > 0 %}
-                                            <span style="color: gold;">
-                                                {{ product.average_rating }} <i class="fa fa-star"></i>
-                                            </span>
-                                        {% endif %}
-                                    </h2>
-                                    <p><strong>Price:</strong> ${{ product.price }}</p>
-                                    <p><strong>Stock:</strong> {{ product.quantity }} available</p>
-                                </div>
-                                        
-                                        <form action="/home/cart" method="get" style="display: flex; align-items: center; gap: 10px;">
-                                            <div>
-                                                <label for="quantity-{{ product.id }}">Qty:</label>
-                                                <input type="number" id="quantity-{{ product.id }}" name="quantity" 
-                                                       min="1" max="{{ product.quantity }}" value="1" style="width: 50px;">
-                                            </div>
-                                            <input type="hidden" name="product_id" value="{{ product.id }}">
-                                            <button type="submit" style="flex: 1;">
-                                                <i class="fa fa-cart-plus"></i> Add
-                                            </button>
-                                        </form>    
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <input type="checkbox" class="category-filter" value="{{ category.id }}" id="cat-{{ category.id }}">
+                <label for="cat-{{ category.id }}">{{ category.name }}</label>
+            </div>
             {% endfor %}
         </div>
+
+        <div class="filter-section">
+            <h4>Price Range ($)</h4>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                <label for="min-price">Min:</label>
+                <input type="number" id="min-price" class="price-filter" placeholder="0" min="0">
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="max-price">Max:</label>
+                <input type="number" id="max-price" class="price-filter" placeholder="9999" min="0">
+            </div>
+        </div>
+
+        <button id="apply-filters">Apply Filters</button>
     </div>
+
+    <!-- Product Content -->
+    <div class="content">
+        <!-- Search Bar (now in content area, not fixed) -->
+        <div class="search-container">
+            <form method="get" action="/filter">
+                <div class="search-bar">
+                    <input type="text" name="query" placeholder="Search for items..." id="search-input"
+                        value="{{ query }}">
+                    <button type="submit">
+                        <i class="fa fa-search"></i> Search
+                    </button>
+
+                    <div style="position: relative;">
+                        <button type="button" onclick="toggleFilter()">
+                            <i class="fa fa-filter"></i> Filter
+                        </button>
+
+                        <div id="filter-options">
+                            <label>
+                                <input type="checkbox" name="search_in" value="name" {% if 'name' in search_in
+                                    %}checked{% endif %}>
+                                Item Name
+                            </label>
+                            <label>
+                                <input type="checkbox" name="search_in" value="seller" {% if 'seller' in search_in
+                                    %}checked{% endif %}>
+                                Seller
+                            </label>
+                            <label>
+                                <input type="checkbox" name="search_in" value="category" {% if 'category' in search_in
+                                    %}checked{% endif %}>
+                                Category
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% for category in cat %}
+        <div class="category-box" data-category="{{ category.id }}">
+            <a href="/products/category/{{ category.id }}" style="text-decoration: none; color: inherit;">
+                <h1>{{ category.name }}</h1>
+            </a>
+            <div class="items-container">
+                <div class="items">
+                    {% for product in pro %}
+                    {% if product.category.id == category.id and product.for_sale %}
+                    <div class="item" data-category="{{ product.category.id }}" data-price="{{ product.price }}"
+                        data-name="{{ product.name|lower }}" data-seller="{{ product.seller.username|lower }}"
+                        data-category-name="{{ product.category.name|lower }}">
+                        <div class="item-content">
+                            <a href="/products/product_{{ product.id }}">
+                                <img src="{{ product.image }}" alt="{{ product.name }}">
+                            </a>
+                            <h2>
+                                {{ product.name }}
+                                {% if product.average_rating > 0 %}
+                                <span style="color: gold;">
+                                    {{ product.average_rating }} <i class="fa fa-star"></i>
+                                </span>
+                                {% endif %}
+                            </h2>
+                            <p><strong>Price:</strong> ${{ product.price }}</p>
+                            <p><strong>Stock:</strong> {{ product.quantity }} available</p>
+                        </div>
+
+                        <form action="/home/cart" method="get" style="display: flex; align-items: center; gap: 10px;">
+                            <div>
+                                <label for="quantity-{{ product.id }}">Qty:</label>
+                                <input type="number" id="quantity-{{ product.id }}" name="quantity" min="1"
+                                    max="{{ product.quantity }}" value="1" style="width: 50px;">
+                            </div>
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <button type="submit" style="flex: 1;">
+                                <i class="fa fa-cart-plus"></i> Add
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
 <script>
     document.getElementById('apply-filters').addEventListener('click', () => {

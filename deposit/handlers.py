@@ -1,7 +1,7 @@
 from datetime import datetime
 from template_engine import render_template
-from response_builder import build_response, redirect, error_response
-from session_manager import require_login, get_current_user
+from core.http.response_builder import build_response, redirect, error_response
+from core.auth.session_manager import require_login, get_current_user
 from deposit import queries as deposit_queries
 
 @require_login

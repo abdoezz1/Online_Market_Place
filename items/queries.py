@@ -1,4 +1,4 @@
-from db import execute_query
+from core.db.db import execute_query
 
 
 def get_item_by_id(item_id):

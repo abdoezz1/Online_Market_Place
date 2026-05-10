@@ -1,4 +1,4 @@
-from db import execute_query, execute_transaction
+from core.db.db import execute_query, execute_transaction
 
 
 def get_cart_items(user_id):

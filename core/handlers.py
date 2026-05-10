@@ -1,19 +1,22 @@
-from session_manager import get_current_user, create_session, destroy_session, require_login
+from core.auth.session_manager import get_current_user, create_session, destroy_session, require_login, make_session_cookie, clear_session_cookie
 from template_engine import render_template
-from response_builder import build_response, redirect, error_response
-from auth import authenticate, register_user, hash_password, verify_password
+from core.http.response_builder import build_response, redirect, error_response
+from core.auth.auth import authenticate, register_user, hash_password, verify_password
 import core.queries as q
 from items.queries import get_home_items
 from core.queries import get_all_categories
+from core.queries import get_user_by_id
 
 
 # ── Landing page ──────────────────────────────────────────────────────────────
+
+
 
 def index(request):
     user_id = get_current_user(request)
     if user_id:
         return redirect('/home')
-    html = render_template('core/landing.html', {})
+    html = render_template('core/index.html', {})
     return build_response(200, html)
 
 
@@ -38,7 +41,7 @@ def login_submit(request):
         return build_response(200, html)
 
     session_key = create_session(user_id)
-    return redirect('/home', cookies={'sessionid': session_key})
+    return redirect('/home', cookies=[make_session_cookie(session_key)])
 
 
 def signup_page(request):
@@ -67,9 +70,9 @@ def signup_submit(request):
         return build_response(200, html)
 
     result = register_user(username, email, password, first_name, last_name)
-    if result is not True:
-        # register_user returns an error string on failure
-        html = render_template('core/signup.html', {'error': result})
+    if not result.get('success'):
+        # register_user returns a dict with 'error' key on failure
+        html = render_template('core/signup.html', {'error': result.get('error', 'Registration failed.')})
         return build_response(200, html)
 
     return redirect('/login')
@@ -79,7 +82,7 @@ def logout(request):
     session_key = request.get('cookies', {}).get('sessionid')
     if session_key:
         destroy_session(session_key)
-    return redirect('/login', cookies={'sessionid': ''})
+    return redirect('/login', cookies=[clear_session_cookie()])
 
 
 # ── Profile ───────────────────────────────────────────────────────────────────
@@ -184,9 +187,9 @@ def home(request):
     profile    = q.get_user_profile(user_id)
     items      = get_home_items(profile['id'])
     categories = get_all_categories()
-    html = render_template('core/home.html', {
-        'items': items,
-        'categories': categories,
+    html = render_template('core/index.html', {
+        'pro': items,
+        'cat': categories,
         'user': q.get_user_by_id(user_id),
         'profile': profile,
     })

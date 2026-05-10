@@ -1,6 +1,6 @@
 from template_engine import render_template
-from response_builder import build_response, redirect
-from session_manager import require_login
+from core.http.response_builder import build_response, redirect
+from core.auth.session_manager import require_login
 from wishlist import queries
 
 

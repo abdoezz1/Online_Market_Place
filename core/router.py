@@ -12,7 +12,7 @@ from deposit.routes   import routes as deposit_routes
 from dashboard.routes import routes as dashboard_routes
 from wishlist.routes  import routes as wishlist_routes
 from messages.routes  import routes as messages_routes
-from inventory.routes import routes as inventory_routes  # Not ready yet, will be added later
+from inventory.routes import routes as inventory_routes  
 
 
 #Route Table

@@ -1,22 +1,23 @@
 <link rel="icon" type="image/x-icon" href="/static/images/website_icon.ico">
 <head></head>
-    <title>SALES Square</title>
-</head>
-{% block content %}
-<head></head>
-    <title>Login</title>
+    <title>SALES Square - Login</title>
 </head>
 {% block extra_css %}
 <link rel="stylesheet" href="/static/css/login.css">
 {% endblock %}
+{% block content %}
 <main class="signup-wrapper">
     <div class="signup-container">
         <h1>Welcome Back</h1>
-        <div id="message" style="display: none;"></div>
-        <form id="login-form">
+        {% if error %}
+        <div id="message" style="color:#721c24;background:#f8d7da;padding:10px;margin:10px 0;border-radius:5px;">
+            {{ error }}
+        </div>
+        {% endif %}
+        <form method="POST" action="/login">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input id="username" name="username" type="text" required>
+                <label for="identifier">Username or Email</label>
+                <input id="identifier" name="identifier" type="text" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -29,33 +30,4 @@
         </div>
     </div>
 </main>
-<script>
-    document.getElementById("login-form").addEventListener("submit", async function (e) {
-        e.preventDefault();
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        const response = await fetch("/api/login/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-            credentials: "same-origin",  // Important for session-based login
-            body: JSON.stringify({ username, password }),
-        });
-        const messageBox = document.getElementById("message");
-        if (response.ok) {
-            // Redirect to a protected page on success
-            window.location.href = "/home/";
-        } else {
-            messageBox.style.display = "block";
-            messageBox.innerHTML = "Login failed. Check your credentials.";
-            messageBox.style.color = "#721c24";
-            messageBox.style.backgroundColor = "#f8d7da";
-            messageBox.style.padding = "10px";
-            messageBox.style.margin = "10px 0";
-            messageBox.style.borderRadius = "5px";
-        }
-    });
-</script>
 {% endblock %}
