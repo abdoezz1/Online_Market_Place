@@ -34,8 +34,8 @@ def create_session(user_id: int) -> str:
 
     db.execute_query(
         """
-        INSERT INTO sessions (session_key, user_id, created_at, expires_at)
-        VALUES (%s, %s, CURRENT_TIMESTAMP, %s)
+        INSERT INTO sessions (session_key, user_id, expires_at)
+        VALUES (%s, %s, %s)
         """,
         (session_key, user_id, expires_at)
     )

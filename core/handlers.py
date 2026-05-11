@@ -192,6 +192,7 @@ def home(request):
         'cat': categories,
         'user': q.get_user_by_id(user_id),
         'profile': profile,
+        'cart_items_count': 0,
     })
     return build_response(200, html)
 
