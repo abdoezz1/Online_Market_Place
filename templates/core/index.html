@@ -539,10 +539,10 @@
             <div class="items-container">
                 <div class="items">
                     {% for product in pro %}
-                    {% if product.category.id == category.id and product.for_sale %}
-                    <div class="item" data-category="{{ product.category.id }}" data-price="{{ product.price }}"
-                        data-name="{{ product.name|lower }}" data-seller="{{ product.seller.username|lower }}"
-                        data-category-name="{{ product.category.name|lower }}">
+                    {% if product.category_id == category.id and product.for_sale %}
+                    <div class="item" data-category="{{ product.category_id }}" data-price="{{ product.price }}"
+                        data-name="{{ product.name|lower }}" data-seller="{{ product.owner_username|lower }}"
+                        data-category-name="{{ product.category_name|lower }}">
                         <div class="item-content">
                             <a href="/products/product_{{ product.id }}">
                                 <img src="{{ product.image }}" alt="{{ product.name }}">

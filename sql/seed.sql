@@ -1,10 +1,19 @@
 INSERT INTO users (username, email, password, first_name, last_name, is_staff, is_active)
 VALUES
-    ('ahmed_m',   'ahmed@mail.com',   '$2a$18$H.vv1GNoiMoSZcT0.83w8OV0P9pCTnlGN1.S0hNIUVTjIgyIR2uj2', 'Ahmed',  'Mohamed', FALSE, TRUE),
-    ('sara_k',    'sara@mail.com',    '$2a$18$H.vv1GNoiMoSZcT0.83w8OV0P9pCTnlGN1.S0hNIUVTjIgyIR2uj2', 'Sara',   'Kamal',   FALSE, TRUE),
-    ('omar_h',    'omar@mail.com',    '$2a$18$H.vv1GNoiMoSZcT0.83w8OV0P9pCTnlGN1.S0hNIUVTjIgyIR2uj2', 'Omar',   'Hassan',  FALSE, TRUE),
-    ('admin',     'admin@mail.com',   '$2a$18$H.vv1GNoiMoSZcT0.83w8OV0P9pCTnlGN1.S0hNIUVTjIgyIR2uj2', 'Admin',  'User',    TRUE,  TRUE),
-    ('nour_a',    'nour@mail.com',    '$2a$18$H.vv1GNoiMoSZcT0.83w8OV0P9pCTnlGN1.S0hNIUVTjIgyIR2uj2', 'Nour',   'Ali',     FALSE, TRUE);
+    ('ahmed_m',   'ahmed@mail.com',   'Pass_123', 'Ahmed',  'Mohamed', FALSE, TRUE),
+    ('sara_k',    'sara@mail.com',    'New_Pass_124', 'Sara',   'Kamal',   FALSE, TRUE),
+    ('omar_h',    'omar@mail.com',    'NewPass_125', 'Omar',   'Hassan',  FALSE, TRUE),
+    ('admin',     'admin@mail.com',   'Admin_Pass_163', 'Admin',  'User',    TRUE,  TRUE),
+    ('nour_a',    'nour@mail.com',    'Nour_Pass_723', 'Nour',   'Ali',     FALSE, TRUE);
+
+
+INSERT INTO user_profiles (user_id, balance, created_at, updated_at)
+VALUES
+    (1, 1000.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, 1000.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (3, 1000.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (4, 1000.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (5, 1000.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 INSERT INTO categories (name)
@@ -25,8 +34,8 @@ VALUES
     ('Samsung TV 55"',     499.99, 'Samsung 4K UHD Smart TV',         3,  TRUE,  3,  4.50, 85,  2, 1),
     ('Laptop Dell XPS',    999.99, 'Dell XPS 15 Intel i7',            2,  TRUE,  2,  4.70, 200, 3, 1),
     ('Wireless Headphones', 79.99, 'Noise cancelling headphones',     10, TRUE,  10, 4.20, 60,  1, 1),
-    ('Men\'s Jacket',       49.99, 'Winter jacket size L',            8,  TRUE,  8,  4.00, 40,  2, 2),
-    ('Women\'s Dress',      39.99, 'Floral summer dress size M',      6,  TRUE,  6,  4.30, 55,  3, 2),
+    ('Men''s Jacket',       49.99, 'Winter jacket size L',            8,  TRUE,  8,  4.00, 40,  2, 2),
+    ('Women''s Dress',      39.99, 'Floral summer dress size M',      6,  TRUE,  6,  4.30, 55,  3, 2),
     ('Running Shoes',       89.99, 'Nike Air Max size 42',            4,  TRUE,  4,  4.60, 90,  4, 2),
     ('T-Shirt Pack',        19.99, 'Pack of 3 cotton t-shirts',       15, TRUE,  15, 4.10, 30,  5, 2),
     ('Clean Code',          29.99, 'By Robert C. Martin',             7,  TRUE,  7,  4.90, 150, 1, 3),
