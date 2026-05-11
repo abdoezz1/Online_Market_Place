@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+{% if user %}
+{% include 'parts/navbarwithoutforms.html' %}
+{% else %}
+{% include 'parts/navbar.html' %}
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/item.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="item-detail">
+
+    <div class="item-image">
+        <img src="{{ item.image }}" alt="{{ item.name }}">
+    </div>
+
+    <div class="item-info">
+
+        <h1 style="display: flex; justify-content: space-between; align-items: center;">
+            {{ item.name }}
+
+            {% if item.average_rating and item.average_rating > 0 %}
+            <span>
+                {{ item.average_rating }}
+                <i class="fa fa-star" style="color: gold;"></i>
+            </span>
+            {% endif %}
+        </h1>
+
+        <p class="price">
+            Price: ${{ item.price }}
+        </p>
+
+        <p>
+            Description: {{ item.description }}
+        </p>
+
+        <p>
+            Category: {{ item.category_name }}
+        </p>
+
+        <p>
+            Seller:
+            <a href="/user/{{ item.owner_profile_id }}">
+                {{ item.owner_username }}
+            </a>
+        </p>
+
+        <p>
+            Created At: {{ item.created_at }}
+        </p>
+
+        <p>
+            Available Quantity: {{ item.quantity }}
+        </p>
+
+    </div>
+
+</div>
+
+<!-- Reviews -->
+
+<div class="reviews-section">
+
+    <h2>Reviews</h2>
+
+    <div class="reviews-container" style="display:flex; flex-wrap:wrap; gap:16px; margin-top:20px;">
+
+        {% if reviews %}
+
+        {% for review in reviews %}
+
+        <div class="review-card" style="border:1px solid #E2E8F0;
+                            border-radius:8px;
+                            padding:16px;
+                            width:300px;
+                            box-shadow:0 4px 8px rgba(0,0,0,0.1);">
+
+            <h3 style="margin:0;">
+                {{ review.username }}
+            </h3>
+
+            <p style="margin:8px 0;">
+                Rating: {{ review.rating }}
+                <i class="fa fa-star" style="color: gold;"></i>
+            </p>
+
+            <p style="margin:8px 0;">
+                {{ review.comment }}
+            </p>
+
+            <p style="font-size:0.9rem; color:#64748B;">
+                {{ review.created_at }}
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+        {% else %}
+
+        <p>No reviews yet.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

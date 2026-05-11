@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block navbar %}
-    {% if user %}
-        {% include 'parts/navbarwithoutforms.html' %}
-    {% else %}
-        {% include 'parts/navbar.html' %}
-    {% endif %}
+{% if user %}
+{% include 'parts/navbarwithoutforms.html' %}
+{% else %}
+{% include 'parts/navbar.html' %}
+{% endif %}
 {% endblock %}
 
 {% block extra_css %}
@@ -14,11 +14,11 @@
 
 {% block content %}
 {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="alert {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
 {% endif %}
 
 <div class="item-detail">
@@ -29,21 +29,28 @@
         <h1 style="display: flex; justify-content: space-between; align-items: center;">
             {{ product.name }}
             {% if product.average_rating > 0 %}
-                <span >
-                    {{ product.average_rating }} <i class="fa fa-star" style="color: gold;"></i>
-                </span>
+            <span>
+                {{ product.average_rating }} <i class="fa fa-star" style="color: gold;"></i>
+            </span>
             {% endif %}
         </h1>
         <p class="price">Price: ${{ product.price }}</p>
         <p>Description: {{ product.description }}</p>
         <p>Category: {{ product.category }}</p>
-        <p>Created By: <a href="/user/{{ product.owned_by.user.id }}">{{ product.owned_by }}</a></p>
+        <p>
+            Created By:
+            <a href="/user/{{ product.owner_profile_id }}">
+                {{ product.owner_username }}
+            </a>
+        </p>
+
         <p>Created At: {{ product.created_at }}</p>
         <p>Available Quantity: {{ product.quantity }}</p>
         <form action="/home/add-to-cart" method="get" class="add-to-cart-form">
             <div class="form-group">
                 <label for="quantity-{{ product.id }}">Amount:</label>
-                <input type="number" id="quantity-{{ product.id }}" name="quantity" min="1" max="{{ product.quantity }}" value="1">
+                <input type="number" id="quantity-{{ product.id }}" name="quantity" min="1" max="{{ product.quantity }}"
+                    value="1">
                 <input type="hidden" name="product_id" value="{{ product.id }}">
             </div>
             <button type="submit" class="btn-primary">Add to Cart</button>
@@ -56,14 +63,15 @@
     <h2>Reviews</h2>
     <div class="reviews-container" style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 20px;">
         {% for review in reviews %}
-            <div class="review-card" style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; width: 300px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                <h3 style="margin: 0;"> {{ review.user.user.first_name }} {{ review.user.user.last_name }} </h3>
-                <p style="margin: 8px 0;">Rating: {{ review.rating }} <i class="fa fa-star" style="color: gold;"></i></p>
-                <p style="margin: 8px 0;">{{ review.comment }}</p>
-                <p style="font-size: 0.9rem; color: #64748B;">{{ review.created_at }}</p>
-            </div>
+        <div class="review-card"
+            style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; width: 300px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <h3 style="margin: 0;"> {{ review.user.user.first_name }} {{ review.user.user.last_name }} </h3>
+            <p style="margin: 8px 0;">Rating: {{ review.rating }} <i class="fa fa-star" style="color: gold;"></i></p>
+            <p style="margin: 8px 0;">{{ review.comment }}</p>
+            <p style="font-size: 0.9rem; color: #64748B;">{{ review.created_at }}</p>
+        </div>
         {% empty %}
-            <p>No reviews yet. Be the first to review this product!</p>
+        <p>No reviews yet. Be the first to review this product!</p>
         {% endfor %}
     </div>
 </div>

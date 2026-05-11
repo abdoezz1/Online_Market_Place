@@ -57,36 +57,32 @@ def category_detail(request):
 
 @require_login
 def filter_items(request):
-    params      = request.get('query_params', {})
-    user_id     = get_current_user(request)
-    profile     = cq.get_user_profile(user_id)
 
-    name        = params.get('name', '').strip() or None
-    min_price   = _to_float(params.get('min_price'))
-    max_price   = _to_float(params.get('max_price'))
-    min_rating  = _to_float(params.get('min_rating'))
-    category_id = params.get('category_id') or None
-    sort_by     = params.get('sort_by', 'newest')
+    query_params = request.get('query_params', {})
 
-    items      = q.filter_items(
-        current_profile_id=profile['id'],
+    user_id = get_current_user(request)
+
+    name = query_params.get('query', None)
+    min_price = _to_float(query_params.get('min_price'))
+    max_price = _to_float(query_params.get('max_price'))
+    category_id = query_params.get('category_id')
+
+    products = q.filter_items(
+        current_profile_id=user_id,
         name=name,
         min_price=min_price,
         max_price=max_price,
-        min_rating=min_rating,
-        category_id=category_id,
-        sort_by=sort_by,
+        category_id=category_id
     )
-    categories = cq.get_all_categories()
 
-    html = render_template('items/filter.html', {
-        'items': items,
-        'categories': categories,
+    html = render_template('items/category_detail.html', {
+        'category': {'name': 'Filtered Products'},
+        'products': products,
         'user': cq.get_user_by_id(user_id),
-        'params': params,       # echo back so the form stays filled
+        'query': name or ''
     })
-    return build_response(200, html)
 
+    return build_response(200, html)
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 

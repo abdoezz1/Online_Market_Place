@@ -129,12 +129,21 @@ def require_login(handler_func):
         user_id = get_current_user(request)
 
         if user_id is None:
-            # Import here to avoid circular imports at module load time
-            from core.http.response_builder import redirect 
+            from core.http.response_builder import redirect
             return redirect("/login")
 
-        # Inject user_id so the handler can use it without another DB call
+        # 🔥 FETCH FULL USER OBJECT HERE
+        from core.queries import get_user_by_id
+        user = get_user_by_id(user_id)
+
+        if not user:
+            from core.http.response_builder import redirect
+            return redirect("/login")
+
+        # 🔥 THIS IS THE FIX
+        request["user"] = user
         request["user_id"] = user_id
+
         return handler_func(request)
 
     return wrapper

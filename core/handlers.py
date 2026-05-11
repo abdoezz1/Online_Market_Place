@@ -92,9 +92,15 @@ def profile_page(request):
     user_id = get_current_user(request)
     user    = q.get_user_by_id(user_id)
     profile = q.get_user_profile(user_id)
+    cart_items_count = 0
+    print("PROFILE:", profile)
     html = render_template('core/profile.html', {
-        'user': user, 'profile': profile, 'error': None, 'success': None
-    })
+    'user': user,
+    'profile': profile,
+    'error': None,
+    'success': None,
+    'cart_items_count': 0
+})
     return build_response(200, html)
 
 
@@ -202,8 +208,16 @@ def home(request):
 @require_login
 def user_detail(request):
     profile_id = request.get('path_params', {}).get('id')
-    if not profile_id:
+
+    # ❌ Missing or broken id
+    if profile_id is None:
         return error_response(404, 'User not found')
+
+    # ❗ Convert to integer safely (VERY IMPORTANT)
+    try:
+        profile_id = int(profile_id)
+    except (ValueError, TypeError):
+        return error_response(400, 'Invalid user id')
 
     public_profile = q.get_user_public_profile(profile_id)
     if not public_profile:
@@ -212,11 +226,13 @@ def user_detail(request):
     avg_rating = q.get_user_avg_rating(profile_id)
     user_items = q.get_user_for_sale_items(profile_id)
 
-    user_id    = get_current_user(request)
+    user_id = get_current_user(request)
+
     html = render_template('core/user_detail.html', {
         'public_profile': public_profile,
         'avg_rating': avg_rating,
         'user_items': user_items,
         'user': q.get_user_by_id(user_id),
     })
+
     return build_response(200, html)

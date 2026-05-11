@@ -61,5 +61,7 @@ def render_template(template_name: str, context: Optional[dict] = None) -> str:
     """
     if context is None:
         context = {}
+    
+    context.setdefault('cart_items_count', 0)
     template = _env.get_template(template_name)
     return template.render(**context)
