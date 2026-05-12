@@ -13,10 +13,7 @@ from core.queries import get_user_by_id
 
 
 def index(request):
-    user_id = get_current_user(request)
-    if user_id:
-        return redirect('/home')
-    html = render_template('core/index.html', {})
+    html = render_template('core/login.html', {'error': None})
     return build_response(200, html)
 
 
