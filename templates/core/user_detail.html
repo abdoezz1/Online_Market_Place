@@ -321,7 +321,7 @@
                 {% for product in products %}
                 <div class="product-card">
                     <div class="product-image-container">
-                        <a href="{% url 'item' product.id %}">
+                        <a href="/products/product_{{ product.id }}">
                             <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
                         </a>
                     </div>
