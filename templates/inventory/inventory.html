@@ -296,7 +296,7 @@
                     <p><strong>Price:</strong> ${{ item.price }}</p>
                 </div>
                 <div class="item-actions">
-                    <a href="/inventory/edit_item/{{ item.id }}"><button type="submit" class="edit-btn">Edit Item</button></a>
+                    <a href="/inventory/{{ item.id }}/edit"><button type="submit" class="edit-btn">Edit Item</button></a>
                     <button type="button" class="remove-btn remove-item-btn" data-item-id="{{ item.id }}">Remove Item</button>
                 </div>
             </div>
@@ -325,7 +325,7 @@
                     <p><strong>Price:</strong> ${{ item.price }}</p>
                 </div>
                 <div class="item-actions">
-                    <a href="/inventory/edit_item/{{ item.id }}"><button type="submit" class="edit-btn">Edit Item</button></a>
+                    <a href="/inventory/{{ item.id }}/edit"><button type="submit" class="edit-btn">Edit Item</button></a>
                     <button type="button" class="remove-btn remove-item-btn" data-item-id="{{ item.id }}">Remove Item</button>
                 </div>
             </div>
@@ -340,7 +340,7 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <h3>Add New Category</h3>
-        <form method="post" action="/inventory/add_category">
+        <form method="post" action="/inventory/add-category">
             <input type="text" name="name" placeholder="Category name" required>
             <button type="submit">Add</button>
         </form>
@@ -352,13 +352,13 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <h3>Remove Existing Category</h3>
-        <form method="post" action="/inventory/remove_category">
+        <form method="post" action="/inventory/remove-category">
             <div class="form-group">
                 <label for="category-select">Select Category:</label>
                 <select id="category-select" name="category_id" required>
                     {% for category in categories %}
                         <option value="{{ category.id }}">{{ category.name }}</option>
-                    {% empty %}
+                    {% else %}
                         <option disabled>No categories available</option>
                     {% endfor %}
                 </select>

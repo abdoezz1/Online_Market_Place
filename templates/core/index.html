@@ -559,7 +559,7 @@
                             <p><strong>Stock:</strong> {{ product.quantity }} available</p>
                         </div>
 
-                        <form action="/home/cart" method="get" style="display: flex; align-items: center; gap: 10px;">
+                        <form action="/home/add-to-cart" method="get" style="display: flex; align-items: center; gap: 10px;">
                             <div>
                                 <label for="quantity-{{ product.id }}">Qty:</label>
                                 <input type="number" id="quantity-{{ product.id }}" name="quantity" min="1"

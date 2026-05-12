@@ -39,20 +39,29 @@ MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 def _render(template_name, context=None):
     """Render a template. Falls back to a JSON dump if template_engine isn't ready."""
     try:
-        from core.app.template_engine import render_template
+        from template_engine import render_template
         html = render_template(template_name, context or {})
         return build_response(200, html)
-    except (ImportError, AttributeError, Exception):
-        # template_engine not implemented yet — return context as JSON
+    except Exception as e:
+        # Fallback to JSON if rendering fails
         import json
+        from core.http.response_builder import json_response
 
         def _default(obj):
+            from decimal import Decimal
+            if isinstance(obj, Decimal):
+                return float(obj)
             try:
                 return str(obj)
             except Exception:
                 return repr(obj)
 
-        return json_response({"template": template_name, "context": context or {}})
+        # Serialize context safely
+        return json_response({
+            "error": str(e),
+            "template": template_name,
+            "context": json.loads(json.dumps(context or {}, default=_default))
+        }, status_code=500)
 
 
 def _save_uploaded_file(file_dict):
@@ -90,6 +99,8 @@ def inventory(request):
     return _render("inventory/inventory.html", {
         "available_items": items,
         "categories": categories,
+        "user": request.get("user"),
+        "profile": request.get("profile"),
     })
 
 
@@ -99,8 +110,11 @@ def inventory(request):
 
 @require_login
 def add_item_page(request):
-    categories = queries.get_all_categories() or []
-    return _render("inventory/add_item.html", {"categories": categories})
+    return _render("inventory/add_item.html", {
+        "categories": queries.get_all_categories() or [],
+        "user": request.get("user"),
+        "profile": request.get("profile"),
+    })
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -135,38 +149,43 @@ def add_item_submit(request):
             "error": "Price must be a number and quantity must be an integer.",
         })
 
-    # Handle image upload
     image_file = files.get("image")
-    if not image_file:
-        return _render("inventory/add_item.html", {
-            "categories": queries.get_all_categories() or [],
-            "error": "Please upload an image for the item.",
-        })
-
-    image_path = _save_uploaded_file(image_file)
+    image_path = None
+    if image_file:
+        image_path = _save_uploaded_file(image_file)
 
     # Get or create category
     category, _ = queries.get_or_create_category(category_name)
 
     # Insert item
-    result = queries.insert_item(
-        name=name,
-        category_id=category["id"],
-        price=price,
-        description=description,
-        image_path=image_path,
-        quantity=quantity,
-        for_sale=True,
-        advertise=False,
-        quantity_advertise=0,
-        user_id=user_id,
-    )
+    try:
+        result = queries.insert_item(
+            name=name,
+            category_id=category["id"],
+            price=price,
+            description=description,
+            image_path=image_path,
+            quantity=quantity,
+            for_sale=True,
+            advertise=False,
+            quantity_advertise=0,
+            user_id=user_id,
+        )
+    except Exception as e:
+        return _render("inventory/add_item.html", {
+            "categories": queries.get_all_categories() or [],
+            "user": request.get("user"),
+            "profile": request.get("profile"),
+            "error": f"Database error: {str(e)}",
+        })
 
     if result:
         return redirect("/inventory")
     else:
         return _render("inventory/add_item.html", {
             "categories": queries.get_all_categories() or [],
+            "user": request.get("user"),
+            "profile": request.get("profile"),
             "error": "Failed to add item. Please try again.",
         })
 
@@ -185,7 +204,11 @@ def item_detail(request):
     if not item:
         return error_response(404, "Item not found.")
 
-    return _render("inventory/item_detail.html", {"product": item})
+    return _render("inventory/item_detail.html", {
+        "product": item,
+        "user": request.get("user"),
+        "profile": request.get("profile"),
+    })
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -211,6 +234,8 @@ def edit_item_page(request):
     return _render("inventory/edit_item.html", {
         "item": item,
         "categories": categories,
+        "user": request.get("user"),
+        "profile": request.get("profile"),
     })
 
 
@@ -252,6 +277,8 @@ def edit_item_submit(request):
         return _render("inventory/edit_item.html", {
             "item": queries.get_item_by_id(item_id),
             "categories": queries.get_all_categories() or [],
+            "user": request.get("user"),
+            "profile": request.get("profile"),
             "error": "Price/quantity must be valid numbers.",
         })
 
@@ -260,6 +287,8 @@ def edit_item_submit(request):
         return _render("inventory/edit_item.html", {
             "item": queries.get_item_by_id(item_id),
             "categories": queries.get_all_categories() or [],
+            "user": request.get("user"),
+            "profile": request.get("profile"),
             "error": "Quantity to advertise cannot exceed the total quantity.",
         })
 
@@ -270,18 +299,27 @@ def edit_item_submit(request):
     # Resolve category
     category, _ = queries.get_or_create_category(category_name)
 
-    result = queries.update_item(
-        item_id=item_id,
-        name=name,
-        category_id=category["id"],
-        price=price,
-        description=description,
-        image_path=image_path,
-        quantity=quantity,
-        for_sale=for_sale,
-        advertise=advertise,
-        quantity_advertise=quantity_advertise,
-    )
+    try:
+        result = queries.update_item(
+            item_id=item_id,
+            name=name,
+            category_id=category["id"],
+            price=price,
+            description=description,
+            image_path=image_path,
+            quantity=quantity,
+            for_sale=for_sale,
+            advertise=advertise,
+            quantity_advertise=quantity_advertise,
+        )
+    except Exception as e:
+        return _render("inventory/edit_item.html", {
+            "item": queries.get_item_by_id(item_id),
+            "categories": queries.get_all_categories() or [],
+            "user": request.get("user"),
+            "profile": request.get("profile"),
+            "error": f"Database error: {str(e)}",
+        })
 
     if result:
         return redirect(f"/inventory/item_detail_{item_id}")

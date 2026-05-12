@@ -70,7 +70,7 @@
             <p style="margin: 8px 0;">{{ review.comment }}</p>
             <p style="font-size: 0.9rem; color: #64748B;">{{ review.created_at }}</p>
         </div>
-        {% empty %}
+        {% else %}
         <p>No reviews yet. Be the first to review this product!</p>
         {% endfor %}
     </div>

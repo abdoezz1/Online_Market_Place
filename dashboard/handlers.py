@@ -16,7 +16,7 @@ from deposit.queries import get_deposit_by_id
 def transaction_report(request):
     user_id = request.get("user_id")
     user = request.get("user") or {}
-    profile_id = user.get("profile_id")
+    profile_id = request.get("profile_id")
 
     if user.get("is_staff"):
         transactions = dashboard_queries.get_all_transactions() or []
@@ -44,8 +44,10 @@ def transaction_report(request):
     combined_data.sort(key=lambda x: x["date"], reverse=True)
 
     html = render_template("dashboard/transaction_report.html", {
-        "activities": combined_data,
-        "user": user
+        "combined_data": combined_data,
+        "user": user,
+        "profile": request.get("profile"),
+        "user_profile": user.get("username", "User")
     })
 
     return build_response(200, html, "text/html")
@@ -100,12 +102,12 @@ def print_deposit(request):
 
 @require_login
 def make_review_page(request):
-    user_id = request.get("user_id")
+    profile_id = request.get("profile_id")
     transaction_id = request["path_params"].get("id")
 
     transaction = dashboard_queries.get_transaction_by_id(transaction_id)
 
-    if not transaction or transaction["buyer_id"] != user_id:
+    if not transaction or transaction["buyer_id"] != profile_id:
         return error_response(403, "You can only review your own purchases.")
 
     return build_response(
@@ -123,7 +125,7 @@ def make_review_page(request):
 
 @require_login
 def make_review_submit(request):
-    user_profile_id = request.get("user").get("profile_id")
+    user_profile_id = request.get("profile_id")
     t_id = request.get("path_params", {}).get("id")
     data = request.get("form_data", {})
 

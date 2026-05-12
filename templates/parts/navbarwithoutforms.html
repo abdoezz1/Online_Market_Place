@@ -139,7 +139,7 @@
                 <li>
                     <a href="/deposit" class="balance-display">
                         <i class="fas fa-wallet"></i>
-                        ${{ user.profile.balance }}
+                        {% if user.profile %}${{ user.profile.balance }}{% else %}${{ profile.balance }}{% endif %}
                     </a>
                 </li>
 
@@ -155,8 +155,8 @@
                 <!-- Profile with dropdown -->
                 <li>
                     <div class="navbar-profile-icon" onclick="toggleProfileMenu()">
-                        {% if user.profile.photo %}
-                            <img src="{{ user.profile.photo }}" alt="{{ user.username }}'s Profile"
+                        {% if user.profile.photo or profile.photo %}
+                            <img src="{% if user.profile.photo %}{{ user.profile.photo }}{% else %}{{ profile.photo }}{% endif %}" alt="{{ user.username }}'s Profile"
                                  class="profile-icon">
                         {% else %}
                             <i class="fas fa-user-circle profile-icon"></i>
@@ -166,7 +166,7 @@
                         <a href="/profile"><i class="fas fa-user"></i> Profile</a>
                         <a href="/deposit"><i class="fas fa-wallet"></i> Deposit</a>
                         <a href="/inventory"><i class="fas fa-boxes"></i> Inventory</a>
-                        <a href="/dashboard/transaction-report/"><i class="fas fa-file-alt"></i> Reports</a>
+                        <a href="/dashboard/transaction-report"><i class="fas fa-file-alt"></i> Reports</a>
                         <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </li>

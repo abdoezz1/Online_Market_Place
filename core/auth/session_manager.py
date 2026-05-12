@@ -133,16 +133,20 @@ def require_login(handler_func):
             return redirect("/login")
 
         # 🔥 FETCH FULL USER OBJECT HERE
-        from core.queries import get_user_by_id
+        from core.queries import get_user_by_id, get_user_profile
         user = get_user_by_id(user_id)
+        profile = get_user_profile(user_id)
 
-        if not user:
+        if not user or not profile:
             from core.http.response_builder import redirect
             return redirect("/login")
 
         # 🔥 THIS IS THE FIX
+        user["profile"] = profile
         request["user"] = user
+        request["profile"] = profile
         request["user_id"] = user_id
+        request["profile_id"] = profile["id"]
 
         return handler_func(request)
 

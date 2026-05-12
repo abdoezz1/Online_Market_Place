@@ -75,7 +75,7 @@ def insert_item(name, category_id, price, description, image_path,
 
     Returns: dict with the new item's 'id', or None on failure
     """
-    available_stock = quantity > 0
+    available_stock = 1 if quantity > 0 else 0
     return db.execute_query(
         """
         INSERT INTO items
@@ -104,7 +104,7 @@ def update_item(item_id, name, category_id, price, description,
 
     Returns: dict with the updated item's 'id', or None
     """
-    available_stock = quantity > 0
+    available_stock = 1 if quantity > 0 else 0
 
     if image_path is not None:
         return db.execute_query(

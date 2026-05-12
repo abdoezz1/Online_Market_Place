@@ -504,35 +504,33 @@
     <h2 class="edit-item-title">Edit Item: <span class="item-name">{{ item.name }}</span></h2>
 
     <form method="POST" enctype="multipart/form-data" class="edit-item-form" id="editItemForm">
-        {{ form.non_field_errors }}
-
         <div class="form-columns">
             <div class="form-column">
                 <div class="edit-form-group">
-                    {{ form.category.label_tag }}
-                    {{ form.category }}
-                    {{ form.category.errors }}
+                    <label for="category" class="inventory-form-label">Category:</label>
+                    <select id="category-options" name="category" class="inventory-form-select" required>
+                        {% for cat in categories %}
+                            <option value="{{ cat.name }}" {% if cat.id == item.category_id %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <div class="edit-form-group">
-                    {{ form.name.label_tag }}
-                    {{ form.name }}
-                    {{ form.name.errors }}
+                    <label for="name" class="inventory-form-label">Item Name:</label>
+                    <input type="text" id="name" name="name" class="inventory-form-input" value="{{ item.name }}" required>
                 </div>
 
                 <div class="edit-form-group">
-                    {{ form.price.label_tag }}
+                    <label for="price" class="inventory-form-label">Price:</label>
                     <div class="input-with-symbol">
                         <span class="symbol">$</span>
-                        {{ form.price }}
+                        <input type="number" id="price" name="price" class="inventory-form-input" value="{{ item.price }}" min="0" step="0.01" required>
                     </div>
-                    {{ form.price.errors }}
                 </div>
 
                 <div class="edit-form-group">
-                    {{ form.quantity.label_tag }}
-                    {{ form.quantity }}
-                    {{ form.quantity.errors }}
+                    <label for="quantity" class="inventory-form-label">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" class="inventory-form-input" value="{{ item.quantity }}" min="0" step="1" required>
                 </div>
             </div>
 
@@ -546,53 +544,48 @@
                                 <div class="no-image">No image selected</div>
                             {% endif %}
                             <div class="photo-overlay">
-                                <label for="{{ form.image.id_for_label }}" class="change-photo-btn">
+                                <label for="image" class="change-photo-btn">
                                     Change Image
                                 </label>
                             </div>
                         </div>
-                        {{ form.image }}
+                        <input type="file" id="image" name="image" class="inventory-form-file" accept="image/*">
                     </div>
-                    {{ form.image.errors }}
                 </div>
             </div>
         </div>
 
         <div class="edit-form-group">
-            {{ form.description.label_tag }}
-            {{ form.description }}
-            {{ form.description.errors }}
+            <label for="description" class="inventory-form-label">Description:</label>
+            <textarea id="description" name="description" class="inventory-form-textarea" rows="4">{{ item.description }}</textarea>
         </div>
 
         <div class="checkbox-section">
             <div class="checkbox-row">
                 <div class="edit-form-group checkbox-group">
                     <label class="edit-checkbox-label">
-                        {{ form.for_sale }}
+                        <input type="checkbox" name="for_sale" {% if item.for_sale %}checked{% endif %}>
                         <span class="edit-checkbox-custom"></span>
-                        <span class="checkbox-text">{{ form.for_sale.label }}</span>
+                        <span class="checkbox-text">For Sale</span>
                     </label>
-                    {{ form.for_sale.errors }}
                 </div>
 
                 <div class="edit-form-group checkbox-group">
                     <label class="edit-checkbox-label">
-                        {{ form.advertise }}
+                        <input type="checkbox" name="advertise" {% if item.advertise %}checked{% endif %}>
                         <span class="edit-checkbox-custom"></span>
-                        <span class="checkbox-text">{{ form.advertise.label }}</span>
+                        <span class="checkbox-text">Advertise</span>
                     </label>
-                    {{ form.advertise.errors }}
                 </div>
             </div>
 
             <div class="edit-form-group" id="quantityAdvertiseGroup">
-                <label for="{{ form.quantity_advertise.id_for_label }}" class="quantity-advertise-label">
-                    {{ form.quantity_advertise.label }}
+                <label for="quantity_advertise" class="quantity-advertise-label">
+                    Quantity to Advertise
                 </label>
                 <div class="quantity-input-container">
-                    {{ form.quantity_advertise }}
+                    <input type="number" id="quantity_advertise" name="quantity_advertise" class="inventory-form-input" value="{{ item.quantity_advertise }}" min="0">
                 </div>
-                {{ form.quantity_advertise.errors }}
             </div>
         </div>
 

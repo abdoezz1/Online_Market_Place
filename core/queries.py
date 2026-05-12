@@ -15,6 +15,12 @@ def get_user_profile(user_id):
         (user_id,), fetch_one=True
     )
 
+def get_user_profile_by_pk(profile_id):
+    return execute_query(
+        "SELECT * FROM user_profiles WHERE id = %s",
+        (profile_id,), fetch_one=True
+    )
+
 def update_user_profile(user_id, phone, address, bio, date_of_birth):
     execute_query(
         """UPDATE user_profiles

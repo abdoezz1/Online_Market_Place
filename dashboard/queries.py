@@ -15,7 +15,7 @@ def get_all_transactions():
         LEFT JOIN items i ON t.product_id = i.id
         ORDER BY t.date DESC
     """
-    return execute_query(sql)
+    return execute_query(sql, fetch_all=True)
 
 def get_user_transactions(profile_id):
     """Fetches transactions where the user is either the buyer or the seller."""
@@ -31,7 +31,7 @@ def get_user_transactions(profile_id):
         WHERE t.buyer_id = %s OR t.seller_id = %s
         ORDER BY t.date DESC
     """
-    return execute_query(sql, (profile_id, profile_id))
+    return execute_query(sql, (profile_id, profile_id), fetch_all=True)
 
 def get_transaction_by_id(transaction_id):
     """Fetches a single transaction by its primary key."""
@@ -49,12 +49,12 @@ def get_all_deposits():
         JOIN users u ON up.user_id = u.id
         ORDER BY d.date DESC
     """
-    return execute_query(sql)
+    return execute_query(sql, fetch_all=True)
 
 def get_user_deposits(profile_id):
     """Fetches all deposits made by a specific user."""
     sql = "SELECT * FROM deposits WHERE user_id = %s ORDER BY date DESC"
-    return execute_query(sql, (profile_id,))
+    return execute_query(sql, (profile_id,), fetch_all=True)
 
 # --- REVIEWS ---
 

@@ -48,7 +48,7 @@
     </div>
 
     <div class="profile-content">
-        <form method="POST" enctype="multipart/form-data" class="profile-form">
+        <form method="POST" action="/profile" enctype="multipart/form-data" class="profile-form">
 
             <!-- Login Info -->
             <div class="form-section">
@@ -56,31 +56,22 @@
 
                 <div class="form-group">
                     <label>Username</label>
-                    {{ form.username }}
+                    <input type="text" name="username" value="{{ user.username }}" readonly class="readonly-field">
                 </div>
 
                 <div class="form-group">
                     <label>Old Password</label>
-                    {{ form.old_password }}
-                    {% if form.old_password.errors %}
-                        <div class="error-message">{{ form.old_password.errors }}</div>
-                    {% endif %}
+                    <input type="password" name="old_password" placeholder="Current Password">
                 </div>
 
                 <div class="form-group">
                     <label>New Password</label>
-                    {{ form.new_password }}
-                    {% if form.new_password.errors %}
-                        <div class="error-message">{{ form.new_password.errors }}</div>
-                    {% endif %}
+                    <input type="password" name="new_password" placeholder="New Password">
                 </div>
 
                 <div class="form-group">
                     <label>Confirm New Password</label>
-                    {{ form.confirm_password }}
-                    {% if form.confirm_password.errors %}
-                        <div class="error-message">{{ form.confirm_password.errors }}</div>
-                    {% endif %}
+                    <input type="password" name="confirm_password" placeholder="Confirm New Password">
                 </div>
             </div>
 
@@ -90,22 +81,22 @@
 
                 <div class="form-group">
                     <label>First Name</label>
-                    {{ form.first_name }}
+                    <input type="text" name="first_name" value="{{ user.first_name or '' }}">
                 </div>
 
                 <div class="form-group">
                     <label>Last Name</label>
-                    {{ form.last_name }}
+                    <input type="text" name="last_name" value="{{ user.last_name or '' }}">
                 </div>
 
                 <div class="form-group">
                     <label>Email</label>
-                    {{ form.email }}
+                    <input type="email" name="email" value="{{ user.email }}" readonly class="readonly-field">
                 </div>
 
                 <div class="form-group">
                     <label>Date of Birth</label>
-                    {{ form.date_of_birth }}
+                    <input type="date" name="date_of_birth" value="{{ profile.date_of_birth }}">
                 </div>
             </div>
 
@@ -115,12 +106,12 @@
 
                 <div class="form-group">
                     <label>Phone Number</label>
-                    {{ form.phone }}
+                    <input type="text" name="phone" value="{{ profile.phone or '' }}">
                 </div>
 
                 <div class="form-group">
                     <label>Address</label>
-                    {{ form.address }}
+                    <input type="text" name="address" value="{{ profile.address or '' }}">
                 </div>
             </div>
 
@@ -130,13 +121,13 @@
 
                 <div class="form-group">
                     <label>Bio</label>
-                    {{ form.bio }}
+                    <textarea name="bio" rows="4">{{ profile.bio or '' }}</textarea>
                 </div>
             </div>
 
             <!-- Hidden Photo Field -->
             <div class="form-group hidden">
-                {{ form.photo }}
+                <input type="file" name="photo" id="photo-input">
             </div>
 
             <div class="form-actions">
