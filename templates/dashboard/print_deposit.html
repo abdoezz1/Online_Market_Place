@@ -98,7 +98,7 @@
         </tr>
         <tr>
             <th>Date</th>
-            <td>{{ deposit.date|date:"F j, Y H:i" }}</td>
+            <td>{{ deposit.date.strftime('%B %-d, %Y %H:%M') }}</td>
         </tr>
         <tr>
             <th>Account</th>
