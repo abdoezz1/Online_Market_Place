@@ -258,19 +258,19 @@
         </div>
         <div class="profile-info">
             <h1>{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h1>
-            <p class="member-since">Member since {{ user_profile.created_at|date:"F Y" }}</p>
+            <p class="member-since">Member since {{ user_profile.created_at.strftime('%B %Y') }}</p>
             <div class="rating-summary">
                 {% if rated_count > 0 %}
                     <div class="stars">
-                        {% for i in "12345" %}
-                            {% if forloop.counter <= avg_rating %}
+                        {% for i in range(1, 6) %}
+                            {% if i <= avg_rating %}
                                 <i class="fas fa-star"></i>
                             {% else %}
                                 <i class="far fa-star"></i>
                             {% endif %}
                         {% endfor %}
                         <span class="rating-value">
-                            {{ avg_rating|floatformat:1 }} 
+                            {{ "%.1f"|format(avg_rating) }}
                             ({{ rated_count }} rated of {{ total_products }})
                         </span>
                     </div>
@@ -328,7 +328,7 @@
                     <div class="product-info">
                         <h3><a href="/products/product_{{ product.id }}">{{ product.name }}</a></h3>
                         <p class="price">${{ product.price }}</p>
-                        <p class="created-date">Posted on {{ product.created_at|date:"M d, Y" }}</p>
+                        <p class="created-date">Posted on {{ product.created_at.strftime('%b %d, %Y') }}</p>
                     </div>
                 </div>
                 {% endfor %}
