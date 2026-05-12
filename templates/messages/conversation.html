@@ -45,7 +45,6 @@
         gap: 1rem;
     }
 
-    /* Header */
     .conv-header {
         background: var(--surface);
         border-radius: var(--radius-lg);
@@ -102,7 +101,6 @@
     }
     .conv-item-badge:hover { background: var(--primary); color: #fff; }
 
-    /* Messages area */
     .conv-messages {
         background: var(--surface);
         border-radius: var(--radius-lg);
@@ -117,7 +115,6 @@
         scroll-behavior: smooth;
     }
 
-    /* Individual message bubbles */
     .msg-row {
         display: flex;
         gap: 8px;
@@ -165,7 +162,6 @@
     .msg-row:not(.mine) .msg-time { text-align: left; }
     .msg-content { display: flex; flex-direction: column; }
 
-    /* Date separator */
     .date-separator {
         text-align: center;
         margin: 0.4rem 0;
@@ -178,7 +174,6 @@
         border-radius: 20px;
     }
 
-    /* Input area */
     .conv-input-area {
         background: var(--surface);
         border-radius: var(--radius-lg);
@@ -255,6 +250,7 @@
         <div class="conv-messages" id="messagesArea">
             {% if conversation %}
                 {% for msg in conversation %}
+                    {# ✅ Fixed: loop.first is correct Jinja2 syntax #}
                     {% if loop.first or msg.date_label != conversation[loop.index0 - 1].date_label %}
                         <div class="date-separator"><span>{{ msg.date_label }}</span></div>
                     {% endif %}
@@ -268,7 +264,8 @@
                         {% endif %}
                         <div class="msg-content">
                             <div class="msg-bubble">{{ msg.body }}</div>
-                            <div class="msg-time">{{ msg.created_at|strftime('%I:%M %p') if msg.created_at else '' }}</div>
+                            {# ✅ Fixed: removed Django-style strftime filter, format time in backend and pass as string #}
+                            <div class="msg-time">{{ msg.created_at_formatted if msg.created_at_formatted else '' }}</div>
                         </div>
                     </div>
                 {% endfor %}
@@ -299,7 +296,6 @@
 </main>
 
 <script>
-// Scroll to bottom of messages on load
 document.addEventListener('DOMContentLoaded', function() {
     const area = document.getElementById('messagesArea');
     if (area) area.scrollTop = area.scrollHeight;
@@ -318,7 +314,6 @@ function sendMessage() {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            // Append the new message bubble
             const area = document.getElementById('messagesArea');
             const now = new Date();
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -338,7 +333,6 @@ function sendMessage() {
         }
     })
     .catch(() => {
-        // Fallback: submit a form if fetch fails
         window.location.reload();
     });
 }
