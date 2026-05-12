@@ -97,7 +97,7 @@
         </tr>
         <tr>
             <th>Date</th>
-            <td>{{ transaction.date|date("F j, Y H:i") }}</td>
+            <td>{{ transaction.date.strftime('%B %-d, %Y %H:%M') }}</td>
         </tr>
         <tr>
             <th>Buyer</th>
