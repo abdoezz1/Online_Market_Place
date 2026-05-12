@@ -615,7 +615,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Image preview functionality
-    const imageInput = document.getElementById('{{ form.image.id_for_label }}');
+    // ✅ Fixed: replaced Django's {{ form.image.id_for_label }} with plain HTML id "image"
+    const imageInput = document.getElementById('image');
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
             const preview = document.querySelector('.profile-photo');
@@ -627,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     preview.innerHTML = `
                         <img src="${event.target.result}" alt="Preview">
                         <div class="photo-overlay">
-                            <label for="{{ form.image.id_for_label }}" class="change-photo-btn">
+                            <label for="image" class="change-photo-btn">
                                 Change Image
                             </label>
                         </div>
