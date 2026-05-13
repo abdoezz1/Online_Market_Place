@@ -403,28 +403,74 @@ def csv_upload(request):
         return json_response({"success": False, "error": "No CSV file uploaded."}, 400)
 
     try:
-        text = csv_file["data"].decode("utf-8", errors="replace")
-        reader = csv.DictReader(io.StringIO(text))
+        log_path = r"D:\College\Senior 2\Online_Market_Place\csv_debug.txt"
+        # Handle BOM (Byte Order Mark) and UTF-16
+        raw_data = csv_file["data"]
+        with open(log_path, "a") as f:
+            f.write(f"\n--- UPLOAD AT {time.time()} ---\n")
+            f.write(f"Raw data len: {len(raw_data)}\n")
+            
+        if raw_data.startswith(b'\xef\xbb\xbf'):
+            text = raw_data[3:].decode("utf-8", errors="replace")
+        elif raw_data.startswith(b'\xff\xfe') or raw_data.startswith(b'\xfe\xff'):
+            text = raw_data.decode("utf-16", errors="replace")
+        else:
+            text = raw_data.decode("utf-8", errors="replace")
+            
+        # Detect delimiter
+        try:
+            dialect = csv.Sniffer().sniff(text[:2000])
+            reader = csv.DictReader(io.StringIO(text), dialect=dialect)
+        except Exception as e:
+            with open(log_path, "a") as f:
+                f.write(f"Sniffer fail: {e}\n")
+            reader = csv.DictReader(io.StringIO(text))
 
         rows = []
-        for row in reader:
-            cat_name = row.get("category", "").strip()
-            if not cat_name:
+        with open(log_path, "a") as f:
+            f.write(f"CSV Headers: {reader.fieldnames}\n")
+        for raw_row in reader:
+            row = {str(k).strip().lower(): str(v).strip() for k, v in raw_row.items() if k}
+            
+            cat_name = ""
+            cat_id = ""
+            for k, v in row.items():
+                if "category" in k or "cat" in k:
+                    if "id" in k:
+                        cat_id = v
+                    else:
+                        cat_name = v
+            
+            if not cat_name and not cat_id:
                 continue
-            category, _ = queries.get_or_create_category(cat_name)
+                
+            try:
+                if cat_name:
+                    category, _ = queries.get_or_create_category(cat_name)
+                    final_cat_id = category["id"]
+                else:
+                    final_cat_id = int(cat_id)
 
-            rows.append({
-                "name": row.get("name", "Unnamed").strip(),
-                "category_id": category["id"],
-                "price": float(row.get("price", 0)),
-                "description": row.get("description", ""),
-                "quantity": int(row.get("quantity", 1)),
-            })
-
+                rows.append({
+                    "name": row.get("name", "Unnamed"),
+                    "category_id": final_cat_id,
+                    "price": float(row.get("price", "0").replace(",", "") or 0),
+                    "description": row.get("description", ""),
+                    "quantity": int(row.get("quantity", "1").replace(",", "") or 1),
+                })
+            except Exception:
+                continue
+        
+        with open(log_path, "a") as f:
+            f.write(f"Rows prepared: {len(rows)}\n")
+            
         inserted = queries.bulk_insert_items(rows, user_id)
         return json_response({"success": True, "inserted": inserted})
 
     except Exception as e:
+        log_path = r"D:\College\Senior 2\Online_Market_Place\csv_debug.txt"
+        with open(log_path, "a") as f:
+            f.write(f"Global error: {e}\n")
         traceback.print_exc()
         return json_response({"success": False, "error": str(e)}, 400)
 

@@ -88,7 +88,7 @@
     
     <div class="header">
         <h2>Transaction Summary</h2>
-        <p>Generated on {{ now().strftime("%B %-d, %Y %H:%M") }}</p>
+        <p>Generated on {{ now().strftime("%B %d, %Y %H:%M") }}</p>
     </div>
     <table>
         <tr>
@@ -97,19 +97,19 @@
         </tr>
         <tr>
             <th>Date</th>
-            <td>{{ transaction.date.strftime('%B %-d, %Y %H:%M') }}</td>
+            <td>{{ transaction.date | strftime('%B %d, %Y %H:%M') }}</td>
         </tr>
         <tr>
             <th>Buyer</th>
-            <td>{{ transaction.buyer }}</td>
+            <td>{{ transaction.buyer_name or 'N/A' }}</td>
         </tr>
         <tr>
             <th>Seller</th>
-            <td>{{ transaction.seller }}</td>
+            <td>{{ transaction.seller_name or 'N/A' }}</td>
         </tr>
         <tr>
             <th>Product</th>
-            <td>{{ transaction.product.name }}</td>
+            <td>{{ transaction.product_name or 'N/A' }}</td>
         </tr>
         <tr>
             <th>Quantity</th>
@@ -117,11 +117,11 @@
         </tr>
         <tr>
             <th>Unit Price</th>
-            <td>{{ transaction.product.price }}</td>
+            <td>${{ transaction.product_price or '0.00' }}</td>
         </tr>
         <tr>
             <th>Total Price</th>
-            <td><strong>{{ transaction.total_price }}</strong></td>
+            <td><strong>${{ transaction.total_price }}</strong></td>
         </tr>
         <tr>
             <th>Status</th>

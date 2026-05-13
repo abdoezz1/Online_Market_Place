@@ -3,7 +3,7 @@ from . import queries as dashboard_queries
 from core.db.db import execute_transaction
 from core.auth.session_manager import require_login, get_current_user
 from template_engine import render_template
-from core.http.response_builder import build_response, error_response, json_response
+from core.http.response_builder import build_response, error_response, json_response, redirect
 
 from deposit.queries import get_deposit_by_id
 
@@ -81,9 +81,10 @@ def print_transaction(request):
 @require_login
 def print_deposit(request):
     d_id = request.get("path_params", {}).get("id")
+    profile_id = request.get("profile_id")
     user = request.get("user") or {}
 
-    deposit = get_deposit_by_id(d_id, user.get("profile_id"))
+    deposit = get_deposit_by_id(d_id, profile_id)
 
     if not deposit:
         return error_response(404, "Deposit not found")
@@ -135,26 +136,40 @@ def make_review_submit(request):
         return error_response(404, "Transaction not found")
 
     product_id = transaction["product_id"]
-    rating = data.get("rating")
+    
+    # Ensure rating is a float
+    try:
+        rating = float(data.get("rating", 0))
+    except (ValueError, TypeError):
+        return error_response(400, "Invalid rating value.")
+        
     comment = data.get("comment", "")
 
     if dashboard_queries.check_review_exists(user_profile_id, t_id, product_id):
-        return error_response(400, "Review already submitted.")
+        return build_response(200, render_template("dashboard/make_review.html", {
+            "transaction": transaction,
+            "error": "You already reviewed this item"
+        }))
 
     q1_sql, q1_params = dashboard_queries.create_review(
         t_id, user_profile_id, product_id, rating, comment
     )
     q2_sql, q2_params = dashboard_queries.update_product_rating_query(product_id)
 
-    success = execute_transaction([
-        (q1_sql, q1_params),
-        (q2_sql, q2_params)
-    ])
+    try:
+        success = execute_transaction([
+            (q1_sql, q1_params),
+            (q2_sql, q2_params)
+        ])
 
-    if success:
-        return json_response({"message": "Review submitted successfully!"}, 201)
-
-    return error_response(500, "Failed to save review.")
+        if success:
+            return redirect("/dashboard/transaction-report")
+            
+        return error_response(500, "Failed to save review.")
+        
+    except Exception as e:
+        print(f"REVIEW ERROR: {e}")
+        return error_response(500, f"Database error: {str(e)}")
 
 
 # ─────────────────────────────────────────────

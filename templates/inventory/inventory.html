@@ -277,6 +277,8 @@
         <div style="display: flex; gap: 10px;">
             <button type="button" class="edit-btn inventory-add-category-btn" id="openAddModalBtn">Add category</button>
             <button type="button" class="edit-btn inventory-add-category-btn remove-category-btn" id="openRemoveModalBtn">Remove category</button>
+            <button type="button" class="edit-btn" onclick="document.getElementById('csv_file_input').click();">Upload CSV</button>
+            <input type="file" id="csv_file_input" style="display: none;" accept=".csv">
             <button type="button" class="edit-btn"><a class="addItem" href="/inventory/add_item">Add item</a></button>
         </div>
     </h2>
@@ -447,6 +449,34 @@
             if (event.target == removeModal) removeModal.style.display = 'none';
             if (event.target == removeItemModal) removeItemModal.style.display = 'none';
         });
+        // CSV Upload Logic
+        const csvInput = document.getElementById('csv_file_input');
+        if (csvInput) {
+            csvInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const formData = new FormData();
+                    formData.append('csv_file', this.files[0]);
+                    
+                    fetch('/inventory/upload', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(`Success! Inserted ${data.inserted} items.`);
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + (data.error || 'Upload failed'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Upload error:', err);
+                        alert('An error occurred during upload.');
+                    });
+                }
+            });
+        }
     });
 </script>
 {% endblock %}

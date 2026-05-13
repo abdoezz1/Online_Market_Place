@@ -82,7 +82,14 @@ def process_payment_transaction(buyer_id, seller_id, product_id, quantity, total
         
         # 6. Remove item from the orders/cart
         ("DELETE FROM orders WHERE id = %s", 
-         (order_id,))
+         (order_id,)),
+
+        # 7. Deliver item to buyer's inventory (Create a non-sale record)
+        ("""INSERT INTO items 
+            (name, category_id, price, description, image, available_stock, owned_by_id, quantity, for_sale, average_rating)
+            SELECT name, category_id, price, description, image, 0, %s, %s, FALSE, average_rating
+            FROM items WHERE id = %s""",
+         (buyer_id, quantity, product_id))
     ]
 
     # 3. Execute all 7 steps as one unit

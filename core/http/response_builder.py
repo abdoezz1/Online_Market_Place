@@ -223,7 +223,16 @@ def json_response(
     >>> b'"success": true' in resp
     True
     """
-    body = json.dumps(data, ensure_ascii=False)
+    def _default_encoder(obj):
+        from decimal import Decimal
+        from datetime import datetime, date
+        if isinstance(obj, Decimal):
+            return float(obj)
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        return str(obj)
+
+    body = json.dumps(data, ensure_ascii=False, default=_default_encoder)
     return build_response(
         status_code=status_code,
         body=body,

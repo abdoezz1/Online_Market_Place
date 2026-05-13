@@ -556,7 +556,12 @@
         </div>
 
         <div class="edit-form-group">
-            <label for="description" class="inventory-form-label">Description:</label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="description" class="inventory-form-label">Description:</label>
+                <button type="button" class="edit-btn" id="generateAIDescBtn" style="padding: 5px 15px; font-size: 0.85rem; margin-bottom: 5px;">
+                    <i class="fas fa-magic"></i> Generate with AI
+                </button>
+            </div>
             <textarea id="description" name="description" class="inventory-form-textarea" rows="4">{{ item.description }}</textarea>
         </div>
 
@@ -751,6 +756,49 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add event listener
         advertiseCheckbox.addEventListener('change', toggleAdvertiseQuantity);
+    }
+    // AI Description Generation
+    const aiBtn = document.getElementById('generateAIDescBtn');
+    if (aiBtn) {
+        aiBtn.addEventListener('click', function() {
+            const name = document.getElementById('name').value.trim ? document.getElementById('name').value.trim() : document.getElementById('name').value;
+            const categorySelect = document.getElementById('category-options');
+            const category = categorySelect.options[categorySelect.selectedIndex].text;
+            
+            if (!name) {
+                alert('Please enter a product name first.');
+                return;
+            }
+            
+            const originalText = aiBtn.innerHTML;
+            aiBtn.disabled = true;
+            aiBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            
+            const formData = new FormData();
+            formData.append('product_name', name);
+            formData.append('category', category);
+            
+            fetch('/inventory/ai-desc', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('description').value = data.description;
+                } else {
+                    alert('AI Error: ' + (data.error || 'Failed to generate description'));
+                }
+            })
+            .catch(err => {
+                console.error('AI error:', err);
+                alert('An error occurred while connecting to the AI service.');
+            })
+            .finally(() => {
+                aiBtn.disabled = false;
+                aiBtn.innerHTML = originalText;
+            });
+        });
     }
 });
 </script>

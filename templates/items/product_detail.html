@@ -25,7 +25,7 @@
         <h1 style="display: flex; justify-content: space-between; align-items: center;">
             {{ item.name }}
 
-            {% if item.average_rating and item.average_rating > 0 %}
+            {% if item.for_sale and item.average_rating and item.average_rating > 0 %}
             <span>
                 {{ item.average_rating }}
                 <i class="fa fa-star" style="color: gold;"></i>
@@ -66,6 +66,7 @@
 
 <!-- Reviews -->
 
+{% if item.for_sale %}
 <div class="reviews-section">
 
     <h2>Reviews</h2>
@@ -112,5 +113,6 @@
     </div>
 
 </div>
+{% endif %}
 
 {% endblock %}

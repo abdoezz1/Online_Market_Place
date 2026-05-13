@@ -145,11 +145,9 @@
     }
 </style>
 
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
+    {% if error %}
+        <div class="alert error" style="max-width: 600px; margin: 20px auto; padding: 15px; border-radius: 8px; background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; text-align: center;">
+            <i class="fas fa-exclamation-circle"></i> {{ error }}
         </div>
     {% endif %}
 
