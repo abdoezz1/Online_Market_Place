@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h1>Your Purchased Products</h1>
+
+    {% if products %}
+
+    <div class="products-grid">
+
+        {% for product in products %}
+
+        <div class="card">
+
+            <h3>{{ product.name }}</h3>
+
+            <p>
+                Price: ${{ product.price }}
+            </p>
+
+            <a href="/products/product_{{ product.id }}">
+                View Product
+            </a>
+
+            <br><br>
+
+            <a href="/dashboard/transaction/{{ product.id }}/make-review">
+                Write Review
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <p>You have not purchased any products yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -277,6 +277,7 @@
         <div style="display: flex; gap: 10px;">
             <button type="button" class="edit-btn inventory-add-category-btn" id="openAddModalBtn">Add category</button>
             <button type="button" class="edit-btn inventory-add-category-btn remove-category-btn" id="openRemoveModalBtn">Remove category</button>
+            <button type="button" class="edit-btn" id="openCsvModalBtn">Upload CSV</button>
             <button type="button" class="edit-btn"><a class="addItem" href="/inventory/add_item">Add item</a></button>
         </div>
     </h2>
@@ -396,14 +397,17 @@
         // Buttons to open modals
         const addBtn = document.getElementById('openAddModalBtn');
         const removeBtn = document.getElementById('openRemoveModalBtn');
+        const csvBtn = document.getElementById('openCsvModalBtn');
         
         // Close buttons
         const closeButtons = document.querySelectorAll('.close');
         const cancelBtn = document.querySelector('.cancel-btn');
+        const csvModal = document.getElementById('csvModal');
         
         // Open modals
         if (addBtn) addBtn.addEventListener('click', () => addModal.style.display = 'block');
         if (removeBtn) removeBtn.addEventListener('click', () => removeModal.style.display = 'block');
+        if (csvBtn) csvBtn.addEventListener('click', () => csvModal.style.display = 'block');
         
         // Handle remove item buttons - using event delegation for dynamic content
         document.addEventListener('click', function(e) {
@@ -431,6 +435,7 @@
                 addModal.style.display = 'none';
                 removeModal.style.display = 'none';
                 removeItemModal.style.display = 'none';
+                if (csvModal) csvModal.style.display = 'none';
             });
         });
         
@@ -446,7 +451,40 @@
             if (event.target == addModal) addModal.style.display = 'none';
             if (event.target == removeModal) removeModal.style.display = 'none';
             if (event.target == removeItemModal) removeItemModal.style.display = 'none';
+            if (event.target == csvModal) csvModal.style.display = 'none';
         });
+
+        // Handle CSV Upload via Fetch
+        const csvForm = document.getElementById('csvUploadForm');
+        if (csvForm) {
+            csvForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(csvForm);
+                try {
+                    const res = await fetch('/inventory/upload', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                } catch (err) {
+                    alert("Upload failed.");
+                }
+            });
+        }
     });
 </script>
+
+<!-- CSV Upload Modal -->
+<div id="csvModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Upload Items via CSV</h3>
+        <form id="csvUploadForm">
+            <input type="file" name="csv_file" accept=".csv" required style="margin: 20px 0;">
+            <button type="submit" class="edit-btn">Upload</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

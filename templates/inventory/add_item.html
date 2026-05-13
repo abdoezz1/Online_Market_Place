@@ -471,6 +471,7 @@
 
         <div class="edit-form-group">
             <label for="description" class="inventory-form-label">Description:</label>
+            <button type="button" id="generateAIBtn" class="edit-btn" style="width: auto; padding: 5px 10px; margin-bottom: 5px; background-color: #10B981;">Generate AI Description</button>
             <textarea id="description" name="description" class="inventory-form-textarea" rows="4"></textarea>
         </div>
 
@@ -573,6 +574,39 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             return true;
+        });
+    }
+
+    // AI Description logic
+    const generateAIBtn = document.getElementById('generateAIBtn');
+    if (generateAIBtn) {
+        generateAIBtn.addEventListener('click', async () => {
+            const name = document.getElementById('name').value;
+            const categorySelect = document.getElementById('category-options');
+            const category = categorySelect ? categorySelect.value : '';
+            if (!name) {
+                alert("Please enter a product name first.");
+                return;
+            }
+            generateAIBtn.innerText = "Generating...";
+            generateAIBtn.disabled = true;
+            try {
+                const formData = new FormData();
+                formData.append('product_name', name);
+                formData.append('category', category);
+                const res = await fetch('/inventory/ai-desc', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('description').value = data.description;
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch(e) {
+                alert("Failed to generate description.");
+            } finally {
+                generateAIBtn.innerText = "Generate AI Description";
+                generateAIBtn.disabled = false;
+            }
         });
     }
 

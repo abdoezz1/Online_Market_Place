@@ -80,6 +80,12 @@ def process_payment_transaction(buyer_id, seller_id, product_id, quantity, total
         ("UPDATE items SET quantity = quantity - %s WHERE id = %s", 
          (quantity, product_id)),
         
+        # 5.5 Clone item for buyer's inventory
+        ("""INSERT INTO items (name, category_id, price, description, image, quantity, available_stock, for_sale, advertise, quantity_advertise, average_rating, view_count, owned_by_id)
+            SELECT name, category_id, price, description, image, %s, 0, FALSE, FALSE, 0, 0, 0, %s
+            FROM items WHERE id = %s""",
+         (quantity, buyer_id, product_id)),
+
         # 6. Remove item from the orders/cart
         ("DELETE FROM orders WHERE id = %s", 
          (order_id,))
