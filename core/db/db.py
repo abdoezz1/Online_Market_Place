@@ -34,6 +34,7 @@ def execute_transaction(queries_list):
             for sql, params in queries_list:
                 cursor.execute(sql, params)
             conn.commit()
+            return True
     except Exception as e:
         conn.rollback()
         raise e

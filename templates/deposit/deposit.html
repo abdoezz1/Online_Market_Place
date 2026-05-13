@@ -146,102 +146,45 @@
 
 <div class="deposit-form-container">
   <h2 class="deposit-form-title">💳 Mock Deposit</h2>
-  <form id="depositForm" method="post" class="deposit-form">
-
-    <div class="deposit-form-group">
-      <label class="deposit-form-label">Card Number</label>
-      <input type="text" name="card_number" maxlength="16" required 
-             class="deposit-form-input" placeholder="1234 5678 9012 3456" />
-    </div>
-
-    <div class="deposit-card-details">
+    <form id="depositForm" method="post" action="/deposit/process" class="deposit-form">
+  
       <div class="deposit-form-group">
-        <label class="deposit-form-label">Expiration Month</label>
-        <input type="text" name="expiration_month" maxlength="2" required 
-           class="deposit-form-input" placeholder="MM" style="width: 133px;" />
+        <label class="deposit-form-label">Card Number</label>
+        <input type="text" name="card_number" maxlength="16" required 
+               class="deposit-form-input" placeholder="1234 5678 9012 3456" />
       </div>
-
+  
+      <div class="deposit-card-details">
+        <div class="deposit-form-group">
+          <label class="deposit-form-label">Expiration Month</label>
+          <input type="text" name="expiration_month" maxlength="2" required 
+             class="deposit-form-input" placeholder="MM" style="width: 133px;" />
+        </div>
+  
+        <div class="deposit-form-group">
+          <label class="deposit-form-label">Expiration Year</label>
+          <input type="text" name="expiration_year" maxlength="4" required 
+             class="deposit-form-input" placeholder="YYYY" style="width: 133px;" />
+        </div>
+  
+        <div class="deposit-form-group">
+          <label class="deposit-form-label">CVV</label>
+          <input type="text" name="cvv" maxlength="3" required 
+             class="deposit-form-input" placeholder="CVV" style="width: 133px;" />
+        </div>
+      </div>
+  
       <div class="deposit-form-group">
-        <label class="deposit-form-label">Expiration Year</label>
-        <input type="text" name="expiration_year" maxlength="4" required 
-           class="deposit-form-input" placeholder="YYYY" style="width: 133px;" />
+        <label class="deposit-form-label">Deposit Amount ($)</label>
+        <input type="number" name="amount" step="0.01" required 
+               class="deposit-form-input" placeholder="0.00" />
       </div>
-
-      <div class="deposit-form-group">
-        <label class="deposit-form-label">CVC</label>
-        <input type="text" name="cvc" maxlength="4" required 
-           class="deposit-form-input" placeholder="CVC" style="width: 133px;" />
+  
+      <div class="deposit-form-actions">
+        <button type="submit" class="deposit-submit-btn">Submit Deposit</button>
       </div>
-    </div>
-
-    <div class="deposit-form-group">
-      <label class="deposit-form-label">Deposit Amount ($)</label>
-      <input type="number" name="deposit_amount" step="0.01" required 
-             class="deposit-form-input" placeholder="0.00" />
-    </div>
-
-    <div class="deposit-form-actions">
-      <button type="submit" class="deposit-submit-btn">Submit Deposit</button>
-    </div>
-  </form>
-
-  <div id="responseMessage" class="deposit-response-message"></div>
-</div>
-
-<script>
-  const form = document.getElementById('depositForm');
-  const responseMessage = document.getElementById('responseMessage');
-
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    // Disable the submit button
-    const submitButton = form.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = "Processing...";
-
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => data[key] = value);
-
-    fetch('/deposit/process-payment/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': '{{ csrf_token() }}'  // ✅ Jinja2 / Flask CSRF token
-      },
-      body: JSON.stringify(data)
-    })
-    .then(async (response) => {
-      let result;
-      try {
-        result = await response.json();
-      } catch (err) {
-        throw new Error("Server returned invalid JSON. 1");
-      }
-
-      if (!response.ok) {
-        throw new Error(result.error || "Something went wrong.");
-      }
-
-      responseMessage.innerHTML = `
-        <p>✅ Deposit Successful!</p>
-        <p>Transaction ID: ${result.transaction_id}</p>
-        <p>Amount: $${result.amount}</p>
-      `;
-      responseMessage.className = 'deposit-response-message success';
-      window.location.href = "/deposit";
-    })
-    .catch(error => {
-      responseMessage.innerHTML = `<p>❌ Request failed: ${error.message}</p>`;
-      responseMessage.className = 'deposit-response-message error';
-    })
-    .finally(() => {
-      // Re-enable the submit button
-      submitButton.disabled = false;
-      submitButton.textContent = "Submit Deposit";
-      form.reset();
-    });
-  });
-</script>
+    </form>
+  
+    <div id="responseMessage" class="deposit-response-message"></div>
+  </div>
 {% endblock %}

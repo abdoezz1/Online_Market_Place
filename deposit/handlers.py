@@ -7,9 +7,10 @@ from deposit import queries as deposit_queries
 @require_login
 def deposit_page(request):
     """GET /deposit - Renders the deposit form"""
-    # Get current user to show current balance in the navbar/page
-    user_id = get_current_user(request)
-    return build_response(200, render_template("deposit/deposit.html", {"user_id": user_id}))
+    return build_response(200, render_template("deposit/deposit.html", {
+        "user": request.get("user"),
+        "profile": request.get("profile")
+    }))
 
 @require_login
 def process_deposit(request):
@@ -17,7 +18,7 @@ def process_deposit(request):
     if request['method'] != 'POST':
         return error_response(405, "Method Not Allowed")
 
-    user_id = get_current_user(request)
+    profile_id = request.get("profile_id")
     data = request.get('form_data', {})
     
     # **Extract and Clean Data**
@@ -45,7 +46,7 @@ def process_deposit(request):
         return error_response(400, "Amount must be between 10 and 10,000")
 
     # Max 3 deposits per day per user
-    daily_count = deposit_queries.get_daily_deposit_count(user_id)
+    daily_count = deposit_queries.get_daily_deposit_count(profile_id)
     if daily_count >= 3:
         return error_response(403, "Deposit limit reached: Max 3 per day")
 
@@ -63,9 +64,12 @@ def process_deposit(request):
         return error_response(400, "Invalid expiration date format (MM/YYYY).")
 
     # **Save to Database and update user balance**
-    success = deposit_queries.create_deposit_and_update_balance(user_id, amount)
-    
-    if success:
-        return redirect("/dashboard/transaction-report")
-    else:
-        return error_response(500, "Transaction failed. Please try again.")
+    try:
+        success = deposit_queries.create_deposit_and_update_balance(profile_id, amount)
+        if success:
+            return redirect("/dashboard/transaction-report")
+        else:
+            return error_response(500, "Transaction failed: Database did not confirm the change.")
+    except Exception as e:
+        print(f"DEPOSIT ERROR: {e}")
+        return error_response(500, f"Transaction failed: {str(e)}")
