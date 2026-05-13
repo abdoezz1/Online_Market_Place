@@ -1,5 +1,0 @@
-
---- UPLOAD AT 1778710789.7249165 ---
-Raw data len: 413
-CSV Headers: ['name', 'price', 'description', 'quantity', 'for_sale', 'available_stock', 'average_rating', 'view_count', 'owned_by_id', 'category_id']
-Rows prepared: 4
