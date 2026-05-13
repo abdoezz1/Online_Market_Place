@@ -4,4 +4,5 @@ routes = [
     ('GET', '/products/product_<id>', product_detail),
     ('GET', '/products/category/<id>', category_detail),
     ('GET', '/filter', filter_items),
+    ('GET', '/products', filter_items),
 ]

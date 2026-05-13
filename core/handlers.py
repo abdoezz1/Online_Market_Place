@@ -226,7 +226,7 @@ def user_detail(request):
     user_id = get_current_user(request)
 
     html = render_template('core/user_detail.html', {
-        'public_profile': public_profile,
+        'user_profile': public_profile,
         'avg_rating': avg_rating,
         'user_items': user_items,
         'user': q.get_user_by_id(user_id),

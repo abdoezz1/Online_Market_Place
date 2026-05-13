@@ -1,10 +1,10 @@
 INSERT INTO users (username, email, password, first_name, last_name, is_staff, is_active)
 VALUES
-    ('ahmed_m',   'ahmed@mail.com',   'Pass_123', 'Ahmed',  'Mohamed', FALSE, TRUE),
-    ('sara_k',    'sara@mail.com',    'New_Pass_124', 'Sara',   'Kamal',   FALSE, TRUE),
-    ('omar_h',    'omar@mail.com',    'NewPass_125', 'Omar',   'Hassan',  FALSE, TRUE),
-    ('admin',     'admin@mail.com',   'Admin_Pass_163', 'Admin',  'User',    TRUE,  TRUE),
-    ('nour_a',    'nour@mail.com',    'Nour_Pass_723', 'Nour',   'Ali',     FALSE, TRUE);
+    ('ahmed_m',   'ahmed@mail.com',   '$2b$12$rZ5OkHi0qBxvcB3bpN.RhuFCvDRa.LAWLxwZ9bbonbZnSF69urCra', 'Ahmed',  'Mohamed', FALSE, TRUE),
+    ('sara_k',    'sara@mail.com',    '$2b$12$QBElWtENFhbEw19LJqL8CeU9i/qMBj4.ffgxKxaZQd.LFzCqaBYAa', 'Sara',   'Kamal',   FALSE, TRUE),
+    ('omar_h',    'omar@mail.com',    '$2b$12$FyTRPqnbylQ11sm0y1pC0uy8TTchkp1W9LJ3uEP8p66eB4L45SzO6', 'Omar',   'Hassan',  FALSE, TRUE),
+    ('admin',     'admin@mail.com',   '$2b$12$DQ7xyChMz0b/68u8xg9bQu1TdKliey.c865cMH6x7/T9rnDgVIlla', 'Admin',  'User',    TRUE,  TRUE),
+    ('nour_a',    'nour@mail.com',    '$2b$12$bSNGV4DLFl9nF2H4htVHI.q5MXet0YsmS92N7vgrtmAfa1b.WiPjq', 'Nour',   'Ali',     FALSE, TRUE);
 
 
 INSERT INTO user_profiles (user_id, balance, created_at, updated_at)
@@ -52,6 +52,8 @@ VALUES
     ('Air Fryer',           69.99, '5L digital air fryer',            3,  TRUE,  3,  4.60, 100, 2, 7),
     ('Car Phone Mount',     14.99, 'Universal dashboard mount',       12, TRUE,  12, 4.00, 25,  3, 8),
     ('Dash Cam',            59.99, '1080p front and rear dash cam',   5,  TRUE,  5,  4.30, 55,  4, 8);
+
+UPDATE items SET image = '/static/images/default-product-image.jpg' WHERE image IS NULL OR image = '';
 
 
 

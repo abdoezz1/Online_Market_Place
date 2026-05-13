@@ -49,7 +49,7 @@ def category_detail(request):
 
     html = render_template('items/category_detail.html', {
         'category': category,
-        'items': items,
+        'products': items,
         'user': cq.get_user_by_id(user_id),
     })
     return build_response(200, html)
@@ -91,3 +91,20 @@ def _to_float(value):
         return float(value) if value not in (None, '') else None
     except (ValueError, TypeError):
         return None
+
+@require_login
+def purchased_products(request):
+
+    user_id = request["user"]["id"]
+
+    products = q.get_purchased_products(user_id)
+
+    html = render_template(
+        "items/purchased_products.html",
+        {
+            "products": products,
+            "user": request["user"]
+        }
+    )
+
+    return build_response(200, html)

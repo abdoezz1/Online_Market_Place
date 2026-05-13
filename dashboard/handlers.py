@@ -138,6 +138,9 @@ def make_review_submit(request):
     rating = data.get("rating")
     comment = data.get("comment", "")
 
+    if not rating:
+        return error_response(400, "Please select a rating.")
+
     if dashboard_queries.check_review_exists(user_profile_id, t_id, product_id):
         return error_response(400, "Review already submitted.")
 
@@ -152,7 +155,8 @@ def make_review_submit(request):
     ])
 
     if success:
-        return json_response({"message": "Review submitted successfully!"}, 201)
+        from core.http.response_builder import redirect
+        return redirect("/dashboard")
 
     return error_response(500, "Failed to save review.")
 

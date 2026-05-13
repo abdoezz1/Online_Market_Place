@@ -35,7 +35,20 @@ def get_user_transactions(profile_id):
 
 def get_transaction_by_id(transaction_id):
     """Fetches a single transaction by its primary key."""
-    sql = "SELECT * FROM transactions WHERE transaction_id = %s"
+    sql = """
+        SELECT t.*, 
+               u_buyer.username as buyer, 
+               u_seller.username as seller,
+               i.name as product_name,
+               i.price as product_price
+        FROM transactions t
+        LEFT JOIN user_profiles up_b ON t.buyer_id = up_b.id
+        LEFT JOIN users u_buyer ON up_b.user_id = u_buyer.id
+        LEFT JOIN user_profiles up_s ON t.seller_id = up_s.id
+        LEFT JOIN users u_seller ON up_s.user_id = u_seller.id
+        LEFT JOIN items i ON t.product_id = i.id
+        WHERE t.transaction_id = %s
+    """
     return execute_query(sql, (transaction_id,), fetch_one=True)
 
 # --- DEPOSITS ---
