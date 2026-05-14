@@ -1,10 +1,12 @@
 {% block content %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Store</title>
     <link rel="stylesheet" href="/static/css/stylesheet1.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap" rel="stylesheet">
     <style>
         /* Profile Icon Styles */
         .navbar-profile-icon {
@@ -37,7 +39,7 @@
             margin-top: 10px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             width: 200px;
             z-index: 1000;
             display: none;
@@ -104,7 +106,7 @@
             color: #2563EB !important;
             border-radius: 40%;
             transition: all 0.3s ease;
-            background-color: rgba(37,99,235,0.12);
+            background-color: rgba(37, 99, 235, 0.12);
             transform: scale(1.1);
         }
 
@@ -124,25 +126,61 @@
             font-weight: bold;
             border: 2px solid #222;
         }
+
+        /* ── Logo: centered + new font ── */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .logo {
+            font-family: 'Sora', sans-serif !important;
+            font-weight: 800;
+            font-size: 1.3rem;
+            letter-spacing: 0.01em;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        /* ── Left group: wallet + cart ── */
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: auto;
+        }
+
+        /* ── Right group: profile only ── */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-container">
+
+            <!-- Logo — centered absolutely -->
             <a href="{% if user %}/home{% else %}/{% endif %}" class="logo">
                 SALES<span> Square</span>
             </a>
 
-            <ul class="nav-links">
-                {% if user %}
-                <!-- Right-aligned items -->
+            {% if user %}
+            <!-- Left: wallet + cart -->
+            <ul class="nav-links nav-left" style="list-style:none;margin:0;padding:0;">
                 <li>
                     <a href="/deposit" class="balance-display">
                         <i class="fas fa-wallet"></i>
                         {% if user.profile %}${{ user.profile.balance }}{% else %}${{ profile.balance }}{% endif %}
                     </a>
                 </li>
-
                 <li>
                     <a href="/home/cart" class="cart-icon">
                         <i class="fas fa-shopping-cart"></i>
@@ -151,15 +189,17 @@
                         {% endif %}
                     </a>
                 </li>
+            </ul>
 
-                <!-- Profile with dropdown -->
+            <!-- Right: profile -->
+            <ul class="nav-links nav-right" style="list-style:none;margin:0;padding:0;">
                 <li>
                     <div class="navbar-profile-icon" onclick="toggleProfileMenu()">
                         {% if user.profile.photo or profile.photo %}
-                            <img src="{% if user.profile.photo %}{{ user.profile.photo }}{% else %}{{ profile.photo }}{% endif %}" alt="{{ user.username }}'s Profile"
-                                 class="profile-icon">
+                        <img src="{% if user.profile.photo %}{{ user.profile.photo }}{% else %}{{ profile.photo }}{% endif %}"
+                            alt="{{ user.username }}'s Profile" class="profile-icon">
                         {% else %}
-                            <i class="fas fa-user-circle profile-icon"></i>
+                        <i class="fas fa-user-circle profile-icon"></i>
                         {% endif %}
                     </div>
                     <div class="dropdown-menu" id="profileDropdown">
@@ -170,11 +210,15 @@
                         <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </li>
-                {% else %}
+            </ul>
+
+            {% else %}
+            <!-- Guest: auth buttons on the right -->
+            <ul class="nav-links nav-right" style="list-style:none;margin:0;padding:0;">
                 <li><a href="/signup" class="btn">Sign up</a></li>
                 <li><a href="/login" class="btn">Log In</a></li>
-                {% endif %}
             </ul>
+            {% endif %}
 
             <div class="hamburger">
                 <span></span>
