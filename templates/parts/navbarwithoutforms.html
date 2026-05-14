@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        /* Profile Icon Styles */
         .navbar-profile-icon {
             display: inline-block;
             margin-left: 15px;
@@ -32,7 +31,6 @@
             vertical-align: middle;
         }
 
-        /* Improved Dropdown Menu */
         .dropdown-menu {
             position: absolute;
             top: 100%;
@@ -67,7 +65,6 @@
             color: #2563EB !important;
         }
 
-        /* Balance Display */
         .balance-display {
             background-color: #2563EB;
             color: #FFFFFF !important;
@@ -88,7 +85,6 @@
             color: #FFFFFF !important;
         }
 
-        /* Cart Icon */
         .cart-icon {
             position: relative;
             display: flex;
@@ -127,7 +123,6 @@
             border: 2px solid #222;
         }
 
-        /* ── Logo: centered + new font ── */
         .nav-container {
             display: flex;
             align-items: center;
@@ -146,7 +141,6 @@
             text-decoration: none;
         }
 
-        /* ── Left group: wallet + cart ── */
         .nav-left {
             display: flex;
             align-items: center;
@@ -154,7 +148,6 @@
             margin-right: auto;
         }
 
-        /* ── Right group: profile only ── */
         .nav-right {
             display: flex;
             align-items: center;
@@ -167,12 +160,10 @@
     <nav class="navbar">
         <div class="nav-container">
 
-            <!-- Logo — centered absolutely -->
             <a href="{% if user %}/home{% else %}/{% endif %}" class="logo">
                 SALES<span> Square</span>
             </a>
 
-            {% if user %}
             <!-- Left: wallet + cart -->
             <ul class="nav-links nav-left" style="list-style:none;margin:0;padding:0;">
                 <li>
@@ -191,7 +182,7 @@
                 </li>
             </ul>
 
-            <!-- Right: profile -->
+            <!-- Right: profile dropdown -->
             <ul class="nav-links nav-right" style="list-style:none;margin:0;padding:0;">
                 <li>
                     <div class="navbar-profile-icon" onclick="toggleProfileMenu()">
@@ -206,19 +197,12 @@
                         <a href="/profile"><i class="fas fa-user"></i> Profile</a>
                         <a href="/deposit"><i class="fas fa-wallet"></i> Deposit</a>
                         <a href="/inventory"><i class="fas fa-boxes"></i> Inventory</a>
+                        <a href="/wishlist"><i class="fas fa-heart"></i> Wishlist</a>
                         <a href="/dashboard/transaction-report"><i class="fas fa-file-alt"></i> Reports</a>
                         <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </li>
             </ul>
-
-            {% else %}
-            <!-- Guest: auth buttons on the right -->
-            <ul class="nav-links nav-right" style="list-style:none;margin:0;padding:0;">
-                <li><a href="/signup" class="btn">Sign up</a></li>
-                <li><a href="/login" class="btn">Log In</a></li>
-            </ul>
-            {% endif %}
 
             <div class="hamburger">
                 <span></span>
