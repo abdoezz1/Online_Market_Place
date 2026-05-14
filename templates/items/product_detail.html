@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block navbar %}
 {% if user %}
 {% include 'parts/navbarwithoutforms.html' %}
@@ -10,108 +9,443 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="/static/css/item.css">
+<link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
-<div class="item-detail">
+<style>
+    :root {
+        --primary: #2563EB;
+        --primary-dark: #1D4ED8;
+        --bg: #F8FAFC;
+        --surface: #FFFFFF;
+        --text: #0F172A;
+        --text-muted: #64748B;
+        --border: #E2E8F0;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --transition: all 0.25s ease;
+    }
 
-    <div class="item-image">
-        <img src="{{ item.image }}" alt="{{ item.name }}">
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Outfit', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+    }
+
+    /* ── Hero Split ── */
+    .product-hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 88vh;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+    }
+
+    /* Left: image panel */
+    .hero-image-panel {
+        position: relative;
+        background: #F1F5F9;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-image-panel::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 30% 60%, rgba(37, 99, 235, 0.06) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .hero-image-panel img {
+        position: relative;
+        z-index: 2;
+        max-width: 80%;
+        max-height: 80vh;
+        object-fit: contain;
+        transition: transform 0.5s ease;
+        filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.12));
+    }
+
+    .hero-image-panel img:hover {
+        transform: scale(1.03);
+    }
+
+    /* Right: info panel */
+    .hero-info-panel {
+        padding: 60px 56px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: sticky;
+        top: 0;
+        align-self: start;
+        max-height: 88vh;
+        overflow-y: auto;
+    }
+
+    .product-category-tag {
+        display: inline-block;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--primary);
+        background: rgba(37, 99, 235, 0.08);
+        border-radius: 20px;
+        padding: 5px 14px;
+        margin-bottom: 22px;
+        width: fit-content;
+    }
+
+    .product-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.8rem, 3vw, 2.8rem);
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: var(--text);
+        margin-bottom: 18px;
+    }
+
+    .rating-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #FFFBEB;
+        border: 1px solid #FDE68A;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #92400E;
+        margin-bottom: 24px;
+        width: fit-content;
+    }
+
+    .rating-badge i {
+        color: gold;
+    }
+
+    .price-display {
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: -0.03em;
+        margin-bottom: 28px;
+        line-height: 1;
+    }
+
+    .divider {
+        width: 48px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 2px;
+        margin-bottom: 28px;
+    }
+
+    .product-description {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+        padding: 18px 20px;
+        background: var(--bg);
+        border-left: 3px solid var(--primary);
+        border-radius: 0 8px 8px 0;
+    }
+
+    .meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 24px;
+        margin-bottom: 32px;
+    }
+
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .meta-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+    }
+
+    .meta-value {
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .meta-value a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .meta-value a:hover {
+        text-decoration: underline;
+    }
+
+    /* ── Reviews ── */
+    .reviews-section {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 64px 32px;
+    }
+
+    .reviews-header {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .reviews-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .review-count {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .reviews-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .review-card {
+        display: grid;
+        grid-template-columns: 52px 1fr;
+        gap: 20px;
+        padding: 28px 0;
+        border-bottom: 1px solid var(--border);
+        animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .review-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .review-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .reviewer-name {
+        font-weight: 600;
+        font-size: 0.97rem;
+        color: var(--text);
+    }
+
+    .review-rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #92400E;
+        background: #FFFBEB;
+        border: 1px solid #FDE68A;
+        border-radius: 20px;
+        padding: 3px 10px;
+    }
+
+    .review-rating i {
+        color: gold;
+    }
+
+    .review-comment {
+        font-size: 0.93rem;
+        line-height: 1.65;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+    }
+
+    .review-date {
+        font-size: 0.78rem;
+        color: #94A3B8;
+        letter-spacing: 0.03em;
+    }
+
+    .no-reviews {
+        text-align: center;
+        padding: 48px 0;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+        .product-hero {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+
+        .hero-image-panel {
+            height: 52vw;
+            min-height: 220px;
+        }
+
+        .hero-info-panel {
+            padding: 36px 24px;
+            position: static;
+            max-height: none;
+        }
+
+        .meta-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .reviews-section {
+            padding: 40px 20px;
+        }
+    }
+</style>
+
+<!-- ── Product Hero ── -->
+<div class="product-hero">
+
+    <!-- Left: Image -->
+    <div class="hero-image-panel">
+        <img src="/static/images/default-product-image.jpg" alt="{{ item.name }}">
     </div>
 
-    <div class="item-info">
+    <!-- Right: Info -->
+    <div class="hero-info-panel">
 
-        <h1 style="display: flex; justify-content: space-between; align-items: center;">
-            {{ item.name }}
+        <span class="product-category-tag">{{ item.category_name }}</span>
 
-            {% if item.for_sale and item.average_rating and item.average_rating > 0 %}
-            <span>
-                {{ item.average_rating }}
-                <i class="fa fa-star" style="color: gold;"></i>
-            </span>
-            {% endif %}
-        </h1>
+        <h1 class="product-title">{{ item.name }}</h1>
 
-        <p class="price">
-            Price: ${{ item.price }}
-        </p>
+        {% if item.for_sale and item.average_rating and item.average_rating > 0 %}
+        <div class="rating-badge">
+            {{ item.average_rating }} <i class="fa fa-star"></i>
+        </div>
+        {% endif %}
 
-        <p>
-            Description: {{ item.description }}
-        </p>
+        <div class="price-display">${{ item.price }}</div>
 
-        <p>
-            Category: {{ item.category_name }}
-        </p>
+        <div class="divider"></div>
 
-        <p>
-            Seller:
-            <a href="/user/{{ item.owner_profile_id }}">
-                {{ item.owner_username }}
-            </a>
-        </p>
+        <p class="product-description">{{ item.description }}</p>
 
-        <p>
-            Created At: {{ item.created_at }}
-        </p>
+        <div class="meta-grid">
 
-        <p>
-            Available Quantity: {{ item.quantity }}
-        </p>
+            <div class="meta-item">
+                <span class="meta-label">Seller</span>
+                <span class="meta-value">
+                    <a href="/user/{{ item.owner_profile_id }}">{{ item.owner_username }}</a>
+                </span>
+            </div>
 
-    </div>
+            <div class="meta-item">
+                <span class="meta-label">Available</span>
+                <span class="meta-value">{{ item.quantity }} units</span>
+            </div>
 
-</div>
-
-<!-- Reviews -->
-
-{% if item.for_sale %}
-<div class="reviews-section">
-
-    <h2>Reviews</h2>
-
-    <div class="reviews-container" style="display:flex; flex-wrap:wrap; gap:16px; margin-top:20px;">
-
-        {% if reviews %}
-
-        {% for review in reviews %}
-
-        <div class="review-card" style="border:1px solid #E2E8F0;
-                            border-radius:8px;
-                            padding:16px;
-                            width:300px;
-                            box-shadow:0 4px 8px rgba(0,0,0,0.1);">
-
-            <h3 style="margin:0;">
-                {{ review.username }}
-            </h3>
-
-            <p style="margin:8px 0;">
-                Rating: {{ review.rating }}
-                <i class="fa fa-star" style="color: gold;"></i>
-            </p>
-
-            <p style="margin:8px 0;">
-                {{ review.comment }}
-            </p>
-
-            <p style="font-size:0.9rem; color:#64748B;">
-                {{ review.created_at }}
-            </p>
+            <div class="meta-item">
+                <span class="meta-label">Listed On</span>
+                <span class="meta-value">{{ item.created_at }}</span>
+            </div>
 
         </div>
 
+    </div>
+</div>
+
+<!-- ── Reviews ── -->
+{% if item.for_sale %}
+<div class="reviews-section">
+
+    <div class="reviews-header">
+        <h2>Reviews</h2>
+        {% if reviews %}
+        <span class="review-count">{{ reviews|length }} review{{ reviews|length|pluralize }}</span>
+        {% endif %}
+    </div>
+
+    <div class="reviews-container">
+
+        {% if reviews %}
+        {% for review in reviews %}
+        <div class="review-card" style="--delay: {{ forloop.counter0 }}; animation-delay: calc(var(--delay) * 100ms);">
+
+            <div class="review-avatar">
+                {{ review.username|first|upper }}
+            </div>
+
+            <div class="review-body">
+                <div class="review-top">
+                    <span class="reviewer-name">{{ review.username }}</span>
+                    <span class="review-rating">
+                        {{ review.rating }} <i class="fa fa-star"></i>
+                    </span>
+                </div>
+                <p class="review-comment">{{ review.comment }}</p>
+                <span class="review-date">{{ review.created_at }}</span>
+            </div>
+
+        </div>
         {% endfor %}
-
         {% else %}
-
-        <p>No reviews yet.</p>
-
+        <p class="no-reviews">No reviews yet — be the first to share your thoughts!</p>
         {% endif %}
 
     </div>
-
 </div>
 {% endif %}
 
