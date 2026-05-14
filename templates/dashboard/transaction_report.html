@@ -1,81 +1,475 @@
 {% extends 'base.html' %}
-
 {% block navbar %}
-    {% if user %}
-        {% include 'parts/navbarwithoutforms.html' %}
-    {% else %}
-        {% include 'parts/navbar.html' %}
-    {% endif %}
+{% if user %}
+{% include 'parts/navbarwithoutforms.html' %}
+{% else %}
+{% include 'parts/navbar.html' %}
+{% endif %}
 {% endblock %}
-
 {% block extra_css %}
 <link rel="stylesheet" href="/static/css/messages.css">
 <link rel="stylesheet" type="text/css" href="/static/css/dashboard.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@700;800&display=swap"
+    rel="stylesheet">
 {% endblock %}
-
 {% block content %}
+
 {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="alert {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
+<div class="messages" style="position:fixed;top:20px;right:20px;z-index:9999;max-width:360px;">
+    {% for message in messages %}
+    <div class="alert {{ message.tags }}" style="
+                padding:14px 18px;border-radius:10px;margin-bottom:10px;
+                font-size:0.88rem;font-family:'DM Sans',sans-serif;
+                box-shadow:0 4px 16px rgba(0,0,0,0.1);background:#fff;
+                border-left:4px solid #2563EB;">{{ message }}</div>
+    {% endfor %}
+</div>
 {% endif %}
 
-<div class="wrapper">
-    <h1><i class="fas fa-file-invoice"></i> {{ user_profile }} Reports</h1>
+<style>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
 
-    <table class="styled-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>to_party</th>
-                <th>from_party</th>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Total Price</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in combined_data %}
-            <tr>
-                {% if item.type == 'Transaction' %}
-                    <td>T-{{ item.data.transaction_id }}</td>
-                    <td>{{ item.type }}</td>
-                    <td>{{ item.data.buyer_name }}</td>
-                    <td>{{ item.data.seller_name }}</td>
-                    <td>{{ item.data.product_name }}</td>
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: #F8FAFC;
+        color: #0F172A;
+    }
+
+    /* ── Page Wrapper ── */
+    .reports-wrapper {
+        max-width: 1200px;
+        margin: 48px auto;
+        padding: 0 24px;
+    }
+
+    /* ── Page Header ── */
+    .reports-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .reports-header-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .reports-icon-wrap {
+        width: 48px;
+        height: 48px;
+        background: #DBEAFE;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2563EB;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .reports-header h1 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: #0F172A;
+        margin: 0 0 2px;
+    }
+
+    .reports-header p {
+        font-size: 0.82rem;
+        color: #64748B;
+        margin: 0;
+    }
+
+    /* ── Summary Pills ── */
+    .reports-summary {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .summary-pill {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 14px;
+        border-radius: 50px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        border: 1px solid;
+    }
+
+    .summary-pill.transactions {
+        background: #EFF6FF;
+        border-color: #BFDBFE;
+        color: #1D4ED8;
+    }
+
+    .summary-pill.deposits {
+        background: #F0FDF4;
+        border-color: #BBF7D0;
+        color: #15803D;
+    }
+
+    /* ── Table Card ── */
+    .table-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    /* ── Table ── */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+
+    .styled-table thead {
+        background: #F8FAFC;
+        border-bottom: 2px solid #E2E8F0;
+    }
+
+    .styled-table thead th {
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: #64748B;
+        white-space: nowrap;
+    }
+
+    .styled-table thead th:first-child {
+        padding-left: 24px;
+    }
+
+    .styled-table thead th:last-child {
+        padding-right: 24px;
+        text-align: center;
+    }
+
+    .styled-table tbody tr {
+        border-bottom: 1px solid #F1F5F9;
+        transition: background 0.18s ease;
+    }
+
+    .styled-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .styled-table tbody tr:hover {
+        background: #F8FAFC;
+    }
+
+    .styled-table tbody td {
+        padding: 14px 16px;
+        color: #334155;
+        vertical-align: middle;
+    }
+
+    .styled-table tbody td:first-child {
+        padding-left: 24px;
+    }
+
+    .styled-table tbody td:last-child {
+        padding-right: 24px;
+    }
+
+    /* ── ID Badge ── */
+    .id-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        font-family: 'DM Mono', monospace;
+        letter-spacing: 0.03em;
+    }
+
+    .id-badge.transaction {
+        background: #EFF6FF;
+        color: #2563EB;
+        border: 1px solid #BFDBFE;
+    }
+
+    .id-badge.deposit {
+        background: #F0FDF4;
+        color: #15803D;
+        border: 1px solid #BBF7D0;
+    }
+
+    /* ── Type Badge ── */
+    .type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .type-badge.transaction {
+        background: #EFF6FF;
+        color: #1D4ED8;
+    }
+
+    .type-badge.deposit {
+        background: #F0FDF4;
+        color: #15803D;
+    }
+
+    /* ── Party Cell ── */
+    .party-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    .party-name {
+        font-weight: 600;
+        color: #0F172A;
+        font-size: 0.85rem;
+    }
+
+    .party-label {
+        font-size: 0.72rem;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* ── Price ── */
+    .price-total {
+        font-weight: 700;
+        color: #0F172A;
+    }
+
+    .price-unit {
+        color: #64748B;
+    }
+
+    .na-cell {
+        color: #CBD5E1;
+        font-size: 0.8rem;
+    }
+
+    /* ── Date ── */
+    .date-cell {
+        color: #64748B;
+        font-size: 0.82rem;
+        white-space: nowrap;
+    }
+
+    /* ── Action Buttons ── */
+    .action-buttons {
+        display: flex;
+        gap: 7px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        border-radius: 7px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .btn.review {
+        background: #EFF6FF;
+        border-color: #BFDBFE;
+        color: #2563EB;
+    }
+
+    .btn.review:hover {
+        background: #2563EB;
+        border-color: #2563EB;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .btn.print {
+        background: #F8FAFC;
+        border-color: #E2E8F0;
+        color: #475569;
+    }
+
+    .btn.print:hover {
+        background: #0F172A;
+        border-color: #0F172A;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    /* ── Empty State ── */
+    .empty-state {
+        text-align: center;
+        padding: 64px 24px;
+        color: #94A3B8;
+    }
+
+    .empty-state i {
+        font-size: 2.5rem;
+        margin-bottom: 14px;
+        display: block;
+        color: #CBD5E1;
+    }
+
+    .empty-state p {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+        .reports-wrapper {
+            padding: 0 12px;
+        }
+
+        .styled-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<div class="reports-wrapper">
+
+    <!-- Header -->
+    <div class="reports-header">
+        <div class="reports-header-left">
+            <div class="reports-icon-wrap">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <div>
+                <h1>{{ user_profile }} Reports</h1>
+                <p>Full transaction and deposit history</p>
+            </div>
+        </div>
+
+        <!-- Summary pills -->
+        <div class="reports-summary">
+            <span class="summary-pill transactions">
+                <i class="fas fa-arrow-right-arrow-left"></i>
+                {{ combined_data | selectattr("type", "equalto", "Transaction") | list | length }} Transactions
+            </span>
+            <span class="summary-pill deposits">
+                <i class="fas fa-wallet"></i>
+                {{ combined_data | selectattr("type", "equalto", "Deposit") | list | length }} Deposits
+            </span>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>To Party</th>
+                    <th>From Party</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in combined_data %}
+                <tr>
+                    {% if item.type == 'Transaction' %}
+                    <td>
+                        <span class="id-badge transaction">T-{{ item.data.transaction_id }}</span>
+                    </td>
+                    <td>
+                        <span class="type-badge transaction">
+                            <i class="fas fa-arrow-right-arrow-left"></i> Transaction
+                        </span>
+                    </td>
+                    <td>
+                        <div class="party-cell">
+                            <span class="party-name">{{ item.data.buyer_name }}</span>
+                            <span class="party-label">Buyer</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="party-cell">
+                            <span class="party-name">{{ item.data.seller_name }}</span>
+                            <span class="party-label">Seller</span>
+                        </div>
+                    </td>
+                    <td style="font-weight:500;color:#0F172A;">{{ item.data.product_name }}</td>
                     <td>{{ item.data.quantity }}</td>
-                    <td>{{ item.data.unit_price if item.data.unit_price else item.data.price }}</td>
-                    <td>{{ item.data.total_price }}</td>
-                    <td>{{ item.data.date.strftime("%Y-%m-%d %H:%M") if item.data.date else '' }}</td>
+                    <td class="price-unit">${{ item.data.unit_price if item.data.unit_price else item.data.price }}</td>
+                    <td class="price-total">${{ item.data.total_price }}</td>
+                    <td class="date-cell">{{ item.data.date.strftime("%Y-%m-%d %H:%M") if item.data.date else '' }}</td>
                     <td>
                         <div class="action-buttons">
                             {% if item.data.seller_name != user.username %}
-                                <a href="/dashboard/transaction/{{ item.data.transaction_id }}/make-review" class="btn review">
-                                    <i class="fas fa-eye"></i> Review
-                                </a>
+                            <a href="/dashboard/transaction/{{ item.data.transaction_id }}/make-review"
+                                class="btn review">
+                                <i class="fas fa-eye"></i> Review
+                            </a>
                             {% endif %}
-                            <a href="/dashboard/transaction/{{ item.data.transaction_id }}/print" class="btn print" target="_blank">
+                            <a href="/dashboard/transaction/{{ item.data.transaction_id }}/print" class="btn print"
+                                target="_blank">
                                 <i class="fas fa-print"></i> Print
                             </a>
                         </div>
                     </td>
-                {% elif item.type == 'Deposit' %}
-                    <td>D-{{ item.data.id }}</td>
-                    <td>{{ item.type }}</td>
-                    <td>{{ item.data.user }}</td>
-                    <td>System</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>{{ item.data.amount }}</td>
-                    <td>{{ item.data.date.strftime("%Y-%m-%d %H:%M") if item.data.date else '' }}</td>
+
+                    {% elif item.type == 'Deposit' %}
+                    <td>
+                        <span class="id-badge deposit">D-{{ item.data.id }}</span>
+                    </td>
+                    <td>
+                        <span class="type-badge deposit">
+                            <i class="fas fa-wallet"></i> Deposit
+                        </span>
+                    </td>
+                    <td>
+                        <div class="party-cell">
+                            <span class="party-name">{{ item.data.user }}</span>
+                            <span class="party-label">User</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="party-cell">
+                            <span class="party-name">System</span>
+                            <span class="party-label">Source</span>
+                        </div>
+                    </td>
+                    <td class="na-cell">—</td>
+                    <td class="na-cell">—</td>
+                    <td class="na-cell">—</td>
+                    <td class="price-total">${{ item.data.amount }}</td>
+                    <td class="date-cell">{{ item.data.date.strftime("%Y-%m-%d %H:%M") if item.data.date else '' }}</td>
                     <td>
                         <div class="action-buttons">
                             <a href="/dashboard/deposit/{{ item.data.id }}/print" class="btn print" target="_blank">
@@ -83,11 +477,23 @@
                             </a>
                         </div>
                     </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+                    {% endif %}
+                </tr>
+                {% endfor %}
 
+                {% if not combined_data %}
+                <tr>
+                    <td colspan="10">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No transactions or deposits found.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
 {% endblock %}
