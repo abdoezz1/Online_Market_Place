@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block navbar %}
 {% if user %}
 {% include 'parts/navbarwithoutforms.html' %}
@@ -7,368 +6,490 @@
 {% include 'parts/navbar.html' %}
 {% endif %}
 {% endblock %}
-
 {% block extra_css %}
 <link rel="stylesheet" href="/static/css/items.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@700;800&display=swap"
+    rel="stylesheet">
 {% endblock %}
-
 {% block content %}
 
 {% if messages %}
-<div class="messages">
+<div class="messages" style="position:fixed;top:20px;right:20px;z-index:9999;max-width:360px;">
     {% for message in messages %}
-    <div class="alert {{ message.tags }}">{{ message }}</div>
+    <div class="alert {{ message.tags }}" style="
+        padding:14px 18px;border-radius:10px;margin-bottom:10px;
+        font-size:0.88rem;font-family:'DM Sans',sans-serif;
+        box-shadow:0 4px 16px rgba(0,0,0,0.1);background:#fff;
+        border-left:4px solid #2563EB;">{{ message }}</div>
     {% endfor %}
 </div>
 {% endif %}
 
 <style>
-    :root {
-        --primary: #2563EB;
-        --primary-dark: #1D4ED8;
-        --bg: #F8FAFC;
-        --surface: #FFFFFF;
-        --text: #0F172A;
-        --text-muted: #64748B;
-        --border: #E2E8F0;
-        --radius: 10px;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-        --transition: all 0.25s ease;
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
     }
 
     body {
-        font-family: 'Segoe UI', sans-serif;
-        background: var(--bg);
-        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+        background: #F8FAFC;
+        color: #0F172A;
     }
 
-    .main-container {
+    /* ── Layout ── */
+    .page-shell {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 36px 24px;
+    }
+
+    /* ── Top Bar ── */
+    .topbar {
         display: flex;
-        min-height: 100vh;
-    }
-
-    .sidebar {
-        width: 250px;
-        background: white;
-        padding: 20px;
-        border-right: 1px solid var(--border);
-    }
-
-    .sidebar h3 {
-        margin-bottom: 20px;
-    }
-
-    .filter-section {
-        margin-bottom: 20px;
-    }
-
-    .price-input-group {
-        margin-bottom: 10px;
-    }
-
-    .price-filter {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-    }
-
-    #apply-filters {
-        width: 100%;
-        padding: 10px;
-        background: var(--primary);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-
-    #apply-filters:hover {
-        background: var(--primary-dark);
-    }
-
-    .content {
-        flex: 1;
-        padding: 25px;
-    }
-
-    .search-container {
-        margin-bottom: 25px;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 32px;
     }
 
     .search-bar {
+        flex: 1;
         display: flex;
         gap: 10px;
     }
 
-    .search-bar input {
+    .search-bar input[type="text"] {
         flex: 1;
-        padding: 12px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
+        padding: 10px 16px;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #0F172A;
+        background: #fff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-bar input[type="text"]:focus {
+        outline: none;
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .search-bar button {
-        padding: 12px 18px;
-        background: var(--primary);
-        color: white;
+        padding: 10px 20px;
+        background: #2563EB;
+        color: #fff;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 600;
+        font-size: 0.88rem;
         cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+        white-space: nowrap;
     }
 
-    .category-title {
+    .search-bar button:hover {
+        background: #1D4ED8;
+        transform: translateY(-1px);
+    }
+
+    /* ── Body: grid ── */
+    .body-layout {
+        display: grid;
+        grid-template-columns: 1fr 220px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    /* ── Category Header ── */
+    .category-header {
         margin-bottom: 20px;
     }
 
-    .items-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 20px;
+    .category-header h1 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0F172A;
+        margin: 0 0 4px;
     }
 
+    .category-header p {
+        font-size: 0.82rem;
+        color: #64748B;
+        margin: 0;
+    }
+
+    /* ── Products Grid ── */
+    .items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 18px;
+    }
+
+    /* ── Product Card ── */
     .item {
-        background: white;
+        background: #fff;
+        border: 1px solid #E2E8F0;
         border-radius: 12px;
-        padding: 15px;
-        box-shadow: var(--shadow-sm);
-        transition: var(--transition);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.22s ease;
     }
 
     .item:hover {
         transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+        border-color: #CBD5E1;
     }
 
-    .item-image-container {
-        height: 200px;
+    .item-img-wrap {
+        width: 100%;
+        height: 170px;
+        background: #F8FAFC;
         display: flex;
-        justify-content: center;
         align-items: center;
-        margin-bottom: 15px;
+        justify-content: center;
+        padding: 14px;
+        border-bottom: 1px solid #E2E8F0;
         overflow: hidden;
-        background: #f8f8f8;
-        border-radius: 8px;
     }
 
-    .item-image-container img {
+    .item-img-wrap img {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
+        transition: transform 0.3s ease;
     }
 
-    .item h2 {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
+    .item:hover .item-img-wrap img {
+        transform: scale(1.05);
     }
 
-    .item p {
-        margin: 5px 0;
-        color: var(--text-muted);
-    }
-
-    .rating {
-        color: gold;
-        font-size: 0.9rem;
-    }
-
-    .item form {
-        margin-top: 12px;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .item input[type="number"] {
-        width: 60px;
-        padding: 6px;
-    }
-
-    .item button {
+    .item-body {
+        padding: 12px 14px;
         flex: 1;
-        padding: 10px;
-        background: var(--primary);
-        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .item-name {
+        font-family: 'Sora', sans-serif;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #0F172A;
+        margin: 0 0 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.4em;
+        line-height: 1.35;
+    }
+
+    .item-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #F59E0B;
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .item-price {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2563EB;
+        margin: 0;
+    }
+
+    .item-stock {
+        font-size: 0.78rem;
+        color: #94A3B8;
+        margin: 0;
+    }
+
+    /* ── Cart Row ── */
+    .item-cart {
+        padding: 10px 14px 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-top: 1px solid #F1F5F9;
+    }
+
+    .qty-label {
+        font-size: 0.75rem;
+        color: #64748B;
+        font-weight: 600;
+    }
+
+    .qty-input {
+        width: 46px;
+        padding: 5px 6px;
+        border: 1px solid #E2E8F0;
+        border-radius: 7px;
+        text-align: center;
+        font-size: 0.85rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #0F172A;
+        background: #F8FAFC;
+    }
+
+    .cart-btn {
+        flex: 1;
+        padding: 8px 10px;
+        background: #2563EB;
+        color: #fff;
         border: none;
         border-radius: 8px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
         cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
     }
 
-    .item button:hover {
-        background: var(--primary-dark);
+    .cart-btn:hover {
+        background: #1D4ED8;
     }
 
     .no-products {
-        font-size: 18px;
-        color: gray;
+        color: #94A3B8;
+        font-size: 0.9rem;
+        grid-column: 1 / -1;
+        padding: 40px 0;
+        text-align: center;
+    }
+
+    /* ── Filter Panel (right) ── */
+    .filter-panel {
+        background: #fff;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 20px 18px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        position: sticky;
+        top: 100px;
+    }
+
+    .filter-panel-title {
+        font-family: 'Sora', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #2563EB;
+        margin: 0 0 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #E2E8F0;
+    }
+
+    .filter-section {
+        margin-bottom: 18px;
+    }
+
+    .filter-section h4 {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 10px;
+    }
+
+    .price-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .price-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .price-field label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .price-field input {
+        padding: 7px 10px;
+        border: 1px solid #E2E8F0;
+        border-radius: 7px;
+        font-size: 0.85rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #0F172A;
+        background: #F8FAFC;
+        width: 100%;
+        transition: border-color 0.2s;
+    }
+
+    .price-field input:focus {
+        outline: none;
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    #apply-filters {
+        width: 100%;
+        margin-top: 16px;
+        padding: 10px;
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        border-radius: 25px;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    #apply-filters:hover {
+        background: #1D4ED8;
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 860px) {
+        .body-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-panel {
+            position: static;
+        }
+    }
+
+    @media (max-width: 540px) {
+        .page-shell {
+            padding: 16px;
+        }
+
+        .topbar {
+            flex-direction: column;
+        }
     }
 </style>
 
-<div class="main-container">
+<div class="page-shell">
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-
-        <h3>Filter By</h3>
-
-        <div class="filter-section">
-
-            <h4>Price Range</h4>
-
-            <div class="price-input-group">
-                <label>Min:</label>
-                <input type="number" id="min-price" class="price-filter">
+    <!-- Search Top Bar -->
+    <form method="get" action="/filter">
+        <div class="topbar">
+            <div class="search-bar">
+                <input type="text" name="query" placeholder="Search products…" value="{{ query }}" id="search-input">
+                <button type="submit"><i class="fa fa-search"></i> Search</button>
             </div>
-
-            <div class="price-input-group">
-                <label>Max:</label>
-                <input type="number" id="max-price" class="price-filter">
-            </div>
-
         </div>
+    </form>
 
-        <button id="apply-filters">
-            Apply Filters
-        </button>
+    <!-- Body -->
+    <div class="body-layout">
 
-    </div>
+        <!-- Products Column -->
+        <div class="products-col">
+            <div class="category-header">
+                <h1>{{ category.name }}</h1>
+                <p>
+                    {% if products %}{{ products|length }} product{% if products|length != 1 %}s{% endif %} available{%
+                    else %}No products found{% endif %}
+                </p>
+            </div>
 
-    <!-- Main Content -->
-    <div class="content">
+            <div class="items-grid">
+                {% if products %}
+                {% for product in products %}
+                <div class="item" data-price="{{ product.price }}" data-name="{{ product.name|lower }}">
 
-        <!-- Search -->
-        <div class="search-container">
+                    <div class="item-img-wrap">
+                        <a href="/products/product_{{ product.id }}">
+                            <img src="/static/images/default-product-image.png" alt="{{ product.name }}">
+                        </a>
+                    </div>
 
-            <form method="get" action="/filter">
+                    <div class="item-body">
+                        <p class="item-name">{{ product.name }}</p>
+                        {% if product.average_rating and product.average_rating > 0 %}
+                        <div class="item-rating">
+                            <i class="fa fa-star"></i> {{ product.average_rating }}
+                        </div>
+                        {% endif %}
+                        <p class="item-price">${{ product.price }}</p>
+                        <p class="item-stock">{{ product.quantity }} in stock</p>
+                    </div>
 
-                <div class="search-bar">
-
-                    <input type="text" name="query" placeholder="Search products..." value="{{ query }}"
-                        id="search-input">
-
-                    <button type="submit">
-                        Search
-                    </button>
+                    <form action="/home/add-to-cart" method="get" class="item-cart">
+                        <span class="qty-label">Qty</span>
+                        <input type="number" class="qty-input" name="quantity" min="1" max="{{ product.quantity }}"
+                            value="1">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <button type="submit" class="cart-btn">
+                            <i class="fa fa-cart-plus"></i> Add
+                        </button>
+                    </form>
 
                 </div>
-
-            </form>
-
+                {% endfor %}
+                {% else %}
+                <p class="no-products">No products available in this category.</p>
+                {% endif %}
+            </div>
         </div>
 
-        <!-- Category -->
-        <h1 class="category-title">
-            {{ category.name }}
-        </h1>
-
-        <!-- Products -->
-        <div class="items-grid">
-
-            {% if products %}
-
-            {% for product in products %}
-
-            <div class="item" data-price="{{ product.price }}" data-name="{{ product.name|lower }}">
-
-                <div class="item-image-container">
-
-                    <a href="/products/product_{{ product.id }}">
-
-                        <img src="{{ product.image }}" alt="{{ product.name }}">
-
-                    </a>
-
+        <!-- Filter Panel -->
+        <div class="filter-panel">
+            <p class="filter-panel-title">Filter By</p>
+            <div class="filter-section">
+                <h4>Price Range ($)</h4>
+                <div class="price-grid">
+                    <div class="price-field">
+                        <label for="min-price">Min</label>
+                        <input type="number" id="min-price" placeholder="0" min="0">
+                    </div>
+                    <div class="price-field">
+                        <label for="max-price">Max</label>
+                        <input type="number" id="max-price" placeholder="9999" min="0">
+                    </div>
                 </div>
-
-                <h2>
-
-                    {{ product.name }}
-
-                    {% if product.average_rating and product.average_rating > 0 %}
-                    <span class="rating">
-                        {{ product.average_rating }}
-                        <i class="fa fa-star"></i>
-                    </span>
-                    {% endif %}
-
-                </h2>
-
-                <p>
-                    <strong>Price:</strong>
-                    ${{ product.price }}
-                </p>
-
-                <p>
-                    <strong>Stock:</strong>
-                    {{ product.quantity }}
-                </p>
-
-                <form action="/home/add-to-cart" method="get">
-
-                    <input type="number" name="quantity" min="1" max="{{ product.quantity }}" value="1">
-
-                    <input type="hidden" name="product_id" value="{{ product.id }}">
-
-                    <button type="submit">
-                        Add to Cart
-                    </button>
-
-                </form>
-
             </div>
-
-            {% endfor %}
-
-            {% else %}
-
-            <p class="no-products">
-                No products available.
-            </p>
-
-            {% endif %}
-
+            <button id="apply-filters">Apply Filters</button>
         </div>
 
     </div>
-
 </div>
 
 <script>
-
     document.getElementById('apply-filters').addEventListener('click', function () {
-
-        const minPrice =
-            parseFloat(document.getElementById('min-price').value) || 0;
-
-        const maxPrice =
-            parseFloat(document.getElementById('max-price').value) || Infinity;
-
-        const searchQuery =
-            document.getElementById('search-input').value.toLowerCase();
+        const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
+        const maxPrice = parseFloat(document.getElementById('max-price').value) || Infinity;
+        const searchQuery = document.getElementById('search-input').value.toLowerCase();
 
         document.querySelectorAll('.item').forEach(item => {
-
-            const price =
-                parseFloat(item.dataset.price);
-
-            const name =
-                item.dataset.name;
-
-            const matchesPrice =
-                price >= minPrice && price <= maxPrice;
-
-            const matchesSearch =
-                name.includes(searchQuery);
-
-            if (matchesPrice && matchesSearch) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-
+            const price = parseFloat(item.dataset.price);
+            const name = item.dataset.name;
+            const matchesPrice = price >= minPrice && price <= maxPrice;
+            const matchesSearch = name.includes(searchQuery);
+            item.style.display = (matchesPrice && matchesSearch) ? 'flex' : 'none';
         });
-
     });
-
 </script>
 
 {% endblock %}
