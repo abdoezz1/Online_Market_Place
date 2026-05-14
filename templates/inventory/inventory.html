@@ -1,203 +1,217 @@
 {% extends 'base.html' %}
 
 {% block navbar %}
-    {% if user %}
-        {% include 'parts/navbarwithoutforms.html' %}
-    {% else %}
-        {% include 'parts/navbar.html' %}
-    {% endif %}
+{% if user %}
+{% include 'parts/navbarwithoutforms.html' %}
+{% else %}
+{% include 'parts/navbar.html' %}
+{% endif %}
 {% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="/static/css/inventory.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@600;700&display=swap"
+    rel="stylesheet">
 {% endblock %}
 
 {% block content %}
+
 {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="alert {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
+<div class="messages" style="position:fixed;top:20px;right:20px;z-index:9999;max-width:360px;">
+    {% for message in messages %}
+    <div class="alert {{ message.tags }}" style="
+                padding: 14px 18px;
+                border-radius: 10px;
+                margin-bottom: 10px;
+                font-size: 0.88rem;
+                font-family: 'DM Sans', sans-serif;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+                background: #fff;
+                border-left: 4px solid #2563EB;
+            ">{{ message }}</div>
+    {% endfor %}
+</div>
 {% endif %}
 
 <style>
-    /* Remove ALL default <a> tag styling for .addItem */
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: #F8FAFC;
+    }
+
+    .inventory-wrapper {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 24px;
+    }
+
+    /* ── Page Header ── */
+    .inventory-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .inventory-page-header h1 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.5rem;
+        color: #0F172A;
+        margin: 0;
+    }
+
+    .inventory-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    /* ── Shared Button Base ── */
+    .inv-btn {
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .inv-btn-primary {
+        background: #2563EB;
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+    }
+
+    .inv-btn-primary:hover {
+        background: #1D4ED8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .inv-btn-secondary {
+        background: #E2E8F0;
+        color: #0F172A;
+    }
+
+    .inv-btn-secondary:hover {
+        background: #CBD5E1;
+        transform: translateY(-1px);
+    }
+
+    .inv-btn-danger {
+        background: #EF4444;
+        color: #fff;
+    }
+
+    .inv-btn-danger:hover {
+        background: #DC2626;
+        transform: translateY(-1px);
+    }
+
     a.addItem {
         text-decoration: none !important;
         color: inherit !important;
-        display: inline-block !important;
-        width: 100% !important;
-        height: 100% !important;
-        line-height: normal !important;
-        outline: none !important;
-        cursor: pointer !important;
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        font: inherit !important;
-    }
-    
-    /* Modal background */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
+        display: block;
         width: 100%;
         height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-    }
-    
-    /* Modal content box */
-    .modal-content {
-        background-color: #ffffff;
-        margin: 10% auto;
-        padding: 30px 25px;
-        border-radius: 12px;
-        width: 350px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        position: relative;
-    }
-    
-    /* Close button */
-    .modal .close {
-        position: absolute;
-        top: 12px;
-        right: 18px;
-        font-size: 22px;
-        color: #888;
+        line-height: normal;
         cursor: pointer;
     }
-    
-    /* Form input */
-    .modal-content input[type="text"] {
-        width: 90%;
-        padding: 10px 12px;
-        margin: 20px 0;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 16px;
-        outline: none;
-    }
-    
-    /* Add Category button inside modal */
-    .modal-content button[type="submit"] {
-        background-color: #2563EB;
-        color: #FFFFFF;
-        padding: 10px 22px;
-        border: none;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.2s ease-in-out;
-    }
-    
-    .modal-content button[type="submit"]:hover {
-        background-color: #1D4ED8;
-    }
-    .form-group {
-        margin-bottom: 20px;
+
+    /* ── Section Cards ── */
+    .category-box {
+        background: #ffffff;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
     }
 
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-    }
-
-    .form-group select,
-    .form-group input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 16px;
-    }
-
-    .form-actions {
+    .section-header {
         display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #E2E8F0;
+        flex-wrap: wrap;
+        gap: 12px;
     }
-    
-    .cancel-btn {
-        background-color: #E2E8F0;
+
+    .section-header h2 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.05rem;
         color: #0F172A;
-        border: none;
-        padding: 10px 18px;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: bold;
-        font-size: 1rem;
+        margin: 0;
     }
 
-    .cancel-btn:hover {
-        background-color: #CBD5E1;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-sm); 
-    }
-
-    /* Scroll Container Styling */
+    /* ── Item Cards ── */
     .scroll-container {
-        display: grid;
-        grid-template-rows: repeat(3, auto);
-        gap: 15px;
-        padding-right: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-height: 440px;
+        overflow-y: auto;
+        padding-right: 6px;
     }
 
-    /* Custom Scrollbar */
     .scroll-container::-webkit-scrollbar {
-        width: 6px;
+        width: 5px;
     }
+
     .scroll-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: #F1F5F9;
         border-radius: 3px;
     }
+
     .scroll-container::-webkit-scrollbar-thumb {
         background: #2563EB;
         border-radius: 3px;
     }
-    .scroll-container::-webkit-scrollbar-thumb:hover {
-        background: #1D4ED8;
-    }
 
-    /* Item Card Container */
     .item-card {
-        display: flex;
-        gap: 15px;
-        padding: 15px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        margin-bottom: 15px;
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        gap: 20px;
+        align-items: center;
+        padding: 16px 18px;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        transition: all 0.25s ease;
     }
 
     .item-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        transform: translateY(-2px);
+        border-color: #CBD5E1;
     }
 
-    /* Image Container */
     .item-img {
-        width: 150px;
-        height: 150px;
-        min-width: 150px;
-        background-color: #f8f8f8;
-        border-radius: 6px;
+        width: 120px;
+        height: 100px;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #E2E8F0;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 10px;
-        box-sizing: border-box;
         overflow: hidden;
+        padding: 8px;
     }
 
     .item-img img {
@@ -208,82 +222,253 @@
     }
 
     .item-card:hover .item-img img {
-        transform: scale(1.05);
-    }
-
-    /* Item Details */
-    .item-details {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        transform: scale(1.06);
     }
 
     .item-details h3 {
-        margin: 0 0 10px 0;
-        font-size: 1.1rem;
+        font-family: 'Sora', sans-serif;
+        font-size: 0.95rem;
         color: #0F172A;
+        margin: 0 0 8px;
     }
 
-    .item-details p {
-        margin: 5px 0;
-        font-size: 0.9rem;
+    .item-meta {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .item-meta span {
+        font-size: 0.82rem;
         color: #64748B;
     }
 
-    .item-details strong {
+    .item-meta strong {
         color: #0F172A;
+        font-weight: 600;
     }
 
-    /* Action Buttons */
     .item-actions {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        gap: 10px;
-        min-width: 120px;
+        gap: 8px;
+        min-width: 110px;
     }
 
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
+    .edit-btn {
+        padding: 8px 14px;
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .edit-btn:hover {
+        background: #1D4ED8;
+        transform: translateY(-1px);
+    }
+
+    .remove-btn {
+        padding: 8px 14px;
+        background: transparent;
+        color: #EF4444;
+        border: 1px solid #EF4444;
+        border-radius: 8px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .remove-btn:hover {
+        background: #EF4444;
+        color: #fff;
+    }
+
+    /* ── Modals ── */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal[style*="block"] {
+        display: flex !important;
+    }
+
+    .modal-content {
+        background: #fff;
+        border-radius: 14px;
+        padding: 36px 32px;
+        width: 380px;
+        max-width: 92vw;
+        box-shadow: 0 8px 32px rgba(15, 23, 42, 0.18);
+        position: relative;
+        text-align: center;
+    }
+
+    .modal-content h3 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.05rem;
+        color: #0F172A;
+        margin: 0 0 20px;
+    }
+
+    .modal .close {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        font-size: 20px;
+        color: #94A3B8;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .modal .close:hover {
+        color: #0F172A;
+    }
+
+    .modal-content input[type="text"] {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-family: 'DM Sans', sans-serif;
+        margin-bottom: 20px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .modal-content input[type="text"]:focus {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .modal-content select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-family: 'DM Sans', sans-serif;
+        outline: none;
+        margin-bottom: 20px;
+        background: #F8FAFC;
+    }
+
+    .modal-content button[type="submit"] {
+        padding: 10px 26px;
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .modal-content button[type="submit"]:hover {
+        background: #1D4ED8;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .cancel-btn {
+        padding: 10px 22px;
+        background: #E2E8F0;
+        color: #0F172A;
+        border: none;
+        border-radius: 8px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .cancel-btn:hover {
+        background: #CBD5E1;
+    }
+
+    @media (max-width: 700px) {
         .item-card {
-            flex-direction: column;
+            grid-template-columns: 80px 1fr;
         }
-        
-        .item-img {
-            width: 100%;
-            height: 200px;
-        }
-        
+
         .item-actions {
+            grid-column: 1 / -1;
             flex-direction: row;
-            margin-top: 15px;
         }
-    }
-    .remove-category-btn {
-        background-color: #EF4444;
-    }
-    .remove-category-btn:hover {
-        background-color: #DC2626;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+        .item-img {
+            width: 80px;
+            height: 80px;
+        }
     }
 </style>
 
-<!-- Available Items -->
-<div class="category-box">
-    <h2 style="display: flex; justify-content: space-between; align-items: center;">
-        Items Available for Sale
-        <div style="display: flex; gap: 10px;">
-            <button type="button" class="edit-btn inventory-add-category-btn" id="openAddModalBtn">Add category</button>
-            <button type="button" class="edit-btn inventory-add-category-btn remove-category-btn" id="openRemoveModalBtn">Remove category</button>
-            <button type="button" class="edit-btn" onclick="document.getElementById('csv_file_input').click();">Upload CSV</button>
-            <input type="file" id="csv_file_input" style="display: none;" accept=".csv">
-            <button type="button" class="edit-btn"><a class="addItem" href="/inventory/add_item">Add item</a></button>
+<div class="inventory-wrapper">
+
+    <!-- Page Header with all actions -->
+    <div class="inventory-page-header">
+        <h1>Inventory</h1>
+        <div class="inventory-actions">
+            <button type="button" class="inv-btn inv-btn-secondary" id="openAddModalBtn">＋ Add Category</button>
+            <button type="button" class="inv-btn inv-btn-danger" id="openRemoveModalBtn">✕ Remove Category</button>
+            <button type="button" class="inv-btn inv-btn-secondary"
+                onclick="document.getElementById('csv_file_input').click();">⬆ Upload CSV</button>
+            <input type="file" id="csv_file_input" style="display:none;" accept=".csv">
+            <a href="/inventory/add_item" class="inv-btn inv-btn-primary" style="text-decoration:none;">＋ Add Item</a>
         </div>
-    </h2>
-    <div class="scroll-container" style="max-height: 400px; overflow-y: auto;">
-        {% if available_items %}
+    </div>
+
+    <!-- Available Items -->
+    <div class="category-box">
+        <div class="section-header">
+            <h2>Items Available for Sale</h2>
+            {% if available_items %}
+            <span style="font-size:0.82rem;color:#64748B;">
+                {{ available_items|selectattr("for_sale")|list|length }} items
+            </span>
+            {% endif %}
+        </div>
+        <div class="scroll-container">
+            {% if available_items %}
             {% for item in available_items %}
             {% if item.for_sale %}
             <div class="item-card">
@@ -294,47 +479,57 @@
                 </div>
                 <div class="item-details">
                     <h3>{{ item.name }}</h3>
-                    <p><strong>Quantity:</strong> {{ item.quantity }}</p>
-                    <p><strong>Price:</strong> ${{ item.price }}</p>
+                    <div class="item-meta">
+                        <span><strong>Qty:</strong> {{ item.quantity }}</span>
+                        <span><strong>Price:</strong> ${{ item.price }}</span>
+                    </div>
                 </div>
                 <div class="item-actions">
-                    <a href="/inventory/{{ item.id }}/edit"><button type="submit" class="edit-btn">Edit Item</button></a>
-                    <button type="button" class="remove-btn remove-item-btn" data-item-id="{{ item.id }}">Remove Item</button>
+                    <a href="/inventory/{{ item.id }}/edit"><button type="button" class="edit-btn">Edit</button></a>
+                    <button type="button" class="remove-btn remove-item-btn"
+                        data-item-id="{{ item.id }}">Remove</button>
                 </div>
             </div>
             {% endif %}
             {% endfor %}
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
-</div>
 
-<!-- Purchased Items -->
-<div class="category-box">
-    <h2>Purchased Items</h2>
-    <div class="scroll-container" style="max-height: 400px; overflow-y: auto;">
-        {% if available_items %}
+    <!-- Purchased Items -->
+    <div class="category-box">
+        <div class="section-header">
+            <h2>Purchased Items</h2>
+        </div>
+        <div class="scroll-container">
+            {% if available_items %}
             {% for item in available_items %}
             {% if not item.for_sale %}
             <div class="item-card">
                 <div class="item-img">
                     <a href="/products/product_{{ item.id }}">
-                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                        <img src="/static/images/default-product-image.jpg" alt="{{ item.name }}">
                     </a>
                 </div>
                 <div class="item-details">
                     <h3>{{ item.name }}</h3>
-                    <p><strong>Quantity:</strong> {{ item.quantity }}</p>
-                    <p><strong>Price:</strong> ${{ item.price }}</p>
+                    <div class="item-meta">
+                        <span><strong>Qty:</strong> {{ item.quantity }}</span>
+                        <span><strong>Price:</strong> ${{ item.price }}</span>
+                    </div>
                 </div>
                 <div class="item-actions">
-                    <a href="/inventory/{{ item.id }}/edit"><button type="submit" class="edit-btn">Edit Item</button></a>
-                    <button type="button" class="remove-btn remove-item-btn" data-item-id="{{ item.id }}">Remove Item</button>
+                    <a href="/inventory/{{ item.id }}/edit"><button type="button" class="edit-btn">Edit</button></a>
+                    <button type="button" class="remove-btn remove-item-btn"
+                        data-item-id="{{ item.id }}">Remove</button>
                 </div>
             </div>
             {% endif %}
             {% endfor %}
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
+
 </div>
 
 <!-- Add Category Modal -->
@@ -344,7 +539,7 @@
         <h3>Add New Category</h3>
         <form method="post" action="/inventory/add-category">
             <input type="text" name="name" placeholder="Category name" required>
-            <button type="submit">Add</button>
+            <button type="submit">Add Category</button>
         </form>
     </div>
 </div>
@@ -353,130 +548,106 @@
 <div id="removeCategoryModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h3>Remove Existing Category</h3>
+        <h3>Remove Category</h3>
         <form method="post" action="/inventory/remove-category">
             <div class="form-group">
-                <label for="category-select">Select Category:</label>
+                <label for="category-select">Select Category</label>
                 <select id="category-select" name="category_id" required>
                     {% for category in categories %}
-                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    <option value="{{ category.id }}">{{ category.name }}</option>
                     {% else %}
-                        <option disabled>No categories available</option>
+                    <option disabled>No categories available</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="form-actions">
-                <button type="submit" class="remove-btn">Remove</button>
+                <button type="submit" class="remove-btn" style="padding:10px 22px;border-radius:8px;">Remove</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Remove Item Confirmation Modal (Single reusable modal) -->
+<!-- Remove Item Modal -->
 <div id="removeItemModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h3 id="removeItemModalTitle">Are you sure you want to remove this item?</h3>
+        <h3 id="removeItemModalTitle">Remove this item?</h3>
         <form id="removeItemForm" method="post" action="">
             <div class="form-actions">
                 <button type="button" class="cancel-btn">Cancel</button>
-                <button type="submit" class="remove-btn">Yes, Remove</button>
+                <button type="submit" class="remove-btn" style="padding:10px 22px;border-radius:8px;">Yes,
+                    Remove</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Modal elements
+    document.addEventListener('DOMContentLoaded', function () {
         const addModal = document.getElementById('addCategoryModal');
         const removeModal = document.getElementById('removeCategoryModal');
         const removeItemModal = document.getElementById('removeItemModal');
         const removeItemForm = document.getElementById('removeItemForm');
         const removeItemModalTitle = document.getElementById('removeItemModalTitle');
-        
-        // Buttons to open modals
+
         const addBtn = document.getElementById('openAddModalBtn');
         const removeBtn = document.getElementById('openRemoveModalBtn');
-        
-        // Close buttons
         const closeButtons = document.querySelectorAll('.close');
         const cancelBtn = document.querySelector('.cancel-btn');
-        
-        // Open modals
+
         if (addBtn) addBtn.addEventListener('click', () => addModal.style.display = 'block');
         if (removeBtn) removeBtn.addEventListener('click', () => removeModal.style.display = 'block');
-        
-        // Handle remove item buttons - using event delegation for dynamic content
-        document.addEventListener('click', function(e) {
+
+        document.addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-item-btn')) {
                 const itemCard = e.target.closest('.item-card');
                 if (itemCard) {
                     const itemId = e.target.getAttribute('data-item-id');
                     const itemName = itemCard.querySelector('.item-details h3').textContent;
-                    
-                    // Update the modal content
-                    removeItemModalTitle.textContent = `Are you sure you want to remove "${itemName}"?`;
-                    
-                    // Use Django's url template tag to generate the correct URL
+                    removeItemModalTitle.textContent = `Remove "${itemName}"?`;
                     removeItemForm.action = `/inventory/delete_item/0`.replace('0', itemId);
-                    
-                    // Show the modal
                     removeItemModal.style.display = 'block';
                 }
             }
         });
-        
-        // Close modals when clicking close buttons
+
         closeButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 addModal.style.display = 'none';
                 removeModal.style.display = 'none';
                 removeItemModal.style.display = 'none';
             });
         });
-        
-        // Close modals when clicking cancel button
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', () => {
-                removeItemModal.style.display = 'none';
-            });
-        }
-        
-        // Close modals when clicking outside
-        window.addEventListener('click', function(event) {
+
+        if (cancelBtn) cancelBtn.addEventListener('click', () => { removeItemModal.style.display = 'none'; });
+
+        window.addEventListener('click', function (event) {
             if (event.target == addModal) addModal.style.display = 'none';
             if (event.target == removeModal) removeModal.style.display = 'none';
             if (event.target == removeItemModal) removeItemModal.style.display = 'none';
         });
-        // CSV Upload Logic
+
         const csvInput = document.getElementById('csv_file_input');
         if (csvInput) {
-            csvInput.addEventListener('change', function() {
+            csvInput.addEventListener('change', function () {
                 if (this.files && this.files[0]) {
                     const formData = new FormData();
                     formData.append('csv_file', this.files[0]);
-                    
-                    fetch('/inventory/upload', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(`Success! Inserted ${data.inserted} items.`);
-                            window.location.reload();
-                        } else {
-                            alert('Error: ' + (data.error || 'Upload failed'));
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Upload error:', err);
-                        alert('An error occurred during upload.');
-                    });
+                    fetch('/inventory/upload', { method: 'POST', body: formData })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert(`Success! Inserted ${data.inserted} items.`);
+                                window.location.reload();
+                            } else {
+                                alert('Error: ' + (data.error || 'Upload failed'));
+                            }
+                        })
+                        .catch(err => { console.error('Upload error:', err); alert('An error occurred during upload.'); });
                 }
             });
         }
     });
 </script>
+
 {% endblock %}
