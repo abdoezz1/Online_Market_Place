@@ -3,188 +3,279 @@
 {% block navbar %}
 <div id="navbar-container">
     {% if user %}
-        {% include 'parts/navbarwithoutforms.html' %}
+    {% include 'parts/navbarwithoutforms.html' %}
     {% else %}
-        {% include 'parts/navbar.html' %}
+    {% include 'parts/navbar.html' %}
     {% endif %}
 </div>
 {% endblock %}
 
 {% block content %}
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@600;700&display=swap"
+    rel="stylesheet">
+
 <style>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: #F8FAFC;
+    }
+
+    .deposit-page {
+        min-height: 80vh;
+        display: grid;
+        grid-template-columns: 1fr 420px 1fr;
+        align-items: start;
+        padding: 56px 24px;
+    }
+
     .deposit-form-container {
-        max-width: 500px;
-        margin: 40px auto;
-        padding: 30px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        grid-column: 2;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
         border: 1px solid #E2E8F0;
+        overflow: hidden;
     }
 
-    .deposit-form-title {
-        color: #0F172A;
+    /* Header strip */
+    .deposit-header {
+        background: #2563EB;
+        padding: 28px 32px 24px;
         text-align: center;
-        margin-bottom: 30px;
-        font-size: 1.8rem;
-        position: relative;
-        padding-bottom: 10px;
     }
 
-    .deposit-form-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 3px;
-        background-color: #2563EB;
+    .deposit-header h2 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.4rem;
+        color: #fff;
+        margin: 0 0 4px;
+    }
+
+    .deposit-header p {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.85rem;
+        margin: 0;
+    }
+
+    /* Form body */
+    .deposit-form-body {
+        padding: 32px;
     }
 
     .deposit-form {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 0;
     }
 
     .deposit-form-group {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-    }
-
-    .deposit-card-details {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 15px;
+        gap: 6px;
+        margin-bottom: 20px;
     }
 
     .deposit-form-label {
-        color: #0F172A;
+        font-size: 0.8rem;
         font-weight: 600;
-        font-size: 0.95rem;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .deposit-form-input {
-        padding: 12px 15px;
+        padding: 11px 14px;
         border: 1px solid #E2E8F0;
-        border-radius: 6px;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        background-color: #ffffff;
+        border-radius: 8px;
+        font-size: 0.92rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #0F172A;
+        background: #F8FAFC;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        width: 100%;
     }
 
     .deposit-form-input:focus {
         outline: none;
         border-color: #2563EB;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        background: #fff;
+    }
+
+    /* Card detail row — 3 equal columns */
+    .deposit-card-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .deposit-card-details .deposit-form-group {
+        margin-bottom: 0;
+    }
+
+    /* Amount row — accent border */
+    .deposit-amount-group .deposit-form-input {
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-color: #2563EB;
+        background: #EFF6FF;
+        color: #1D4ED8;
+    }
+
+    /* Divider */
+    .deposit-divider {
+        border: none;
+        border-top: 1px solid #E2E8F0;
+        margin: 4px 0 24px;
     }
 
     .deposit-form-actions {
-        margin-top: 20px;
+        margin-top: 4px;
     }
 
     .deposit-submit-btn {
         width: 100%;
-        padding: 14px 25px;
-        background-color: #2563EB;
-        color: #FFFFFF;
+        padding: 14px;
+        background: #2563EB;
+        color: #fff;
         border: none;
         border-radius: 25px;
+        font-family: 'DM Sans', sans-serif;
         font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
         font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
     }
 
     .deposit-submit-btn:hover {
-        background-color: #1D4ED8;
+        background: #1D4ED8;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
     }
 
     .deposit-submit-btn:disabled {
-        background-color: #cccccc;
+        background: #cccccc;
         transform: none;
         box-shadow: none;
         cursor: not-allowed;
     }
 
     .deposit-response-message {
-        margin-top: 20px;
-        padding: 15px;
-        border-radius: 6px;
+        margin-top: 16px;
+        padding: 13px 16px;
+        border-radius: 8px;
         text-align: center;
         font-weight: 500;
+        font-size: 0.9rem;
+        display: none;
     }
 
     .deposit-response-message.success {
-        background-color: rgba(0, 168, 150, 0.1);
+        background: rgba(0, 168, 150, 0.08);
         color: #00a896;
         border: 1px solid #00a896;
+        display: block;
     }
 
     .deposit-response-message.error {
-        background-color: rgba(230, 57, 70, 0.1);
+        background: rgba(230, 57, 70, 0.08);
         color: #e63946;
         border: 1px solid #e63946;
+        display: block;
     }
 
-    @media (max-width: 600px) {
+    /* Security note */
+    .deposit-security-note {
+        text-align: center;
+        font-size: 0.78rem;
+        color: #94A3B8;
+        margin-top: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    @media (max-width: 680px) {
+        .deposit-page {
+            grid-template-columns: 1fr;
+            padding: 24px 16px;
+        }
+
         .deposit-form-container {
-            padding: 20px;
-            margin: 20px 15px;
+            grid-column: 1;
         }
 
         .deposit-card-details {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
         }
     }
 </style>
 
-<div class="deposit-form-container">
-  <h2 class="deposit-form-title">💳 Mock Deposit</h2>
-    <form id="depositForm" method="post" action="/deposit/process" class="deposit-form">
-  
-      <div class="deposit-form-group">
-        <label class="deposit-form-label">Card Number</label>
-        <input type="text" name="card_number" maxlength="16" required 
-               class="deposit-form-input" placeholder="1234 5678 9012 3456" />
-      </div>
-  
-      <div class="deposit-card-details">
-        <div class="deposit-form-group">
-          <label class="deposit-form-label">Expiration Month</label>
-          <input type="text" name="expiration_month" maxlength="2" required 
-             class="deposit-form-input" placeholder="MM" style="width: 133px;" />
+<div class="deposit-page">
+    <div class="deposit-form-container">
+
+        <div class="deposit-header">
+            <h2>💳 Mock Deposit</h2>
+            <p>This is a simulated payment form</p>
         </div>
-  
-        <div class="deposit-form-group">
-          <label class="deposit-form-label">Expiration Year</label>
-          <input type="text" name="expiration_year" maxlength="4" required 
-             class="deposit-form-input" placeholder="YYYY" style="width: 133px;" />
+
+        <div class="deposit-form-body">
+            <form id="depositForm" method="post" action="/deposit/process" class="deposit-form">
+
+                <div class="deposit-form-group">
+                    <label class="deposit-form-label">Card Number</label>
+                    <input type="text" name="card_number" maxlength="16" required class="deposit-form-input"
+                        placeholder="1234 5678 9012 3456" />
+                </div>
+
+                <div class="deposit-card-details">
+                    <div class="deposit-form-group">
+                        <label class="deposit-form-label">Exp. Month</label>
+                        <input type="text" name="expiration_month" maxlength="2" required class="deposit-form-input"
+                            placeholder="MM" />
+                    </div>
+                    <div class="deposit-form-group">
+                        <label class="deposit-form-label">Exp. Year</label>
+                        <input type="text" name="expiration_year" maxlength="4" required class="deposit-form-input"
+                            placeholder="YYYY" />
+                    </div>
+                    <div class="deposit-form-group">
+                        <label class="deposit-form-label">CVV</label>
+                        <input type="text" name="cvv" maxlength="3" required class="deposit-form-input"
+                            placeholder="•••" />
+                    </div>
+                </div>
+
+                <hr class="deposit-divider">
+
+                <div class="deposit-form-group deposit-amount-group">
+                    <label class="deposit-form-label">Deposit Amount (USD)</label>
+                    <input type="number" name="amount" step="0.01" required class="deposit-form-input"
+                        placeholder="0.00" />
+                </div>
+
+                <div class="deposit-form-actions">
+                    <button type="submit" class="deposit-submit-btn">Submit Deposit</button>
+                </div>
+
+            </form>
+
+            <div id="responseMessage" class="deposit-response-message"></div>
+
+            <p class="deposit-security-note">
+                🔒 Simulated environment — no real charges apply
+            </p>
         </div>
-  
-        <div class="deposit-form-group">
-          <label class="deposit-form-label">CVV</label>
-          <input type="text" name="cvv" maxlength="3" required 
-             class="deposit-form-input" placeholder="CVV" style="width: 133px;" />
-        </div>
-      </div>
-  
-      <div class="deposit-form-group">
-        <label class="deposit-form-label">Deposit Amount ($)</label>
-        <input type="number" name="amount" step="0.01" required 
-               class="deposit-form-input" placeholder="0.00" />
-      </div>
-  
-      <div class="deposit-form-actions">
-        <button type="submit" class="deposit-submit-btn">Submit Deposit</button>
-      </div>
-    </form>
-  
-    <div id="responseMessage" class="deposit-response-message"></div>
-  </div>
+    </div>
+</div>
+
 {% endblock %}
