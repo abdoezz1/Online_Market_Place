@@ -1,168 +1,395 @@
 {% extends 'base.html' %}
 
 {% block navbar %}
-    {% if user %}
-        {% include 'parts/navbarwithoutforms.html' %}
-    {% else %}
-        {% include 'parts/navbar.html' %}
-    {% endif %}
+{% if user %}
+{% include 'parts/navbarwithoutforms.html' %}
+{% else %}
+{% include 'parts/navbar.html' %}
+{% endif %}
 {% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="/static/css/profile.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@600;700&display=swap"
+    rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
 {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="alert {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
+<div class="messages" style="position:fixed;top:20px;right:20px;z-index:9999;max-width:360px;">
+    {% for message in messages %}
+    <div class="alert {{ message.tags }}" style="
+                padding: 14px 18px;
+                border-radius: 10px;
+                margin-bottom: 10px;
+                font-size: 0.88rem;
+                font-family: 'DM Sans', sans-serif;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+                background: #fff;
+                border-left: 4px solid #2563EB;
+            ">{{ message }}</div>
+    {% endfor %}
+</div>
 {% endif %}
 
-<div class="profile-container">
-    <div class="profile-header">
+<style>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
 
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: #F8FAFC;
+    }
+
+    .profile-wrapper {
+        max-width: 960px;
+        margin: 48px auto;
+        padding: 0 24px;
+    }
+
+    /* ── Hero Banner ── */
+    .profile-hero {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 28px;
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #E2E8F0;
+        border-radius: 16px;
+        padding: 32px 36px;
+        margin-bottom: 28px;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    .profile-photo {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        flex-shrink: 0;
+    }
+
+    .profile-photo img {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #E2E8F0;
+        display: block;
+    }
+
+    .photo-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        cursor: pointer;
+    }
+
+    .profile-photo:hover .photo-overlay {
+        opacity: 1;
+    }
+
+    .change-photo-btn {
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .change-photo-btn i {
+        font-size: 1.1rem;
+    }
+
+    .hero-text h1 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.6rem;
+        color: #0F172A;
+        margin: 0 0 6px;
+    }
+
+    .hero-text .member-since {
+        font-size: 0.85rem;
+        color: #94A3B8;
+        margin: 0 0 4px;
+    }
+
+    .hero-text .user-age {
+        font-size: 0.9rem;
+        color: #64748B;
+        margin: 0;
+    }
+
+    /* ── Form Grid Layout ── */
+    .profile-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .form-section {
+        background: #ffffff;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 28px 28px 24px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    /* About Me spans full width */
+    .form-section.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-section h2 {
+        font-family: 'Sora', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #2563EB;
+        margin: 0 0 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #E2E8F0;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #0F172A;
+        background: #F8FAFC;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        background: #fff;
+    }
+
+    .readonly-field {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    /* ── Save Bar ── */
+    .form-save-bar {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 4px;
+    }
+
+    .save-btn {
+        padding: 12px 32px;
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        border-radius: 25px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+    }
+
+    .save-btn:hover {
+        background: #1D4ED8;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media (max-width: 700px) {
+        .profile-hero {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .profile-photo {
+            margin: 0 auto;
+        }
+
+        .profile-form {
+            grid-template-columns: 1fr;
+        }
+
+        .form-section.full-width {
+            grid-column: 1;
+        }
+    }
+</style>
+
+<div class="profile-wrapper">
+
+    <!-- Hero -->
+    <div class="profile-hero">
         <div class="profile-photo">
-            <img src="{{ profile.photo }}" alt="{{ user.first_name }} {{ user.last_name }} profile photo">
-
+            <img src="/static/images/user3.png" alt="{{ user.first_name }} {{ user.last_name }} profile photo">
             <div class="photo-overlay">
                 <label for="id_photo" class="change-photo-btn" aria-label="Change profile photo">
-                    <i class="fas fa-camera"></i> Change Photo
+                    <i class="fas fa-camera"></i> Change
                 </label>
             </div>
         </div>
-
-        <div class="profile-title">
-            <h1>{{ user.first_name }} {{ user.last_name }}'s Profile</h1>
+        <div class="hero-text">
+            <h1>{{ user.first_name }} {{ user.last_name }}</h1>
             <p class="member-since">Member since {{ user.date_joined }}</p>
-
             {% if profile.date_of_birth %}
-                <p class="user-age">
-                    Age: <strong>{{ profile.age }}</strong>
-                </p>
+            <p class="user-age">Age: <strong>{{ profile.age }}</strong></p>
             {% endif %}
         </div>
     </div>
 
-    <div class="profile-content">
-        <form method="POST" action="/profile" enctype="multipart/form-data" class="profile-form">
+    <!-- Form -->
+    <form method="POST" action="/profile" enctype="multipart/form-data" class="profile-form">
 
-            <!-- Login Info -->
-            <div class="form-section">
-                <h2>Login Information</h2>
-
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" name="username" value="{{ user.username }}" readonly class="readonly-field">
-                </div>
-
-                <div class="form-group">
-                    <label>Old Password</label>
-                    <input type="password" name="old_password" placeholder="Current Password">
-                </div>
-
-                <div class="form-group">
-                    <label>New Password</label>
-                    <input type="password" name="new_password" placeholder="New Password">
-                </div>
-
-                <div class="form-group">
-                    <label>Confirm New Password</label>
-                    <input type="password" name="confirm_password" placeholder="Confirm New Password">
-                </div>
+        <!-- Personal Info -->
+        <div class="form-section">
+            <h2>Personal Information</h2>
+            <div class="form-group">
+                <label>First Name</label>
+                <input type="text" name="first_name" value="{{ user.first_name or '' }}">
             </div>
-
-            <!-- Personal Info -->
-            <div class="form-section">
-                <h2>Personal Information</h2>
-
-                <div class="form-group">
-                    <label>First Name</label>
-                    <input type="text" name="first_name" value="{{ user.first_name or '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label>Last Name</label>
-                    <input type="text" name="last_name" value="{{ user.last_name or '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" value="{{ user.email }}" readonly class="readonly-field">
-                </div>
-
-                <div class="form-group">
-                    <label>Date of Birth</label>
-                    <input type="date" name="date_of_birth" value="{{ profile.date_of_birth }}">
-                </div>
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" name="last_name" value="{{ user.last_name or '' }}">
             </div>
-
-            <!-- Contact Info -->
-            <div class="form-section">
-                <h2>Contact Information</h2>
-
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="text" name="phone" value="{{ profile.phone or '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label>Address</label>
-                    <input type="text" name="address" value="{{ profile.address or '' }}">
-                </div>
+            <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="date" name="date_of_birth" value="{{ profile.date_of_birth }}">
             </div>
+        </div>
 
-            <!-- About -->
-            <div class="form-section">
-                <h2>About Me</h2>
-
-                <div class="form-group">
-                    <label>Bio</label>
-                    <textarea name="bio" rows="4">{{ profile.bio or '' }}</textarea>
-                </div>
+        <!-- Login Info -->
+        <div class="form-section">
+            <h2>Login & Security</h2>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" value="{{ user.username }}" readonly class="readonly-field">
             </div>
-
-            <!-- Hidden Photo Field -->
-            <div class="form-group hidden">
-                <input type="file" name="photo" id="photo-input">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ user.email }}" readonly class="readonly-field">
             </div>
-
-            <div class="form-actions">
-                <button type="submit" class="save-btn">Save Changes</button>
+            <div class="form-group">
+                <label>Old Password</label>
+                <input type="password" name="old_password" placeholder="Current Password">
             </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" name="new_password" placeholder="New Password">
+            </div>
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" name="confirm_password" placeholder="Confirm New Password">
+            </div>
+        </div>
 
-        </form>
-    </div>
+        <!-- Contact Info -->
+        <div class="form-section">
+            <h2>Contact Information</h2>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="phone" value="{{ profile.phone or '' }}">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" name="address" value="{{ profile.address or '' }}">
+            </div>
+        </div>
+
+        <!-- About Me -->
+        <div class="form-section full-width">
+            <h2>About Me</h2>
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea name="bio" rows="4">{{ profile.bio or '' }}</textarea>
+            </div>
+        </div>
+
+        <!-- Hidden Photo Field -->
+        <div class="form-group hidden">
+            <input type="file" name="photo" id="photo-input">
+        </div>
+
+        <!-- Save -->
+        <div class="form-save-bar">
+            <button type="submit" class="save-btn">Save Changes</button>
+        </div>
+
+    </form>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const photoInput = document.getElementById('id_photo');
-    const profileImage = document.querySelector('.profile-photo img');
+    document.addEventListener('DOMContentLoaded', () => {
+        const photoInput = document.getElementById('id_photo');
+        const profileImage = document.querySelector('.profile-photo img');
 
-    if (photoInput) {
-        photoInput.addEventListener('change', function() {
-            const file = this.files?.[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    profileImage.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+        if (photoInput) {
+            photoInput.addEventListener('change', function () {
+                const file = this.files?.[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = e => { profileImage.src = e.target.result; };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        document.querySelectorAll('.alert').forEach(msg => {
+            setTimeout(() => {
+                msg.classList.add('fade-out');
+                setTimeout(() => msg.remove(), 500);
+            }, 10000);
         });
-    }
-
-    document.querySelectorAll('.alert').forEach(msg => {
-        setTimeout(() => {
-            msg.classList.add('fade-out');
-            setTimeout(() => msg.remove(), 500);
-        }, 10000);
     });
-});
 </script>
 
 {% endblock %}
