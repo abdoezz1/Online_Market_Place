@@ -59,7 +59,7 @@ This makes the repository a good fit for learning or extending a custom web stac
 
 	```env
 	SERVER_HOST=0.0.0.0
-	SERVER_PORT=8080
+	SERVER_PORT=8000
 	SECRET_KEY=replace-with-a-secure-value
 
 	DB_HOST=localhost
