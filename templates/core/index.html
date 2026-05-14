@@ -544,6 +544,33 @@
             width: 100%;
         }
     }
+
+    .item-wish {
+        padding: 0 14px 14px;
+    }
+
+    .wish-btn {
+        width: 100%;
+        padding: 7px;
+        background: #F59E0B;
+        color: white;
+        border: 1.5px solid #F59E0B;
+        border-radius: 7px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 600;
+    }
+
+    .wish-btn:hover {
+        background: #D97706;
+        border-color: #D97706;
+    }
 </style>
 
 <div class="page-shell">
@@ -628,6 +655,13 @@
                                     <i class="fa fa-cart-plus"></i> Add
                                 </button>
                             </form>
+
+                            <div class="item-wish">
+                                <button type="button" class="wish-btn" title="Add to Wishlist"
+                                    onclick="addToWishlist('{{ product.id }}', this)">
+                                    <i class="fa fa-heart"></i>
+                                </button>
+                            </div>
                         </div>
                         {% endif %}
                         {% endfor %}
@@ -672,6 +706,52 @@
 </div>
 
 <script>
+    function addToWishlist(productId, btn) {
+        fetch('/wishlist/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'product_id=' + productId
+        })
+            .then(() => {
+                showToast('❤️ Added to your wishlist!');
+                btn.style.background = '#D97706';
+                btn.style.borderColor = '#D97706';
+            })
+            .catch(() => showToast('Something went wrong.'));
+    }
+
+    function showToast(msg) {
+        let toast = document.getElementById('wish-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'wish-toast';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 28px;
+                right: 28px;
+                background: #0F172A;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 10px;
+                font-family: 'DM Sans', sans-serif;
+                font-size: 0.88rem;
+                font-weight: 500;
+                box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+                z-index: 9999;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            `;
+            document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        clearTimeout(toast._timeout);
+        toast._timeout = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+    }
+
     document.getElementById('apply-filters').addEventListener('click', () => {
         const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked')).map(cb => cb.value);
         const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
