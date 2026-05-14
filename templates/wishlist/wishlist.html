@@ -221,7 +221,7 @@
                 {% for entry in wishlist_items %}
                 <div class="wishlist-card">
                     {% if entry.item.image %}
-                        <img src="{{ entry.item.image }}" alt="{{ entry.item.name }}" class="card-img">
+                        <img src="/static/images/default-product-image.jpg" alt="{{ entry.item.name }}" class="card-img">
                     {% else %}
                         <div class="card-img-placeholder">
                             <i class="fas fa-image"></i>
