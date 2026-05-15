@@ -18,15 +18,19 @@ def inbox(request):
 
 @require_login
 def conversation(request):
+    from core.queries import get_user_by_id, get_user_profile
     user_id = request["user_id"]
     other_id = request["path_params"]["user_id"]
 
-    messages = queries.get_messages(user_id, other_id)
+    msgs = queries.get_messages(user_id, other_id)
+    other_user = get_user_by_id(other_id)
 
     html = render_template("messages/conversation.html", {
-        "messages": messages,
+        "conversation": msgs,
+        "other_user": other_user,
         "other_id": other_id,
-        "user": request.get("user")
+        "user": request.get("user"),
+        "thread": {},
     })
     return build_response(200, html)
 

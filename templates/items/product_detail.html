@@ -437,7 +437,7 @@
     <div class="reviews-header">
         <h2>Reviews</h2>
         {% if reviews %}
-        <span class="review-count">{{ reviews|length }} review{{ reviews|length|pluralize }}</span>
+        <span class="review-count">{{ reviews|length }} review{% if reviews|length != 1 %}s{% endif %}</span>
         {% endif %}
     </div>
 
